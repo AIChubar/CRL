@@ -472,7 +472,7 @@ GameObject:
   - component: {fileID: 269078245}
   - component: {fileID: 269078244}
   m_Layer: 5
-  m_Name: Balance
+  m_Name: Money
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1081,6 +1081,54 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 526500135}
   m_CullTransparentMesh: 1
+--- !u!1 &578404815
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 578404817}
+  - component: {fileID: 578404816}
+  m_Layer: 0
+  m_Name: PauseManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &578404816
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 578404815}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83e0e9f07b43fb149a11dd2d5cd848e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  restartButton: {fileID: 1208654931}
+  nextLevelButton: {fileID: 1267163506}
+  winLoseMenu: {fileID: 1872191244}
+  pauseMenu: {fileID: 265012279}
+--- !u!4 &578404817
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 578404815}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 600.3405, y: 423.98993, z: -0.0664472}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0
@@ -3154,7 +3202,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1736397143}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
-        m_MethodName: OnRestartButtonPressed
+        m_MethodName: OnContinueButtonPressed
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3387,7 +3435,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1736397143}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
-        m_MethodName: OnRestartButtonPressed
+        m_MethodName: OnMenuButtonPressed
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3466,23 +3514,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   betAmounts: 0a000000140000001e00000028000000320000003c00000046000000500000005a00000064000000780000008c000000a0000000b4000000c8000000fa0000002c0100005e01000090010000c2010000f401000058020000bc0200002003000084030000e8030000
   saveManager: {fileID: 0}
-  moneyText: {fileID: 714420971}
-  changePriceText: {fileID: 1580068575}
-  targetText: {fileID: 2082794859}
-  wagerText: {fileID: 1810959496}
-  spinsText: {fileID: 2005146376}
-  betText: {fileID: 293192502}
-  resultText: {fileID: 1191355351}
-  instructionText: {fileID: 363630096}
-  winLoseMenu: {fileID: 1872191244}
-  pauseMenu: {fileID: 265012279}
-  RestartButton: {fileID: 999518081}
-  NextLevelButton: {fileID: 1156457729}
-  changeButton: {fileID: 2042845825}
-  confirmButton: {fileID: 899886634}
-  spinButton: {fileID: 991188541}
-  increaseButton: {fileID: 826480840}
-  decreaseButton: {fileID: 902176671}
+  slotControls: {fileID: 0}
+  pauseManager: {fileID: 578404816}
   slotMachine: {fileID: 1792177407}
   isChangingSymbol: 0
   simulationRuns: 1000000
@@ -4442,6 +4475,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1792177408}
   - component: {fileID: 1792177407}
+  - component: {fileID: 1792177409}
   m_Layer: 0
   m_Name: SlotMachine
   m_TagString: Untagged
@@ -4480,6 +4514,32 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1792177409
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1792177406}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6c66ddecddb11a41bd839e83e7ce45a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  saveManager: {fileID: 0}
+  moneyText: {fileID: 714420971}
+  targetText: {fileID: 2082794859}
+  wagerText: {fileID: 1810959496}
+  spinsText: {fileID: 2005146376}
+  betText: {fileID: 293192502}
+  resultText: {fileID: 1191355351}
+  instructionText: {fileID: 363630096}
+  changePriceText: {fileID: 1580068575}
+  changeButton: {fileID: 2042845825}
+  confirmButton: {fileID: 899886634}
+  spinButton: {fileID: 991188541}
+  increaseButton: {fileID: 826480840}
+  decreaseButton: {fileID: 902176671}
 --- !u!1 &1801036804
 GameObject:
   m_ObjectHideFlags: 0
@@ -4992,7 +5052,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1872191245}
   m_Layer: 5
-  m_Name: EndLevel
+  m_Name: WinLose
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5252,13 +5312,13 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1869460602}
-  - {fileID: 1751637836}
   - {fileID: 269078243}
   - {fileID: 1520603021}
-  - {fileID: 1801036805}
-  - {fileID: 1857568321}
   - {fileID: 216044083}
+  - {fileID: 1857568321}
+  - {fileID: 1869460602}
+  - {fileID: 1751637836}
+  - {fileID: 1801036805}
   - {fileID: 1235117832}
   - {fileID: 720224392}
   m_Father: {fileID: 0}
@@ -5694,3 +5754,4 @@ SceneRoots:
   - {fileID: 1292554395}
   - {fileID: 1792177408}
   - {fileID: 1736397144}
+  - {fileID: 578404817}

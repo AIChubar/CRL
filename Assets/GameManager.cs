@@ -7,8 +7,6 @@ using System.IO;
 using UnityEngine.SceneManagement;
 
 
-
-
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
@@ -19,34 +17,14 @@ public class GameManager : MonoBehaviour
     private float currentWin = 0;
     
     [HideInInspector]public SaveManager saveManager;
+    [HideInInspector]public SlotControls slotControls;
     
-    public TMP_Text moneyText;
-    public TMP_Text changePriceText;
-    public TMP_Text targetText;
-    public TMP_Text wagerText;
-    public TMP_Text spinsText;
-    public TMP_Text betText;
-    public TMP_Text resultText;
-    public TMP_Text instructionText;
-
-    public GameObject winLoseMenu;
-    public GameObject pauseMenu;
-
     
-    public Button RestartButton;
-    public Button NextLevelButton;
-    
-    public Button changeButton;
-    public Button confirmButton;
-    public Button spinButton;
-    public Button increaseButton;
-    public Button decreaseButton;
 
-    private PlayerInput playerInput;
 
-    
+    public PauseManager pauseManager;
     public SlotMachine slotMachine;
-    public bool isChangingSymbol = false; // Флаг изменения символа
+    public bool isChangingSymbol = false; 
 
     [Header("Monte Carlo Simulation Results")]
     public int simulationRuns = 1000;
@@ -54,16 +32,17 @@ public class GameManager : MonoBehaviour
     public float winProbability;
     public float winCoef;
 
-
+    
     private void Awake()
     {
-        playerInput = new PlayerInput();
 
         if (instance == null)
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
             saveManager = FindFirstObjectByType<SaveManager>(); //Bad
+            slotControls = FindFirstObjectByType<SlotControls>(); //Bad
+
         }
         else
         {
@@ -74,26 +53,7 @@ public class GameManager : MonoBehaviour
    
     void Start()
     {
-        winLoseMenu.SetActive(false);
-        pauseMenu.SetActive(false);
         currentWin = saveManager.gameData.betAmount / 2;
-        changeButton.interactable = false;
-        confirmButton.interactable = false;
-        spinButton.interactable = true;
-        increaseButton.interactable = true;
-        decreaseButton.interactable = true;
-        
-        UpdateUI();
-    }
-    
-    private void OnEnable()
-    {
-        playerInput.Enable();
-    }
-
-    private void OnDisable()
-    {
-        playerInput.Disable();
     }
     
     public void SaveGame()
@@ -106,31 +66,14 @@ public class GameManager : MonoBehaviour
         DataPersistanceManager.instance.LoadGame();
     }
 
-    private void Update()
-    {
-        if (playerInput.Player.Pause.triggered)
-        {
-            PauseGame();
-        }
-    }
+    
 
-    void UpdateUI()
-    {
-        moneyText.text = "Money: $" + saveManager.gameData.money.ToString("0.00");
-        spinsText.text = "Spins Left: " + saveManager.gameData.spinsLeft.ToString();
-        betText.text = "Bet: $" + saveManager.gameData.betAmount.ToString();
-        targetText.text = "Target Money: $" + saveManager.gameData.targetMoney.ToString("0.00");
-        wagerText.text = "Wager Left: $" + saveManager.gameData.wagerLeft.ToString();
-        changePriceText.text = "$" + saveManager.gameData.changePrice.ToString();
-    }
+    
 
     public void Spin()
     {
-        changeButton.interactable = true;
-        confirmButton.interactable = true;
-        spinButton.interactable = false;
-        increaseButton.interactable = false;
-        decreaseButton.interactable = false;
+        slotControls.UpdateButtons(SlotMode.WaitingForConfirm);
+        
         if (saveManager.gameData.spinsLeft > 0 && saveManager.gameData.money >= saveManager.gameData.betAmount && saveManager.gameData.wagerLeft >= saveManager.gameData.betAmount)
         {
             saveManager.gameData.spinsLeft--;
@@ -138,21 +81,19 @@ public class GameManager : MonoBehaviour
             saveManager.gameData.wagerLeft -= saveManager.gameData.betAmount;
             currentWin = slotMachine.SpinSlot(saveManager.gameData.betAmount, false) * winCoef;
 
-
-            resultText.text = "Current win: $" + currentWin;
-            UpdateUI();
+            slotControls.UpdateResultText("Current win: $" + currentWin);
         }
         else if (saveManager.gameData.spinsLeft <= 0)
         {
-            resultText.text = "Not enough spins!";
+            slotControls.UpdateResultText("Not enough spins!");
         }
         else if (saveManager.gameData.wagerLeft < saveManager.gameData.betAmount)
         {
-            resultText.text = "Not enough wager!";
+            slotControls.UpdateResultText("Not enough wager!");
         }
         else
         {
-            resultText.text = "Not enough balance!";
+            slotControls.UpdateResultText("Not enough balance!");
         }
     }
 
@@ -162,7 +103,7 @@ public class GameManager : MonoBehaviour
         {
             saveManager.gameData.betAmount = betAmounts[betAmounts.FindIndex(x => x == saveManager.gameData.betAmount) + 1];
             saveManager.gameData.changePrice = saveManager.gameData.betAmount / 2;
-            UpdateUI();
+            slotControls.UpdateUI();
         }
     }
 
@@ -172,7 +113,7 @@ public class GameManager : MonoBehaviour
         {
             saveManager.gameData.betAmount = betAmounts[betAmounts.FindIndex(x => x == saveManager.gameData.betAmount) - 1];
             saveManager.gameData.changePrice = saveManager.gameData.betAmount / 2;
-            UpdateUI();
+            slotControls.UpdateUI();
         }
     }
 
@@ -182,45 +123,34 @@ public class GameManager : MonoBehaviour
     {
         if (saveManager.gameData.changePrice > saveManager.gameData.money)
         {
-            instructionText.text = "Not enough money to change symbol!";
+            slotControls.UpdateInstructionText("Not enough money to change symbol!");
             return;
         }
         
         saveManager.gameData.money -= saveManager.gameData.changePrice;
         isChangingSymbol = true;
         
-        changeButton.interactable = false;
-        confirmButton.interactable = false;
-        spinButton.interactable = false;
-        increaseButton.interactable = false;
-        decreaseButton.interactable = false;
-        instructionText.text = "Select a symbol to change!";
-        UpdateUI();
+        slotControls.UpdateButtons(SlotMode.ChangingSymbols);
+
+        slotControls.UpdateInstructionText("Select a symbol to change!");
     }
     
     public void FinishChangingSymbol()
     {
-        changeButton.interactable = true;
-        confirmButton.interactable = true;
-        spinButton.interactable = false;
-        increaseButton.interactable = false;
-        decreaseButton.interactable = false;
+        slotControls.UpdateButtons(SlotMode.WaitingForConfirm);
+
         currentWin = slotMachine.CalculateWin(saveManager.gameData.betAmount) * winCoef;
-        resultText.text = "Current win: $" + currentWin;
-        instructionText.text = "";
-        UpdateUI();
+        slotControls.UpdateResultText("Current win: $" + currentWin);
+        slotControls.UpdateInstructionText("");
     }
 
     public void ConfirmSpin()
     {
-        changeButton.interactable = false;
-        confirmButton.interactable = false;
-        spinButton.interactable = true;
-        increaseButton.interactable = true;
-        decreaseButton.interactable = true;
+        slotControls.UpdateButtons(SlotMode.ReadyForSpin);
+
         saveManager.gameData.money += currentWin;
-        resultText.text = "You won: $" + currentWin;
-        UpdateUI();
+        slotControls.UpdateResultText("You won: $" + currentWin);
+        slotControls.UpdateInstructionText("");
         CheckLevelEnd();
     }
 
@@ -228,31 +158,25 @@ public class GameManager : MonoBehaviour
     {
         if (saveManager.gameData.money >= saveManager.gameData.targetMoney)
         {
-            instructionText.text = "You Win!";
-            winLoseMenu.SetActive(true);
-            RestartButton.gameObject.SetActive(false);
+            slotControls.UpdateInstructionText("You Win!");
+            pauseManager.winLoseMenu.SetActive(true);
+            pauseManager.restartButton.gameObject.SetActive(false);
             saveManager.gameData.currentLevel++;
             saveManager.gameData.targetMoney = saveManager.gameData.targetMoney * 2 + (int)saveManager.gameData.money;
             SaveGame();
-            DisableAllButtons();
+            slotControls.UpdateButtons(SlotMode.AllDisabled);
         }
         else if (saveManager.gameData.spinsLeft == 0 || saveManager.gameData.wagerLeft < betAmounts[0] || saveManager.gameData.money < betAmounts[0])
         {
-            instructionText.text = "You lose!";
-            winLoseMenu.SetActive(true);
-            NextLevelButton.gameObject.SetActive(false);
-            DisableAllButtons();
+            slotControls.UpdateInstructionText("You Lose!");
+            pauseManager.winLoseMenu.SetActive(true);
+            pauseManager.nextLevelButton.gameObject.SetActive(false);
+            slotControls.UpdateButtons(SlotMode.AllDisabled);
+
         }
     }
 
-    public void DisableAllButtons()
-    {
-        changeButton.interactable = false;
-        confirmButton.interactable = false;
-        spinButton.interactable = false;
-        increaseButton.interactable = false;
-        decreaseButton.interactable = false;
-    }
+    
     
     public void RunMonteCarloSimulation()
     {
@@ -274,23 +198,28 @@ public class GameManager : MonoBehaviour
         winProbability = (float)Math.Round((float)totalWins / simulationRuns * 100, 2);
         winCoef = (float)Math.Round(saveManager.gameData.RTP * saveManager.gameData.betAmount / averageWin, 2 );
     }
-
-    public void PauseGame()
-    {
-        pauseMenu.SetActive(!pauseMenu.activeSelf);
-    }
-
+    
     public void Restart()
     {
-        winLoseMenu.SetActive(false);
+        pauseManager.winLoseMenu.SetActive(false);
         LoadGame();
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     public void NextLevel()
     {
-        winLoseMenu.SetActive(false);
+        pauseManager.winLoseMenu.SetActive(false);
         LoadGame();
         SceneManager.LoadScene(SceneManager.GetActiveScene().name, LoadSceneMode.Single);
+    }
+
+    public void Continue()
+    {
+        pauseManager.PauseGame();
+    }
+
+    public void ToMenu()
+    {
+        SceneManager.LoadScene(0, LoadSceneMode.Single);
     }
 }

@@ -1,9 +1,17 @@
 using UnityEngine;
+using TMPro;
+using UnityEngine.UI;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
     public GameManager gameManager;
 
+    
+    
     // Function to handle the Spin button press
     public void OnSpinButtonPressed()
     {
@@ -41,4 +49,15 @@ public class UIManager : MonoBehaviour
     {
         gameManager.NextLevel();  // Decrease the bet amount
     }
+    
+    public void OnContinueButtonPressed()
+    {
+        gameManager.Continue();  // Decrease the bet amount
+    }
+    public void OnMenuButtonPressed()
+    {
+        gameManager.ToMenu();  // Decrease the bet amount
+    }
+    
+    
 }
