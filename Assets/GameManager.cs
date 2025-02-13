@@ -6,6 +6,9 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine.SceneManagement;
 
+
+
+
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
@@ -15,7 +18,7 @@ public class GameManager : MonoBehaviour
     
     private float currentWin = 0;
     
-     public SaveManager saveManager;
+    [HideInInspector]public SaveManager saveManager;
     
     public TMP_Text moneyText;
     public TMP_Text changePriceText;
@@ -26,7 +29,9 @@ public class GameManager : MonoBehaviour
     public TMP_Text resultText;
     public TMP_Text instructionText;
 
-    public GameObject WinLoseMenu;
+    public GameObject winLoseMenu;
+    public GameObject pauseMenu;
+
     
     public Button RestartButton;
     public Button NextLevelButton;
@@ -37,7 +42,8 @@ public class GameManager : MonoBehaviour
     public Button increaseButton;
     public Button decreaseButton;
 
-    
+    private PlayerInput playerInput;
+
     
     public SlotMachine slotMachine;
     public bool isChangingSymbol = false; // Флаг изменения символа
@@ -51,6 +57,8 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        playerInput = new PlayerInput();
+
         if (instance == null)
         {
             instance = this;
@@ -66,7 +74,8 @@ public class GameManager : MonoBehaviour
    
     void Start()
     {
-        WinLoseMenu.SetActive(false);
+        winLoseMenu.SetActive(false);
+        pauseMenu.SetActive(false);
         currentWin = saveManager.gameData.betAmount / 2;
         changeButton.interactable = false;
         confirmButton.interactable = false;
@@ -77,6 +86,16 @@ public class GameManager : MonoBehaviour
         UpdateUI();
     }
     
+    private void OnEnable()
+    {
+        playerInput.Enable();
+    }
+
+    private void OnDisable()
+    {
+        playerInput.Disable();
+    }
+    
     public void SaveGame()
     {
         DataPersistanceManager.instance.SaveGame();
@@ -84,6 +103,15 @@ public class GameManager : MonoBehaviour
     
     public void LoadGame()
     {
+        DataPersistanceManager.instance.LoadGame();
+    }
+
+    private void Update()
+    {
+        if (playerInput.Player.Pause.triggered)
+        {
+            PauseGame();
+        }
     }
 
     void UpdateUI()
@@ -201,7 +229,7 @@ public class GameManager : MonoBehaviour
         if (saveManager.gameData.money >= saveManager.gameData.targetMoney)
         {
             instructionText.text = "You Win!";
-            WinLoseMenu.SetActive(true);
+            winLoseMenu.SetActive(true);
             RestartButton.gameObject.SetActive(false);
             saveManager.gameData.currentLevel++;
             saveManager.gameData.targetMoney = saveManager.gameData.targetMoney * 2 + (int)saveManager.gameData.money;
@@ -211,7 +239,7 @@ public class GameManager : MonoBehaviour
         else if (saveManager.gameData.spinsLeft == 0 || saveManager.gameData.wagerLeft < betAmounts[0] || saveManager.gameData.money < betAmounts[0])
         {
             instructionText.text = "You lose!";
-            WinLoseMenu.SetActive(true);
+            winLoseMenu.SetActive(true);
             NextLevelButton.gameObject.SetActive(false);
             DisableAllButtons();
         }
@@ -247,16 +275,21 @@ public class GameManager : MonoBehaviour
         winCoef = (float)Math.Round(saveManager.gameData.RTP * saveManager.gameData.betAmount / averageWin, 2 );
     }
 
+    public void PauseGame()
+    {
+        pauseMenu.SetActive(!pauseMenu.activeSelf);
+    }
 
     public void Restart()
     {
+        winLoseMenu.SetActive(false);
         LoadGame();
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     public void NextLevel()
     {
-        WinLoseMenu.SetActive(false);
+        winLoseMenu.SetActive(false);
         LoadGame();
         SceneManager.LoadScene(SceneManager.GetActiveScene().name, LoadSceneMode.Single);
     }
