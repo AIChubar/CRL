@@ -15,19 +15,15 @@ public static class SlotCalculator
     public static int CalculateWin(string[,] slotGrid, int betAmount, int rows, int columns, string wildSymbol, string[] slotSymbols)
     {
         int totalWin = 0;
-        // Создаем словарь для подсчета количества символов в каждом столбце
         Dictionary<string, int[]> symbolCountPerColumn = new Dictionary<string, int[]>();
 
-        // Инициализируем счетчики для обычных символов
         foreach (string symbol in slotSymbols)
         {
             symbolCountPerColumn[symbol] = new int[columns];
         }
-        // Инициализируем счетчик для wild-символа (если его еще нет)
         if (!symbolCountPerColumn.ContainsKey(wildSymbol))
             symbolCountPerColumn[wildSymbol] = new int[columns];
 
-        // Подсчитываем в каждом столбце количество каждого символа
         for (int col = 0; col < columns; col++)
         {
             for (int row = 0; row < rows; row++)
@@ -35,24 +31,20 @@ public static class SlotCalculator
                 string symbol = slotGrid[row, col];
                 if (symbolCountPerColumn.ContainsKey(symbol))
                     symbolCountPerColumn[symbol][col]++;
-                // Если встретился новый символ, можно добавить обработку, но для простоты предполагаем, что это не происходит
             }
         }
 
-        // Для каждого символа (кроме wild) добавляем в каждый столбец количество wild-символов
         foreach (var entry in symbolCountPerColumn)
         {
             string symbol = entry.Key;
             int[] counts = entry.Value;
             if (symbol != wildSymbol)
             {
-                // Добавляем в каждый столбец количество wild-символов
                 for (int col = 0; col < columns; col++)
                 {
                     counts[col] += symbolCountPerColumn[wildSymbol][col];
                 }
             }
-            // Если символ (с учетом wild) присутствует во всех столбцах, считаем множитель и добавляем выигрыш
             bool valid = true;
             int multiplier = 1;
             for (int col = 0; col < columns; col++)
