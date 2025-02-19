@@ -19,6 +19,6 @@ MonoBehaviour:
   - "\U0001F349"
   - "\U0001F34C"
   wildSymbol: "\u2B50"
-  wildChance: 0.02
-  rows: 5
-  columns: 5
+  wildChance: 0.04
+  rows: 3
+  columns: 3

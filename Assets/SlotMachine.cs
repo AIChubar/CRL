@@ -58,7 +58,6 @@ public class SlotMachine : MonoBehaviour
         float panelWidth = 1150f;
         float panelHeight = 850f;
 
-        // Вычисляем размеры символов с учетом отступов
         float maxCellWidth = panelWidth / currentSlotConfig.columns;
         float maxCellHeight = panelHeight / currentSlotConfig.rows;
 
@@ -68,7 +67,6 @@ public class SlotMachine : MonoBehaviour
         float cellWidth = maxCellWidth - spacingX;
         float cellHeight = maxCellHeight - spacingY;
 
-        // Настраиваем GridLayoutGroup
         grid.cellSize = new Vector2(cellWidth, cellHeight);
         grid.spacing = new Vector2(spacingX, spacingY);
         grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
@@ -82,7 +80,6 @@ public class SlotMachine : MonoBehaviour
                 GameObject newSymbol = Instantiate(slotSymbolPrefab, slotPanel.transform);
                 newSymbol.GetComponent<TMP_Text>().text = slotGrid[row, col];
 
-                // Устанавливаем размеры символов
                 RectTransform rectTransform = newSymbol.GetComponent<RectTransform>();
                 rectTransform.sizeDelta = new Vector2(cellWidth, cellHeight);
                 rectTransform.localScale = Vector3.one;

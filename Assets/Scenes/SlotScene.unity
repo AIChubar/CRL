@@ -1110,8 +1110,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83e0e9f07b43fb149a11dd2d5cd848e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  restartButton: {fileID: 1208654931}
-  nextLevelButton: {fileID: 1267163506}
+  restartButton: {fileID: 999518081}
+  nextLevelButton: {fileID: 1156457729}
   winLoseMenu: {fileID: 1872191244}
   pauseMenu: {fileID: 265012279}
 --- !u!4 &578404817
