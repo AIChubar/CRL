@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
-    public GameManager gameManager;
+    private GameManager gameManager;
 
 
     private void Start()

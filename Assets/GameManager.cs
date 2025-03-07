@@ -65,11 +65,7 @@ public class GameManager : MonoBehaviour
     {
         DataPersistanceManager.instance.LoadGame();
     }
-
     
-
-    
-
     public void Spin()
     {
         slotControls.UpdateButtons(SlotMode.WaitingForConfirm);
@@ -116,8 +112,6 @@ public class GameManager : MonoBehaviour
             slotControls.UpdateUI();
         }
     }
-
-    
 
     public void StartChangingSymbol()
     {
@@ -175,8 +169,6 @@ public class GameManager : MonoBehaviour
 
         }
     }
-
-    
     
     public void RunMonteCarloSimulation()
     {
