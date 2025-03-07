@@ -55,8 +55,8 @@ public class SlotMachine : MonoBehaviour
             grid = slotPanel.AddComponent<GridLayoutGroup>();
         }
 
-        float panelWidth = 1150f;
-        float panelHeight = 850f;
+        float panelWidth = 1200f;
+        float panelHeight = 750f;
 
         float maxCellWidth = panelWidth / currentSlotConfig.columns;
         float maxCellHeight = panelHeight / currentSlotConfig.rows;

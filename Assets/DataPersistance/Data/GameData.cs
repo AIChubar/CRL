@@ -15,8 +15,11 @@ public class GameData
     public int changePrice = 5;
     public int currentLevel = 1;
     
+    public CharacterStat wildLuck;
+    public CharacterStat payoutCoef;
     public GameData()
     {
         
     }
 }
+

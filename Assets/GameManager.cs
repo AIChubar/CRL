@@ -208,9 +208,8 @@ public class GameManager : MonoBehaviour
 
     public void NextLevel()
     {
-        pauseManager.winLoseMenu.SetActive(false);
         LoadGame();
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name, LoadSceneMode.Single);
+        SceneManager.LoadScene(1, LoadSceneMode.Single);
     }
 
     public void Continue()
@@ -221,5 +220,11 @@ public class GameManager : MonoBehaviour
     public void ToMenu()
     {
         SceneManager.LoadScene(0, LoadSceneMode.Single);
+    }
+
+    public void ToShop()
+    {
+        SaveGame();
+        SceneManager.LoadScene(2, LoadSceneMode.Single);
     }
 }

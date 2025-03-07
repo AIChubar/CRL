@@ -5,6 +5,8 @@ public class SaveManager : MonoBehaviour, IDataPersistence
     public static SaveManager instance;
 
     
+    
+    
     [SerializeField] public GameData gameData;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Awake()

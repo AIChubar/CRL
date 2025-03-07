@@ -10,8 +10,12 @@ public class UIManager : MonoBehaviour
 {
     public GameManager gameManager;
 
-    
-    
+
+    private void Start()
+    {
+        gameManager = GameManager.instance;
+    }
+
     // Function to handle the Spin button press
     public void OnSpinButtonPressed()
     {
@@ -48,6 +52,11 @@ public class UIManager : MonoBehaviour
     public void OnNextLevelButtonPressed()
     {
         gameManager.NextLevel();  // Decrease the bet amount
+    }
+    
+    public void OnToShopButtonPressed()
+    {
+        gameManager.ToShop();  // Decrease the bet amount
     }
     
     public void OnContinueButtonPressed()
