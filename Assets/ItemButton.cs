@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Item : MonoBehaviour
+public class ItemButton : MonoBehaviour
 {
     
     [HideInInspector] public Image image;
@@ -17,7 +17,7 @@ public class Item : MonoBehaviour
         
     }
     
-    public void SetButton(string fn)
+    public void SetButton(Item item)
     {
         image = GetComponent<Image>();
     }
