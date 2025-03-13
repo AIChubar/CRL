@@ -938,13 +938,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameData:
     RTP: 0.95
-    money: 1000
+    money: 2000
     spinsLeft: 10
     wagerLeft: 2000
     targetMoney: 1500
     betAmount: 10
     changePrice: 5
     currentLevel: 1
+    wildLuck:
+      BaseValue: 0
+    payoutCoef:
+      BaseValue: 0
 --- !u!4 &283514738
 Transform:
   m_ObjectHideFlags: 0

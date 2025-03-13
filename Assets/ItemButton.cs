@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -5,6 +6,8 @@ public class ItemButton : MonoBehaviour
 {
     
     [HideInInspector] public Image image;
+
+    public TextMeshProUGUI text;
 
     public Item item;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -22,6 +25,7 @@ public class ItemButton : MonoBehaviour
     public void SetButton(Item _item)
     {
         item = _item;
+        text.text = item.name;
         image = GetComponent<Image>();
     }
     

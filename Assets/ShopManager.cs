@@ -14,7 +14,7 @@ public class ShopManager : MonoBehaviour
     
     [HideInInspector]
     [UnityEngine.Tooltip("Contains all available items.")]
-    public List<Item> items = new List<Item>();
+    public Queue<Item> items = new Queue<Item>();
     
     [UnityEngine.Tooltip("Prefab for UI Item object representing the gameWorld.")]
     public GameObject itemButtonPrefab;
@@ -33,7 +33,7 @@ public class ShopManager : MonoBehaviour
     {
         for (int i = 0; i < 100; i++)
         {
-            items.Add(new Item(i.ToString()));
+            items.Enqueue(new Item(i.ToString()));
         }
 
         RerollItems();
@@ -43,13 +43,12 @@ public class ShopManager : MonoBehaviour
     {
         foreach (ItemButton item in itemButtonsParent.GetComponentsInChildren<ItemButton>())
         {
-            items.Add(item.item);
+            items.Enqueue(item.item);
             Destroy(item.gameObject);
         }
         for (int i = 0; i < 3; i++)
         {
-            AddButton(items[i]);
-            items.RemoveAt(i);
+            AddButton(items.Dequeue());
         }
     }
     // Update is called once per frame
@@ -59,10 +58,10 @@ public class ShopManager : MonoBehaviour
         ItemButton ib = go.GetComponent<ItemButton>();
         ib.SetButton(item);
         go.transform.localScale = new Vector3(1, 1, 1);
-        /*foreach (var button in go.GetComponentsInChildren<Button>())
+        foreach (var button in go.GetComponentsInChildren<ItemButton>())
         {
-            items.Add(button);
-        }*/
+            items.Enqueue(button.item);
+        }
 
     }
 
