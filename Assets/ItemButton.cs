@@ -5,6 +5,8 @@ public class ItemButton : MonoBehaviour
 {
     
     [HideInInspector] public Image image;
+
+    public Item item;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -17,8 +19,9 @@ public class ItemButton : MonoBehaviour
         
     }
     
-    public void SetButton(Item item)
+    public void SetButton(Item _item)
     {
+        item = _item;
         image = GetComponent<Image>();
     }
     

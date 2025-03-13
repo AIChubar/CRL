@@ -67,6 +67,9 @@ public class UIManager : MonoBehaviour
     {
         gameManager.ToMenu();  // Decrease the bet amount
     }
-    
-    
+
+    public void OnRerollButtonPressed()
+    {
+        ShopManager.instance.RerollItems();
+    }
 }
