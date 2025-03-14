@@ -7,7 +7,7 @@ using System.Collections.Generic;
 public class GameData
 {
     public float RTP = 0.95f;
-    public float money = 1000;
+    public float money = 2000;
     public int spinsLeft = 10;
     public int wagerLeft = 2000;
     public int targetMoney = 1500;
@@ -17,6 +17,8 @@ public class GameData
     
     public CharacterStat wildLuck;
     public CharacterStat payoutCoef;
+    
+    public List<Item> playerItems =  new List<Item>();
     public GameData()
     {
         

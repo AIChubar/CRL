@@ -16,10 +16,9 @@ public class GameManager : MonoBehaviour
     
     private float currentWin = 0;
     
-    [HideInInspector]public SaveManager saveManager;
     [HideInInspector]public SlotControls slotControls;
     
-    
+    public GameData gameData;
 
 
     public PauseManager pauseManager;
@@ -35,12 +34,10 @@ public class GameManager : MonoBehaviour
     
     private void Awake()
     {
-
         if (instance == null)
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
-            saveManager = FindFirstObjectByType<SaveManager>(); //Bad
             slotControls = FindFirstObjectByType<SlotControls>(); //Bad
 
         }
@@ -53,7 +50,7 @@ public class GameManager : MonoBehaviour
    
     void Start()
     {
-        currentWin = saveManager.gameData.betAmount / 2;
+        currentWin = gameData.betAmount / 2;
     }
     
     public void SaveGame()
@@ -70,20 +67,20 @@ public class GameManager : MonoBehaviour
     {
         slotControls.UpdateButtons(SlotMode.WaitingForConfirm);
         
-        if (saveManager.gameData.spinsLeft > 0 && saveManager.gameData.money >= saveManager.gameData.betAmount && saveManager.gameData.wagerLeft >= saveManager.gameData.betAmount)
+        if (gameData.spinsLeft > 0 && gameData.money >= gameData.betAmount && gameData.wagerLeft >= gameData.betAmount)
         {
-            saveManager.gameData.spinsLeft--;
-            saveManager.gameData.money -= saveManager.gameData.betAmount;
-            saveManager.gameData.wagerLeft -= saveManager.gameData.betAmount;
-            currentWin = slotMachine.SpinSlot(saveManager.gameData.betAmount, false) * winCoef;
+            gameData.spinsLeft--;
+            gameData.money -= gameData.betAmount;
+            gameData.wagerLeft -= gameData.betAmount;
+            currentWin = slotMachine.SpinSlot(gameData.betAmount, false) * winCoef;
 
             slotControls.UpdateResultText("Current win: $" + currentWin);
         }
-        else if (saveManager.gameData.spinsLeft <= 0)
+        else if (gameData.spinsLeft <= 0)
         {
             slotControls.UpdateResultText("Not enough spins!");
         }
-        else if (saveManager.gameData.wagerLeft < saveManager.gameData.betAmount)
+        else if (gameData.wagerLeft < gameData.betAmount)
         {
             slotControls.UpdateResultText("Not enough wager!");
         }
@@ -95,33 +92,33 @@ public class GameManager : MonoBehaviour
 
     public void IncreaseBet()
     {
-        if (saveManager.gameData.money > saveManager.gameData.betAmount && saveManager.gameData.betAmount < betAmounts[^1])
+        if (gameData.money > gameData.betAmount && gameData.betAmount < betAmounts[^1])
         {
-            saveManager.gameData.betAmount = betAmounts[betAmounts.FindIndex(x => x == saveManager.gameData.betAmount) + 1];
-            saveManager.gameData.changePrice = saveManager.gameData.betAmount / 2;
+            gameData.betAmount = betAmounts[betAmounts.FindIndex(x => x == gameData.betAmount) + 1];
+            gameData.changePrice = gameData.betAmount / 2;
             slotControls.UpdateUI();
         }
     }
 
     public void DecreaseBet()
     {
-        if (saveManager.gameData.betAmount > betAmounts[0])
+        if (gameData.betAmount > betAmounts[0])
         {
-            saveManager.gameData.betAmount = betAmounts[betAmounts.FindIndex(x => x == saveManager.gameData.betAmount) - 1];
-            saveManager.gameData.changePrice = saveManager.gameData.betAmount / 2;
+            gameData.betAmount = betAmounts[betAmounts.FindIndex(x => x == gameData.betAmount) - 1];
+            gameData.changePrice = gameData.betAmount / 2;
             slotControls.UpdateUI();
         }
     }
 
     public void StartChangingSymbol()
     {
-        if (saveManager.gameData.changePrice > saveManager.gameData.money)
+        if (gameData.changePrice > gameData.money)
         {
             slotControls.UpdateInstructionText("Not enough money to change symbol!");
             return;
         }
         
-        saveManager.gameData.money -= saveManager.gameData.changePrice;
+        gameData.money -= gameData.changePrice;
         isChangingSymbol = true;
         
         slotControls.UpdateButtons(SlotMode.ChangingSymbols);
@@ -133,7 +130,7 @@ public class GameManager : MonoBehaviour
     {
         slotControls.UpdateButtons(SlotMode.WaitingForConfirm);
 
-        currentWin = slotMachine.CalculateWin(saveManager.gameData.betAmount) * winCoef;
+        currentWin = slotMachine.CalculateWin(gameData.betAmount) * winCoef;
         slotControls.UpdateResultText("Current win: $" + currentWin);
         slotControls.UpdateInstructionText("");
     }
@@ -142,7 +139,7 @@ public class GameManager : MonoBehaviour
     {
         slotControls.UpdateButtons(SlotMode.ReadyForSpin);
 
-        saveManager.gameData.money += currentWin;
+        gameData.money += currentWin;
         slotControls.UpdateResultText("You won: $" + currentWin);
         slotControls.UpdateInstructionText("");
         CheckLevelEnd();
@@ -150,17 +147,17 @@ public class GameManager : MonoBehaviour
 
     private void CheckLevelEnd()
     {
-        if (saveManager.gameData.money >= saveManager.gameData.targetMoney)
+        if (gameData.money >= gameData.targetMoney)
         {
             slotControls.UpdateInstructionText("You Win!");
             pauseManager.winLoseMenu.SetActive(true);
             pauseManager.restartButton.gameObject.SetActive(false);
-            saveManager.gameData.currentLevel++;
-            saveManager.gameData.targetMoney = saveManager.gameData.targetMoney * 2 + (int)saveManager.gameData.money;
+            gameData.currentLevel++;
+            gameData.targetMoney = gameData.targetMoney * 2 + (int)gameData.money;
             SaveGame();
             slotControls.UpdateButtons(SlotMode.AllDisabled);
         }
-        else if (saveManager.gameData.spinsLeft == 0 || saveManager.gameData.wagerLeft < betAmounts[0] || saveManager.gameData.money < betAmounts[0])
+        else if (gameData.spinsLeft == 0 || gameData.wagerLeft < betAmounts[0] || gameData.money < betAmounts[0])
         {
             slotControls.UpdateInstructionText("You Lose!");
             pauseManager.winLoseMenu.SetActive(true);
@@ -177,7 +174,7 @@ public class GameManager : MonoBehaviour
 
         for (int i = 0; i < simulationRuns; i++)
         {
-            int result = slotMachine.SpinSlot(saveManager.gameData.betAmount, true);
+            int result = slotMachine.SpinSlot(gameData.betAmount, true);
             totalWin += result;
 
             if (result > 0)
@@ -188,7 +185,7 @@ public class GameManager : MonoBehaviour
 
         averageWin = (float)Math.Round((float)totalWin / simulationRuns, 2 );
         winProbability = (float)Math.Round((float)totalWins / simulationRuns * 100, 2);
-        winCoef = (float)Math.Round(saveManager.gameData.RTP * saveManager.gameData.betAmount / averageWin, 2 );
+        winCoef = (float)Math.Round(gameData.RTP * gameData.betAmount / averageWin, 2 );
     }
     
     public void Restart()

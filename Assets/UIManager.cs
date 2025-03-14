@@ -72,4 +72,9 @@ public class UIManager : MonoBehaviour
     {
         ShopManager.instance.RerollItems();
     }
+    
+    public void OnBuyButtonPressed()
+    {
+        ShopManager.instance.BuyItem();
+    }
 }

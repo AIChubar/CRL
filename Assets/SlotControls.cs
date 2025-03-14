@@ -16,7 +16,6 @@ public enum SlotMode
 
 public class SlotControls : MonoBehaviour
 {
-    [HideInInspector]public SaveManager saveManager;
 
     
     public TMP_Text moneyText;
@@ -36,17 +35,16 @@ public class SlotControls : MonoBehaviour
 
     void Awake()
     {
-        saveManager = FindFirstObjectByType<SaveManager>(); //Bad
     }
     
     public void UpdateUI()
     {
-        moneyText.text = "Money: $" + saveManager.gameData.money.ToString("0.00");
-        spinsText.text = "Spins Left: " + saveManager.gameData.spinsLeft.ToString();
-        betText.text = "Bet: $" + saveManager.gameData.betAmount.ToString();
-        targetText.text = "Target Money: $" + saveManager.gameData.targetMoney.ToString("0.00");
-        wagerText.text = "Wager Left: $" + saveManager.gameData.wagerLeft.ToString();
-        changePriceText.text = "$" + saveManager.gameData.changePrice.ToString();
+        moneyText.text = "Money: $" + GameManager.instance.gameData.money.ToString("0.00");
+        spinsText.text = "Spins Left: " + GameManager.instance.gameData.spinsLeft.ToString();
+        betText.text = "Bet: $" + GameManager.instance.gameData.betAmount.ToString();
+        targetText.text = "Target Money: $" + GameManager.instance.gameData.targetMoney.ToString("0.00");
+        wagerText.text = "Wager Left: $" + GameManager.instance.gameData.wagerLeft.ToString();
+        changePriceText.text = "$" + GameManager.instance.gameData.changePrice.ToString();
     }
 
     public void UpdateButtons(SlotMode mode)

@@ -31,7 +31,7 @@ public class ShopManager : MonoBehaviour
     }
     void Start()
     {
-        for (int i = 0; i < 100; i++)
+        for (int i = 0; i < 10; i++)
         {
             items.Enqueue(new Item(i.ToString()));
         }
@@ -58,11 +58,13 @@ public class ShopManager : MonoBehaviour
         ItemButton ib = go.GetComponent<ItemButton>();
         ib.SetButton(item);
         go.transform.localScale = new Vector3(1, 1, 1);
-        foreach (var button in go.GetComponentsInChildren<ItemButton>())
-        {
-            items.Enqueue(button.item);
-        }
+    }
 
+    public void BuyItem()
+    {
+        GameManager.instance.gameData.playerItems.Add(currentItem.item);
+        Destroy(currentItem.gameObject);
+        currentItem = null;
     }
 
     public void SetCurrentItem(ItemButton item)
@@ -74,7 +76,7 @@ public class ShopManager : MonoBehaviour
 public class Item
 {
     public string name;
-
+    
     public Item(string _name)
     {
         name = _name;
