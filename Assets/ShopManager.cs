@@ -8,7 +8,7 @@ public class ShopManager : MonoBehaviour
     public ItemButton currentItem;
     public bool inputDisabled;
     public GameObject itemButtonsParent;
-    public static ShopManager instance  { get; private set; }
+    public static ShopManager instance;
     
     
     
@@ -22,19 +22,34 @@ public class ShopManager : MonoBehaviour
     
     private void Awake()
     {
-
         if (instance == null)
         {
             instance = this;
+            DontDestroyOnLoad(gameObject);
         }
-       
+        else
+        {
+            Destroy(gameObject);
+        }
     }
     void Start()
     {
-        for (int i = 0; i < 10; i++)
+        GameData gameData = GameManager.instance.gameData;
+
+        items.Enqueue(new Item("Lucky Charm", new List<StatModifier>
         {
-            items.Enqueue(new Item(i.ToString()));
-        }
+            new(0.1f, StatModType.PercentAdd, gameData.wildLuck)
+        }));
+
+        items.Enqueue(new Item("Jackpot Boost", new List<StatModifier>
+        {
+            new(0.2f, StatModType.PercentMult, gameData.payoutCoef)
+        }));
+
+        items.Enqueue(new Item("Bonus Payout", new List<StatModifier>
+        {
+            new(50f, StatModType.Flat, gameData.payoutBonus)
+        }));
 
         RerollItems();
     }
@@ -62,7 +77,12 @@ public class ShopManager : MonoBehaviour
 
     public void BuyItem()
     {
-        GameManager.instance.gameData.playerItems.Add(currentItem.item);
+        Item item = currentItem.item;
+        GameManager.instance.gameData.playerItems.Add(item);
+
+        // Apply the item's stat modifiers
+        item.ApplyModifiers();
+
         Destroy(currentItem.gameObject);
         currentItem = null;
     }
@@ -73,12 +93,4 @@ public class ShopManager : MonoBehaviour
     }
 }
 
-public class Item
-{
-    public string name;
-    
-    public Item(string _name)
-    {
-        name = _name;
-    }
-}
+

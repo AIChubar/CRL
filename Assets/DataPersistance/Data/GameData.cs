@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 /// <summary>
 /// Class containing all data that needs to be saved.
@@ -15,8 +16,9 @@ public class GameData
     public int changePrice = 5;
     public int currentLevel = 1;
     
-    public CharacterStat wildLuck;
-    public CharacterStat payoutCoef;
+    [SerializeField]public CharacterStat wildLuck = new CharacterStat(1f);
+    [SerializeField]public CharacterStat payoutCoef = new CharacterStat(1f);
+    [SerializeField]public CharacterStat payoutBonus = new CharacterStat(0);
     
     public List<Item> playerItems =  new List<Item>();
     public GameData()

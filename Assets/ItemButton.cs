@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -40,4 +41,40 @@ public class ItemButton : MonoBehaviour
         ShopManager.instance.SetCurrentItem(this);
         image.color = new Color32(245, 124, 124, 255);
     }
+    
+    
 }
+public class Item
+{
+    public string name;
+    public List<StatModifier> statModifiers;
+
+    public Item(string _name, List<StatModifier> modifiers)
+    {
+        name = _name;
+        statModifiers = modifiers;
+    }
+
+    public void ApplyModifiers()
+    {
+        foreach (StatModifier mod in statModifiers)
+        {
+            if (mod.Source is CharacterStat targetStat)
+            {
+                targetStat.AddModifier(mod);
+            }
+        }
+    }
+
+    public void RemoveModifiers()
+    {
+        foreach (StatModifier mod in statModifiers)
+        {
+            if (mod.Source is CharacterStat targetStat)
+            {
+                targetStat.RemoveModifier(mod);
+            }
+        }
+    }
+}
+

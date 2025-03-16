@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System;
 using System.Collections.ObjectModel;
+using UnityEngine;
 
 /// <summary>
 /// Modifiable character stats.
@@ -16,7 +17,7 @@ public class CharacterStat
     public readonly ReadOnlyCollection<StatModifier> StatModifiers;
     
     protected  bool isDirty = true;
-    protected  float _value;
+    [SerializeField]protected  float _value;
     
     /// <summary>
     /// Current modified stat value.
@@ -25,7 +26,6 @@ public class CharacterStat
         get {
             if(isDirty || lastBaseValue != BaseValue) {
                 lastBaseValue = BaseValue;
-                _value = CalculateFinalValue();
                 isDirty = false;
             }
             return _value;
@@ -41,6 +41,7 @@ public class CharacterStat
     public CharacterStat(float baseValue) : this()
     {
         BaseValue = baseValue;
+        _value = baseValue;
     }
     
     /// <summary>
@@ -60,7 +61,9 @@ public class CharacterStat
             isDirty = true;
             return true;
         }
+        
         return false;
+        
     }
     
     public virtual bool RemoveAllModifiersFromSource(object source)
