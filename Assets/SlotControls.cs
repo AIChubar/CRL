@@ -24,8 +24,10 @@ public class SlotControls : MonoBehaviour
     public TMP_Text spinsText;
     public TMP_Text betText;
     public TMP_Text resultText;
-    public TMP_Text instructionText;
     public TMP_Text changePriceText;
+
+    public TMP_Text instructionText;
+    public TMP_Text goldText;
 
     public Button changeButton;
     public Button confirmButton;
@@ -45,6 +47,7 @@ public class SlotControls : MonoBehaviour
         targetText.text = "Target Money: $" + GameManager.instance.gameData.targetMoney.ToString("0.00");
         wagerText.text = "Wager Left: $" + GameManager.instance.gameData.wagerLeft.ToString();
         changePriceText.text = "$" + GameManager.instance.gameData.changePrice.ToString();
+        goldText.text = "Gold: $" + GameManager.instance.gameData.gold.ToString();
     }
 
     public void UpdateButtons(SlotMode mode)

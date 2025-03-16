@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,7 +10,9 @@ public class ItemButton : MonoBehaviour
     
     [HideInInspector] public Image image;
 
-    public TextMeshProUGUI text;
+    public TextMeshProUGUI nameText;
+    public TextMeshProUGUI priceText;
+    public TextMeshProUGUI descriptionText;
 
     public Item item;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -26,7 +30,13 @@ public class ItemButton : MonoBehaviour
     public void SetButton(Item _item)
     {
         item = _item;
-        text.text = item.name;
+        nameText.text = item.name;
+        priceText.text = item.price.ToString();
+        descriptionText.text = "";
+        for (int i = 0; i < item.statModifiers.Count; i++)
+        {
+            descriptionText.text += item.statModifiers[i].Description + " " + item.statModifiers[i].Value.ToString() + "\n";
+        }
         image = GetComponent<Image>();
     }
     
@@ -44,15 +54,24 @@ public class ItemButton : MonoBehaviour
     
     
 }
+
+public enum StatType
+{
+    wildLuck, payoutMult, payoutBonus
+}
+
 public class Item
 {
     public string name;
-    public List<StatModifier> statModifiers;
+    public int price;
+    public List<StatModifier> statModifiers ;
 
-    public Item(string _name, List<StatModifier> modifiers)
+    public Item(string _name, int _price,List<StatModifier> _modifiers )
     {
         name = _name;
-        statModifiers = modifiers;
+        statModifiers = _modifiers;
+        price = _price;
+      
     }
 
     public void ApplyModifiers()

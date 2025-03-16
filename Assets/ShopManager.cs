@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,7 +12,8 @@ public class ShopManager : MonoBehaviour
     public GameObject itemButtonsParent;
     public static ShopManager instance;
     
-    
+    public TMP_Text instructionText;
+    public TMP_Text goldText;
     
     [HideInInspector]
     [UnityEngine.Tooltip("Contains all available items.")]
@@ -32,24 +35,36 @@ public class ShopManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
+    public void UpdateUI()
+    {
+        goldText.text = "Gold: $" + GameManager.instance.gameData.gold.ToString();
+    }
+
     void Start()
     {
+        goldText.text = "Gold: $" + GameManager.instance.gameData.gold.ToString();
+
         GameData gameData = GameManager.instance.gameData;
 
-        items.Enqueue(new Item("Lucky Charm", new List<StatModifier>
+        items.Enqueue(new Item("Lucky Charm",3, new List<StatModifier>
         {
-            new(0.1f, StatModType.PercentAdd, gameData.wildLuck)
+            new(0.1f, StatModType.PercentAdd, gameData.wildLuck, "Wild Luck")
+        }
+        ));
+
+        items.Enqueue(new Item("Jackpot Boost", 5,new List<StatModifier>
+        {
+            new(0.2f, StatModType.PercentMult, gameData.payoutMult, "Payout Mult"),
+            new(50f, StatModType.Flat, gameData.payoutBonus, "Payout Bonus"),
+
         }));
 
-        items.Enqueue(new Item("Jackpot Boost", new List<StatModifier>
+        items.Enqueue(new Item("Bonus Payout", 3,new List<StatModifier>
         {
-            new(0.2f, StatModType.PercentMult, gameData.payoutCoef)
-        }));
-
-        items.Enqueue(new Item("Bonus Payout", new List<StatModifier>
-        {
-            new(50f, StatModType.Flat, gameData.payoutBonus)
-        }));
+            new(50f, StatModType.Flat, gameData.payoutBonus, "Payout Bonus")
+        }
+        ));
 
         RerollItems();
     }
@@ -63,7 +78,8 @@ public class ShopManager : MonoBehaviour
         }
         for (int i = 0; i < 3; i++)
         {
-            AddButton(items.Dequeue());
+            if (items.Count > 0)
+                AddButton(items.Dequeue());
         }
     }
     // Update is called once per frame
@@ -77,6 +93,16 @@ public class ShopManager : MonoBehaviour
 
     public void BuyItem()
     {
+        if (currentItem.item.price > GameManager.instance.gameData.gold)
+        {
+            instructionText.text = "Not enough gold!";
+            return;
+
+        }
+        else
+        {
+            GameManager.instance.gameData.gold -= currentItem.item.price;
+        }
         Item item = currentItem.item;
         GameManager.instance.gameData.playerItems.Add(item);
 
@@ -85,6 +111,7 @@ public class ShopManager : MonoBehaviour
 
         Destroy(currentItem.gameObject);
         currentItem = null;
+        UpdateUI();
     }
 
     public void SetCurrentItem(ItemButton item)

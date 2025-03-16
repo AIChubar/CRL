@@ -14,13 +14,15 @@ public class StatModifier
     public readonly StatModType Type;
     public readonly int Order;
     public readonly object Source;
+    public readonly string Description;
 
-    public StatModifier(float value, StatModType type, int order, object source)
+    public StatModifier(float value, StatModType type, int order, object source, string description = "null")
     {
         Value = value;
         Type = type;
         Order = order;
         Source = source;
+        Description = description;
     }
 
     // Requires Value and Type. Calls the "Main" constructor and sets Order and Source to their default values: (int)type and null, respectively.
@@ -31,4 +33,7 @@ public class StatModifier
  
     // Requires Value, Type and Source. Sets Order to its default value: (int)Type
     public StatModifier(float value, StatModType type, object source) : this(value, type, (int)type, source) { }
+    
+    // Requires Value, Type, Source and Description. Sets Order to its default value: (int)Type
+    public StatModifier(float value, StatModType type, object source, string description) : this(value, type, (int)type, source, description) { }
 }

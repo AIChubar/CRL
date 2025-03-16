@@ -153,7 +153,8 @@ public class GameManager : MonoBehaviour
             pauseManager.winLoseMenu.SetActive(true);
             pauseManager.restartButton.gameObject.SetActive(false);
             gameData.currentLevel++;
-            gameData.targetMoney = gameData.targetMoney * 2 + (int)gameData.money;
+            gameData.targetMoney = (int)gameData.baseMoney * (int)(gameData.currentLevel*gameData.currentLevel*0.5);
+            gameData.gold += 5 + gameData.currentLevel*2;
             SaveGame();
             slotControls.UpdateButtons(SlotMode.AllDisabled);
         }
@@ -199,6 +200,7 @@ public class GameManager : MonoBehaviour
     {
         LoadGame();
         SceneManager.LoadScene(1, LoadSceneMode.Single);
+        gameData.money = gameData.baseMoney;
     }
 
     public void Continue()
