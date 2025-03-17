@@ -19,6 +19,8 @@ public class GameManager : MonoBehaviour
     [HideInInspector]public SlotControls slotControls;
     
     public GameData gameData;
+    
+    [SerializeField] private Button finishRoundButton;
 
 
     public PauseManager pauseManager;
@@ -50,6 +52,9 @@ public class GameManager : MonoBehaviour
    
     void Start()
     {
+        finishRoundButton.interactable = false;
+        //finishRoundText.color = new Color(1, 1, 1, 0.4f);
+
         currentWin = gameData.betAmount / 2;
     }
     
@@ -65,6 +70,11 @@ public class GameManager : MonoBehaviour
     
     public void Spin()
     {
+        if (gameData.spinsLeft == 0)
+        {
+            slotControls.UpdateInstructionText("You don't have spins left!");
+            return;
+        }
         slotControls.UpdateButtons(SlotMode.WaitingForConfirm);
         
         if (gameData.spinsLeft > 0 && gameData.money >= gameData.betAmount && gameData.wagerLeft >= gameData.betAmount)
@@ -149,14 +159,8 @@ public class GameManager : MonoBehaviour
     {
         if (gameData.money >= gameData.targetMoney)
         {
-            slotControls.UpdateInstructionText("You Win!");
-            pauseManager.winLoseMenu.SetActive(true);
-            pauseManager.restartButton.gameObject.SetActive(false);
-            gameData.currentLevel++;
-            gameData.targetMoney = (int)gameData.baseMoney * (int)(gameData.currentLevel*gameData.currentLevel*0.5);
-            gameData.gold += 5 + gameData.currentLevel*2;
-            SaveGame();
-            slotControls.UpdateButtons(SlotMode.AllDisabled);
+            finishRoundButton.interactable = true;
+            //finishRoundText.color = new Color(1, 1, 1, 1);
         }
         else if (gameData.spinsLeft == 0 || gameData.wagerLeft < betAmounts[0] || gameData.money < betAmounts[0])
         {
@@ -164,8 +168,24 @@ public class GameManager : MonoBehaviour
             pauseManager.winLoseMenu.SetActive(true);
             pauseManager.nextLevelButton.gameObject.SetActive(false);
             slotControls.UpdateButtons(SlotMode.AllDisabled);
-
         }
+        else if(gameData.money < gameData.targetMoney)
+        {
+            finishRoundButton.interactable = false;
+            //finishRoundText.color = new Color(1, 1, 1, 0.4f);
+        }
+    }
+
+    public void FinishRound()
+    {
+        slotControls.UpdateInstructionText("You Win!");
+        pauseManager.winLoseMenu.SetActive(true);
+        pauseManager.restartButton.gameObject.SetActive(false);
+        gameData.currentLevel++;
+        gameData.targetMoney = (int)gameData.baseMoney * (int)(gameData.currentLevel*gameData.currentLevel*0.5);
+        gameData.gold += 5 + gameData.currentLevel*2;
+        SaveGame();
+        slotControls.UpdateButtons(SlotMode.AllDisabled);
     }
     
     public void RunMonteCarloSimulation()

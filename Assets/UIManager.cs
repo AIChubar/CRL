@@ -67,6 +67,11 @@ public class UIManager : MonoBehaviour
     {
         gameManager.ToMenu();  // Decrease the bet amount
     }
+    
+    public void OnFinishButtonPressed()
+    {
+        gameManager.FinishRound();  // Decrease the bet amount
+    }
 
     public void OnRerollButtonPressed()
     {
