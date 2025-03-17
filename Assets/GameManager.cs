@@ -9,10 +9,9 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager instance;
+    [HideInInspector]public static GameManager instance;
     
     public List<int> betAmounts =  new List<int>(){ 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 120, 140, 160, 180, 200, 250, 300, 350, 400, 450, 500, 600, 700, 800, 900, 1000 };
-    
     
     private float currentWin = 0;
     
@@ -27,11 +26,8 @@ public class GameManager : MonoBehaviour
     public SlotMachine slotMachine;
     public bool isChangingSymbol = false; 
 
-    [Header("Monte Carlo Simulation Results")]
-    public int simulationRuns = 1000;
-    public float averageWin;
-    public float winProbability;
     public float winCoef;
+
 
     
     private void Awake()
@@ -41,7 +37,6 @@ public class GameManager : MonoBehaviour
             instance = this;
             DontDestroyOnLoad(gameObject);
             slotControls = FindFirstObjectByType<SlotControls>(); //Bad
-
         }
         else
         {
@@ -188,26 +183,7 @@ public class GameManager : MonoBehaviour
         slotControls.UpdateButtons(SlotMode.AllDisabled);
     }
     
-    public void RunMonteCarloSimulation()
-    {
-        int totalWin = 0;
-        int totalWins = 0;
 
-        for (int i = 0; i < simulationRuns; i++)
-        {
-            int result = slotMachine.SpinSlot(gameData.betAmount, true);
-            totalWin += result;
-
-            if (result > 0)
-            {
-                totalWins++;
-            }
-        }
-
-        averageWin = (float)Math.Round((float)totalWin / simulationRuns, 2 );
-        winProbability = (float)Math.Round((float)totalWins / simulationRuns * 100, 2);
-        winCoef = (float)Math.Round(gameData.RTP * gameData.betAmount / averageWin, 2 );
-    }
     
     public void Restart()
     {

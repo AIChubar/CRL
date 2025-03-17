@@ -1,14 +1,14 @@
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(GameManager))]
-public class GameManagerEditor : Editor
+[CustomEditor(typeof(MonteCarloController))]
+public class MonteCarloControllerEditor : Editor
 {
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector(); 
 
-        GameManager gameManager = (GameManager)target;
+        MonteCarloController gameManager = (MonteCarloController)target;
 
         if (GUILayout.Button("Run Monte Carlo Simulation"))
         {
