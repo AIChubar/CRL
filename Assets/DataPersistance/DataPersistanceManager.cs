@@ -42,6 +42,7 @@ public class DataPersistanceManager : MonoBehaviour
     public void NewGame()
     {
         this.gameData = new GameData();
+        dataPersistenceObjects = FindAllDataPersistenceObjects();
         foreach (IDataPersistence dataPersistenceObj in dataPersistenceObjects)
         {
             dataPersistenceObj.NewGame(gameData);
