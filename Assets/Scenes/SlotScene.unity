@@ -3857,8 +3857,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0664a76c2774b749bf726b92fe02d97, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  betAmounts: 0a000000140000001e00000028000000320000003c00000046000000500000005a00000064000000780000008c000000a0000000b4000000c8000000fa0000002c0100005e01000090010000c2010000f401000058020000bc0200002003000084030000e8030000
-  slotControls: {fileID: 0}
+  slotUIManager: {fileID: 1792177409}
   gameData:
     RTP: 0.95
     baseMoney: 2000
@@ -3879,11 +3878,7 @@ MonoBehaviour:
     payoutBonus:
       BaseValue: 0
       _value: 0
-  finishRoundButton: {fileID: 577437916}
-  pauseManager: {fileID: 578404816}
   slotMachine: {fileID: 1792177407}
-  isChangingSymbol: 0
-  winCoef: 0.73
 --- !u!4 &1292554395
 Transform:
   m_ObjectHideFlags: 0
@@ -5071,6 +5066,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6c66ddecddb11a41bd839e83e7ce45a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  betAmounts: 0a000000140000001e00000028000000320000003c00000046000000500000005a00000064000000780000008c000000a0000000b4000000c8000000fa0000002c0100005e01000090010000c2010000f401000058020000bc0200002003000084030000e8030000
+  isChangingSymbol: 0
+  winCoef: 1
   moneyText: {fileID: 714420971}
   targetText: {fileID: 2082794859}
   wagerText: {fileID: 1810959496}
@@ -5085,6 +5083,9 @@ MonoBehaviour:
   spinButton: {fileID: 991188541}
   increaseButton: {fileID: 826480840}
   decreaseButton: {fileID: 902176671}
+  finishRoundButton: {fileID: 577437916}
+  finishRoundText: {fileID: 1063709480}
+  pauseManager: {fileID: 578404816}
 --- !u!1 &1801036804
 GameObject:
   m_ObjectHideFlags: 0

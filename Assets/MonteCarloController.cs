@@ -28,7 +28,7 @@ public class MonteCarloController : MonoBehaviour
         averageWin = (float)Math.Round((float)totalWin / simulationRuns, 2 );
         winProbability = (float)Math.Round((float)totalWins / simulationRuns * 100, 2);
         winCoef = (float)Math.Round(GameManager.instance.gameData.RTP * GameManager.instance.gameData.betAmount / averageWin, 2 );
-        GameManager.instance.winCoef = winCoef;
+        //GameManager.instance.winCoef = winCoef;
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()

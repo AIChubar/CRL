@@ -19,29 +19,29 @@ public class UIManager : MonoBehaviour
     // Function to handle the Spin button press
     public void OnSpinButtonPressed()
     {
-        gameManager.Spin();  // Call the Spin function in GameManager
+        gameManager.slotUIManager.Spin();  // Call the Spin function in GameManager
     }
 
     // Function to handle the Increase Bet button press
     public void OnIncreaseBetButtonPressed()
     {
-        gameManager.IncreaseBet();  // Increase the bet amount
+        gameManager.slotUIManager.IncreaseBet();  // Increase the bet amount
     }
 
     // Function to handle the Decrease Bet button press
     public void OnDecreaseBetButtonPressed()
     {
-        gameManager.DecreaseBet();  // Decrease the bet amount
+        gameManager.slotUIManager.DecreaseBet();  // Decrease the bet amount
     }
     
     public void OnStartChangingButtonPressed()
     {
-        gameManager.StartChangingSymbol();  // Decrease the bet amount
+        gameManager.slotUIManager.StartChangingSymbol();  // Decrease the bet amount
     }
     
     public void OnConfirmButtonPressed()
     {
-        gameManager.ConfirmSpin();  // Decrease the bet amount
+        gameManager.slotUIManager.ConfirmSpin();  // Decrease the bet amount
     }
     
     public void OnRestartButtonPressed()
@@ -70,7 +70,7 @@ public class UIManager : MonoBehaviour
     
     public void OnFinishButtonPressed()
     {
-        gameManager.FinishRound();  // Decrease the bet amount
+        gameManager.slotUIManager.FinishRound();  // Decrease the bet amount
     }
 
     public void OnRerollButtonPressed()

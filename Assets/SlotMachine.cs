@@ -77,15 +77,8 @@ public class SlotMachine : MonoBehaviour
         {
             for (int col = 0; col < currentSlotConfig.columns; col++)
             {
-                GameObject newSymbol = Instantiate(slotSymbolPrefab, slotPanel.transform);
-                newSymbol.GetComponent<TMP_Text>().text = slotGrid[row, col];
-
-                RectTransform rectTransform = newSymbol.GetComponent<RectTransform>();
-                rectTransform.sizeDelta = new Vector2(cellWidth, cellHeight);
-                rectTransform.localScale = Vector3.one;
-
-                int r = row, c = col;
-                newSymbol.GetComponent<Button>().onClick.AddListener(() => ChangeSymbol(r, c));
+                GameManager.instance.slotUIManager.CreateSymbolUI(slotSymbolPrefab, slotPanel, slotGrid, row, col,
+                    cellWidth, cellHeight);
             }
         }
     }
@@ -102,17 +95,15 @@ public class SlotMachine : MonoBehaviour
         
     }
 
-    public void ChangeSymbol(int row, int col)
+    public void RandomizeSymbol(int row, int col)
     {
-        if (!GameManager.instance.isChangingSymbol) return;
-        GameManager.instance.isChangingSymbol = false;
-
         List<string> possibleSymbols = new List<string>(currentSlotConfig.slotSymbols) { currentSlotConfig.wildSymbol };
         possibleSymbols.Remove(slotGrid[row, col]);
         slotGrid[row, col] = possibleSymbols[Random.Range(0, possibleSymbols.Count)];
 
         Transform symbolTransform = slotPanel.transform.GetChild(row * currentSlotConfig.columns + col);
         symbolTransform.GetComponent<TMP_Text>().text = slotGrid[row, col];
-        GameManager.instance.FinishChangingSymbol();
     }
+
+    
 }
