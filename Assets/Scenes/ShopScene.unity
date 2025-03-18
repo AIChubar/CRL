@@ -425,6 +425,9 @@ MonoBehaviour:
   itemButtonsParent: {fileID: 471335607}
   instructionText: {fileID: 955546653}
   goldText: {fileID: 145622482}
+  nextLevelButton: {fileID: 1191044744}
+  rerollButton: {fileID: 1071663682}
+  buyButton: {fileID: 1453022954}
   itemButtonPrefab: {fileID: 7975587973700007349, guid: 1a04f6f3aed5d324ea35054badac67e6, type: 3}
 --- !u!4 &455568477
 Transform:
@@ -985,50 +988,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 720209174}
   m_CullTransparentMesh: 1
---- !u!1 &877072768
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 877072770}
-  - component: {fileID: 877072769}
-  m_Layer: 0
-  m_Name: UIManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &877072769
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 877072768}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3e062ce7b149c9d49a749b5a35d39f7b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!4 &877072770
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 877072768}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 505.93628, y: 472.5985, z: -5.3599415}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &952208403
 GameObject:
   m_ObjectHideFlags: 0
@@ -1484,7 +1443,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 877072769}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
         m_MethodName: OnRerollButtonPressed
         m_Mode: 1
@@ -1617,7 +1576,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 877072769}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
         m_MethodName: OnMenuButtonPressed
         m_Mode: 1
@@ -1750,7 +1709,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 877072769}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
         m_MethodName: OnNextLevelButtonPressed
         m_Mode: 1
@@ -2035,7 +1994,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 877072769}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
         m_MethodName: OnBuyButtonPressed
         m_Mode: 1
@@ -2595,6 +2554,5 @@ SceneRoots:
   m_Roots:
   - {fileID: 1537262637}
   - {fileID: 645180747}
-  - {fileID: 877072770}
   - {fileID: 2088333965}
   - {fileID: 455568477}

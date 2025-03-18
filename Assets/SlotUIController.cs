@@ -133,20 +133,14 @@ public class SlotUIController
         gameData.currentLevel++;
         gameData.targetMoney = (int)(gameData.baseMoney * (gameData.currentLevel * gameData.currentLevel * 0.5));
         gameData.gold += 5 + gameData.currentLevel * 2;
+        gameData.money = gameData.baseMoney;
 
         SaveGame();
         slotUIManager.UpdateButtons(SlotMode.AllDisabled);
     }
 
-    public void NextLevel()
-    {
-        LoadGame();
-        SceneManager.LoadScene(1, LoadSceneMode.Single);
-        gameData.money = gameData.baseMoney;
-    }
     
     
-
     public void Continue()
     {
         slotUIManager.pauseManager.PauseGame();

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class ShopManager : MonoBehaviour
@@ -15,6 +16,10 @@ public class ShopManager : MonoBehaviour
     public TMP_Text instructionText;
     public TMP_Text goldText;
     
+    [SerializeField] private Button nextLevelButton;
+    [SerializeField] private Button rerollButton;
+    [SerializeField] private Button buyButton;
+
     [HideInInspector]
     [UnityEngine.Tooltip("Contains all available items.")]
     public Queue<Item> items = new Queue<Item>();
@@ -28,7 +33,6 @@ public class ShopManager : MonoBehaviour
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -43,6 +47,11 @@ public class ShopManager : MonoBehaviour
 
     void Start()
     {
+        
+        nextLevelButton.onClick.AddListener(NextLevel);
+        rerollButton.onClick.AddListener(RerollItems);
+        buyButton.onClick.AddListener(BuyItem);
+
         goldText.text = "Gold: $" + GameManager.instance.gameData.gold.ToString();
 
         GameData gameData = GameManager.instance.gameData;
@@ -90,7 +99,8 @@ public class ShopManager : MonoBehaviour
         ib.SetButton(item);
         go.transform.localScale = new Vector3(1, 1, 1);
     }
-
+    
+    
     public void BuyItem()
     {
         if (currentItem == null)
@@ -105,10 +115,8 @@ public class ShopManager : MonoBehaviour
             return;
 
         }
-        else
-        {
-            GameManager.instance.gameData.gold -= currentItem.item.price;
-        }
+        
+        GameManager.instance.gameData.gold -= currentItem.item.price;
         Item item = currentItem.item;
         GameManager.instance.gameData.playerItems.Add(item);
 
@@ -118,6 +126,11 @@ public class ShopManager : MonoBehaviour
         Destroy(currentItem.gameObject);
         currentItem = null;
         UpdateUI();
+    }
+    
+    public void NextLevel()
+    {
+        SceneManager.LoadScene(1, LoadSceneMode.Single);
     }
 
     public void SetCurrentItem(ItemButton item)

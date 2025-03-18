@@ -1,8 +1,8 @@
 using UnityEngine;
 
-public class SaveManager : MonoBehaviour, IDataPersistence
+public class DataManager : MonoBehaviour, IDataPersistence
 {
-    public static SaveManager instance;
+    public static DataManager instance;
     [SerializeField]GameData gameData;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Awake()

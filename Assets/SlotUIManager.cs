@@ -114,6 +114,5 @@ public class SlotUIManager : MonoBehaviour
     {
         instructionText.text = result;
         UpdateUI();
-
     }
 }
