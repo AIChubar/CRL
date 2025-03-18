@@ -3342,7 +3342,7 @@ GameObject:
   - component: {fileID: 1208654932}
   - component: {fileID: 1208654931}
   m_Layer: 5
-  m_Name: Restart
+  m_Name: PauseRestart
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3708,7 +3708,7 @@ GameObject:
   - component: {fileID: 1267163507}
   - component: {fileID: 1267163506}
   m_Layer: 5
-  m_Name: Menu
+  m_Name: PauseMenu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5067,8 +5067,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   betAmounts: 0a000000140000001e00000028000000320000003c00000046000000500000005a00000064000000780000008c000000a0000000b4000000c8000000fa0000002c0100005e01000090010000c2010000f401000058020000bc0200002003000084030000e8030000
-  isChangingSymbol: 0
   winCoef: 1
+  isChangingSymbol: 0
   moneyText: {fileID: 714420971}
   targetText: {fileID: 2082794859}
   wagerText: {fileID: 1810959496}
@@ -5083,6 +5083,12 @@ MonoBehaviour:
   spinButton: {fileID: 991188541}
   increaseButton: {fileID: 826480840}
   decreaseButton: {fileID: 902176671}
+  restartButton: {fileID: 999518081}
+  pauseRestartButton: {fileID: 1208654931}
+  continueButton: {fileID: 1226830889}
+  toMenuButton: {fileID: 1267163506}
+  pauseToMenuButton: {fileID: 1267163506}
+  toShopButton: {fileID: 1156457729}
   finishRoundButton: {fileID: 577437916}
   finishRoundText: {fileID: 1063709480}
   pauseManager: {fileID: 578404816}

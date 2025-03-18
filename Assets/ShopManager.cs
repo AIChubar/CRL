@@ -93,6 +93,12 @@ public class ShopManager : MonoBehaviour
 
     public void BuyItem()
     {
+        if (currentItem == null)
+        {
+            instructionText.text = "No item selected.";
+            return;
+        }
+        
         if (currentItem.item.price > GameManager.instance.gameData.gold)
         {
             instructionText.text = "Not enough gold!";
