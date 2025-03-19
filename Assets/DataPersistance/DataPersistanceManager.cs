@@ -52,16 +52,19 @@ public class DataPersistanceManager : MonoBehaviour
     public void LoadGame()
     {
         dataPersistenceObjects = FindAllDataPersistenceObjects();
-        this.gameData = dataHandler.Load();
-        
-        if (this.gameData == null)
+        GameData loadedGameData = dataHandler.Load();
+
+        if (loadedGameData == null)
             return;
 
+        gameData = loadedGameData;
         foreach (IDataPersistence dataPersistenceObj in dataPersistenceObjects)
         {
             dataPersistenceObj.LoadData(gameData);
         }
     }
+
+
 
     public void SaveGame()
     {
@@ -73,9 +76,10 @@ public class DataPersistanceManager : MonoBehaviour
         {
             dataPersistenceObj.SaveData(ref gameData);
         }
-        
         dataHandler.Save(gameData);
     }
+
+
 
     private void OnEnable()
     {
