@@ -27,10 +27,11 @@ public class ItemButton : MonoBehaviour
         
     }
     
-    public void SetButton(Item _item)
+    public void SetButton(Item item)
     {
-        item = _item;
-        nameText.text = item.name;
+        this.item = item;
+        InitializeStatModifiers();
+        nameText.text = item.itemName;
         priceText.text = item.price.ToString();
         descriptionText.text = "";
         for (int i = 0; i < item.statModifiers.Count; i++)
@@ -38,6 +39,21 @@ public class ItemButton : MonoBehaviour
             descriptionText.text += item.statModifiers[i].Description + " " + item.statModifiers[i].Value.ToString() + "\n";
         }
         image = GetComponent<Image>();
+    }
+
+    public void InitializeStatModifiers()
+    {
+        foreach (var stat in item.itemStats)
+        {
+            object source = stat.statType switch
+            {
+                StatType.PayoutBonus  => GameManager.instance.gameData.payoutBonus,
+                StatType.PayoutMult => GameManager.instance.gameData.payoutMult,
+                StatType.WildLuck   => GameManager.instance.gameData.wildLuck,
+                _                => stat // Default fallback
+            };
+            item.statModifiers.Add(new StatModifier(stat.value, stat.statModType, source, nameof(stat.statType)));
+        }
     }
     
     public void OnClicked()
@@ -52,29 +68,7 @@ public class ItemButton : MonoBehaviour
         image.color = new Color32(245, 124, 124, 255);
     }
     
-    
-}
-
-public enum StatType
-{
-    wildLuck, payoutMult, payoutBonus
-}
-
-public class Item
-{
-    public string name;
-    public int price;
-    public List<StatModifier> statModifiers ;
-
-    public Item(string _name, int _price,List<StatModifier> _modifiers )
-    {
-        name = _name;
-        statModifiers = _modifiers;
-        price = _price;
-      
-    }
-
-    public void ApplyModifiers()
+    public void ApplyModifiers(List<StatModifier> statModifiers)
     {
         foreach (StatModifier mod in statModifiers)
         {
@@ -84,8 +78,8 @@ public class Item
             }
         }
     }
-
-    public void RemoveModifiers()
+    
+    public void RemoveModifiers(List<StatModifier> statModifiers)
     {
         foreach (StatModifier mod in statModifiers)
         {
@@ -96,4 +90,7 @@ public class Item
         }
     }
 }
+
+
+
 

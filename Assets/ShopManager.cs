@@ -1,15 +1,15 @@
-using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Linq;
 
 public class ShopManager : MonoBehaviour
 {
-    [HideInInspector]
-    public ItemButton currentItem;
+    [HideInInspector] public ItemButton currentItem;
     public bool inputDisabled;
+    
     public GameObject itemButtonsParent;
     public static ShopManager instance;
     
@@ -19,88 +19,90 @@ public class ShopManager : MonoBehaviour
     [SerializeField] private Button nextLevelButton;
     [SerializeField] private Button rerollButton;
     [SerializeField] private Button buyButton;
+    [SerializeField] private GameObject itemButtonPrefab;
 
-    [HideInInspector]
-    [UnityEngine.Tooltip("Contains all available items.")]
-    public Queue<Item> items = new Queue<Item>();
-    
-    [UnityEngine.Tooltip("Prefab for UI Item object representing the gameWorld.")]
-    public GameObject itemButtonPrefab;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    
+    public List<Item> allItems; // Master list of all items
+    private List<Item> availableItems; // Items currently in the pool
+    private List<Item> currentShopItems; // Currently displayed shop items
+
     private void Awake()
     {
-        if (instance == null)
-        {
-            instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        if (instance == null) instance = this;
+        else Destroy(gameObject);
     }
 
-    public void UpdateUI()
+    private void Start()
     {
-        goldText.text = "Gold: $" + GameManager.instance.gameData.gold.ToString();
-    }
-
-    void Start()
-    {
-        
         nextLevelButton.onClick.AddListener(NextLevel);
         rerollButton.onClick.AddListener(RerollItems);
         buyButton.onClick.AddListener(BuyItem);
 
-        goldText.text = "Gold: $" + GameManager.instance.gameData.gold.ToString();
+        availableItems = new List<Item>(allItems); // Initialize the pool
+        currentShopItems = new List<Item>();
 
-        GameData gameData = GameManager.instance.gameData;
-
-        items.Enqueue(new Item("Lucky Charm",3, new List<StatModifier>
-        {
-            new(0.1f, StatModType.PercentAdd, gameData.wildLuck, "Wild Luck")
-        }
-        ));
-
-        items.Enqueue(new Item("Jackpot Boost", 5,new List<StatModifier>
-        {
-            new(0.2f, StatModType.PercentMult, gameData.payoutMult, "Payout Mult"),
-            new(50f, StatModType.Flat, gameData.payoutBonus, "Payout Bonus"),
-
-        }));
-
-        items.Enqueue(new Item("Bonus Payout", 3,new List<StatModifier>
-        {
-            new(50f, StatModType.Flat, gameData.payoutBonus, "Payout Bonus")
-        }
-        ));
-
-        RerollItems();
+        UpdateUI();
+        RerollItems(); // Generate initial shop items
     }
 
     public void RerollItems()
     {
-        foreach (ItemButton item in itemButtonsParent.GetComponentsInChildren<ItemButton>())
+        // Return previous shop items to the pool
+        availableItems.AddRange(currentShopItems);
+        currentShopItems.Clear();
+
+        // Remove old UI buttons
+        foreach (Transform child in itemButtonsParent.transform)
         {
-            items.Enqueue(item.item);
-            Destroy(item.gameObject);
+            Destroy(child.gameObject);
         }
+
+        // Select 3 new items with weighted probability
         for (int i = 0; i < 3; i++)
         {
-            if (items.Count > 0)
-                AddButton(items.Dequeue());
+            if (availableItems.Count == 0) break;
+
+            Item selectedItem = GetWeightedRandomItem();
+            if (selectedItem != null)
+            {
+                currentShopItems.Add(selectedItem);
+                availableItems.Remove(selectedItem); // Remove from available pool
+                AddButton(selectedItem);
+            }
         }
     }
-    // Update is called once per frame
+
+    private Item GetWeightedRandomItem()
+    {
+        if (availableItems.Count == 0) return null;
+
+        // Create a weighted list
+        Dictionary<Item, float> weightedItems = new Dictionary<Item, float>();
+        foreach (Item item in availableItems)
+        {
+            weightedItems[item] = item.GetWeight(); // Use rarity weight
+        }
+
+        // Weighted random selection
+        float totalWeight = weightedItems.Values.Sum();
+        float randomValue = Random.Range(0, totalWeight);
+
+        foreach (var pair in weightedItems)
+        {
+            randomValue -= pair.Value;
+            if (randomValue <= 0) return pair.Key;
+        }
+
+        return availableItems[0]; // Fallback
+    }
+
     public void AddButton(Item item)
     {
         GameObject go = Instantiate(itemButtonPrefab, itemButtonsParent.transform);
         ItemButton ib = go.GetComponent<ItemButton>();
         ib.SetButton(item);
-        go.transform.localScale = new Vector3(1, 1, 1);
+        go.transform.localScale = Vector3.one;
     }
-    
-    
+
     public void BuyItem()
     {
         if (currentItem == null)
@@ -108,26 +110,23 @@ public class ShopManager : MonoBehaviour
             instructionText.text = "No item selected.";
             return;
         }
-        
+
         if (currentItem.item.price > GameManager.instance.gameData.gold)
         {
             instructionText.text = "Not enough gold!";
             return;
-
         }
-        
-        GameManager.instance.gameData.gold -= currentItem.item.price;
-        Item item = currentItem.item;
-        GameManager.instance.gameData.playerItems.Add(item);
 
-        // Apply the item's stat modifiers
-        item.ApplyModifiers();
+        GameManager.instance.gameData.gold -= currentItem.item.price;
+        GameManager.instance.gameData.playerItems.Add(currentItem.item);
 
         Destroy(currentItem.gameObject);
+        currentShopItems.Remove(currentItem.item); // Remove from shop items
         currentItem = null;
+
         UpdateUI();
     }
-    
+
     public void NextLevel()
     {
         SceneManager.LoadScene(1, LoadSceneMode.Single);
@@ -137,6 +136,9 @@ public class ShopManager : MonoBehaviour
     {
         currentItem = item;
     }
+
+    public void UpdateUI()
+    {
+        goldText.text = "Gold: $" + GameManager.instance.gameData.gold;
+    }
 }
-
-

@@ -1,11 +1,20 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System.ComponentModel;
+
+
+public enum StatType
+{
+    WildLuck, 
+    PayoutMult, 
+    PayoutBonus
+}
 
 /// <summary>
 /// Class containing all data that needs to be saved.
 /// </summary>
-[System.Serializable]
-public class GameData
+[CreateAssetMenu(fileName = "GameData", menuName = "GameData")]
+public class GameData : ScriptableObject
 {
     public float RTP = 0.95f;
     public float baseMoney = 2000;

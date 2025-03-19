@@ -8,6 +8,7 @@ public enum StatModType
 /// <summary>
 /// Stat modifier of a certain type. Could be flat and percentage additive and multiplicative.
 /// </summary>
+[System.Serializable]
 public class StatModifier
 {
     public readonly float Value;

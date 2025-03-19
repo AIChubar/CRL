@@ -3,6 +3,7 @@ using UnityEngine;
 public class DataManager : MonoBehaviour, IDataPersistence
 {
     public static DataManager instance;
+    
     [SerializeField]GameData gameData;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Awake()
@@ -19,10 +20,6 @@ public class DataManager : MonoBehaviour, IDataPersistence
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     public void LoadData(GameData data)
     {
@@ -36,7 +33,6 @@ public class DataManager : MonoBehaviour, IDataPersistence
         if (GameManager.instance != null)
             gameData = GameManager.instance.gameData;
         data = gameData;
-        
     }
 
     public void NewGame(GameData data)

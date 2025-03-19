@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "NewSlotConfig", menuName = "Slot Machine/Slot Config", order = 1)]
+[CreateAssetMenu(fileName = "NewSlotConfig", menuName = "Slot Config", order = 1)]
 public class SlotConfig : ScriptableObject
 {
     [Header("Symbols Settings")]

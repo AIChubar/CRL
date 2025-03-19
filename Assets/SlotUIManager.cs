@@ -50,7 +50,6 @@ public class SlotUIManager : MonoBehaviour
         decreaseButton.onClick.AddListener(slotUIController.DecreaseBet);
         restartButton.onClick.AddListener(slotUIController.Restart);
         pauseRestartButton.onClick.AddListener(slotUIController.Restart);
-        //nextLevelButton.onClick.AddListener(slotUIController.NextLevel);
         continueButton.onClick.AddListener(slotUIController.Continue);
         toMenuButton.onClick.AddListener(slotUIController.ToMenu);
         pauseToMenuButton.onClick.AddListener(slotUIController.ToMenu);
