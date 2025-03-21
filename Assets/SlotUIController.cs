@@ -153,7 +153,7 @@ public class SlotUIController
 
     public void ToShop()
     {
-        SaveGame();
+        //SaveGame();
         SceneManager.LoadScene(2, LoadSceneMode.Single);
     }
 }

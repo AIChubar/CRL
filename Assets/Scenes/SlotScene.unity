@@ -3858,26 +3858,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slotUIManager: {fileID: 1792177409}
-  gameData:
-    RTP: 0.95
-    baseMoney: 2000
-    money: 2000
-    spinsLeft: 10
-    wagerLeft: 2000
-    targetMoney: 1500
-    betAmount: 10
-    changePrice: 5
-    currentLevel: 1
-    gold: 0
-    wildLuck:
-      BaseValue: 1
-      _value: 1
-    payoutMult:
-      BaseValue: 1
-      _value: 1
-    payoutBonus:
-      BaseValue: 0
-      _value: 0
+  gameData: {fileID: 11400000, guid: 3818c758750776a43960d4ea6893340b, type: 2}
   slotMachine: {fileID: 1792177407}
 --- !u!4 &1292554395
 Transform:

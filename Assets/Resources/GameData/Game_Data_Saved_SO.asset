@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6ac1f7eae610d1e4daf895b683cbeb05, type: 3}
-  m_Name: GameData
+  m_Name: Game_Data_Saved_SO
   m_EditorClassIdentifier: 
   RTP: 0.95
   baseMoney: 2000
   money: 2000
-  spinsLeft: 10
-  wagerLeft: 2000
-  targetMoney: 1500
+  spinsLeft: 1
+  wagerLeft: 1910
+  targetMoney: 1
   betAmount: 10
   changePrice: 5
-  currentLevel: 1
-  gold: 0
+  currentLevel: 7
+  gold: 46
   wildLuck:
     BaseValue: 1
     _value: 1
@@ -31,4 +31,7 @@ MonoBehaviour:
   payoutBonus:
     BaseValue: 0
     _value: 0
-  playerItems: []
+  playerItems:
+  - {fileID: 11400000, guid: 1fcc6ddd63304a94b9455d5391fa6cd7, type: 2}
+  - {fileID: 11400000, guid: a72e5350fb2fc8e45966959f53d76949, type: 2}
+  - {fileID: 11400000, guid: 892f29e81c332b54fac014504e3a881a, type: 2}

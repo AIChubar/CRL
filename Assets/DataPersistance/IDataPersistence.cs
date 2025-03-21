@@ -7,5 +7,5 @@ public interface IDataPersistence
 
     void SaveData(ref GameData data);
     
-    void NewGame(GameData data);
+    void NewGame();
 }

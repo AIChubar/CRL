@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 773d10f47d8fd224cac007f4dbd63444, type: 3}
   m_Name: Item_1_SO 4
   m_EditorClassIdentifier: 
-  itemName: Jack
+  itemName: ten
   price: 3
+  statModifiers: []
   rarity: 0

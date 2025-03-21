@@ -40,7 +40,7 @@ public class GameDataSerializable
 
         foreach (var item in data.playerItems)
         {
-            playerItemNames.Add(item.itemName); // Save only the item name
+            playerItemNames.Add(item.name); // Save only the item name
         }
     }
 
@@ -60,7 +60,7 @@ public class GameDataSerializable
         data.wildLuck = new CharacterStat(wildLuck);
         data.payoutMult = new CharacterStat(payoutMult);
         data.payoutBonus = new CharacterStat(payoutBonus);
-
+        data.playerItems = new List<Item>();
         data.playerItems.Clear();
         foreach (var itemName in playerItemNames)
         {

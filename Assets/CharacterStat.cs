@@ -17,7 +17,7 @@ public class CharacterStat
     public readonly ReadOnlyCollection<StatModifier> StatModifiers;
     
     protected  bool isDirty = true;
-    [SerializeField]protected  float _value;
+    protected  float _value;
     
     /// <summary>
     /// Current modified stat value.

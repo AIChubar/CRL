@@ -8,12 +8,16 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class DataPersistanceManager : MonoBehaviour
 {
+    
+    [SerializeField]GameData gameData;
+    
+    [SerializeField]GameData newGameData;
+    
     [Header("File Storage Config")] 
     [SerializeField] public string fileName;
     
-    private GameData gameData;
 
-    private List<IDataPersistence> dataPersistenceObjects;
+    //private List<IDataPersistence> dataPersistenceObjects;
 
     public FileDataHandler dataHandler;
     public static DataPersistanceManager instance { get; private set; }
@@ -35,35 +39,38 @@ public class DataPersistanceManager : MonoBehaviour
     public FileDataHandler GetNewDataHandler()
     {
         dataHandler = new FileDataHandler(Application.persistentDataPath, fileName);
-        dataPersistenceObjects = FindAllDataPersistenceObjects();
+        //dataPersistenceObjects = FindAllDataPersistenceObjects();
         return dataHandler;
     }
 
     public void NewGame()
     {
-        this.gameData = new GameData();
-        dataPersistenceObjects = FindAllDataPersistenceObjects();
-        foreach (IDataPersistence dataPersistenceObj in dataPersistenceObjects)
+        
+        gameData.CopyFrom(newGameData);
+        //dataPersistenceObjects = FindAllDataPersistenceObjects();
+        /*foreach (IDataPersistence dataPersistenceObj in dataPersistenceObjects)
         {
-            dataPersistenceObj.NewGame(gameData);
-        }
+            dataPersistenceObj.NewGame();
+        }*/
     }
 
     public void LoadGame()
     {
-        dataPersistenceObjects = FindAllDataPersistenceObjects();
-        GameData loadedGameData = dataHandler.Load();
-
-        if (loadedGameData == null)
+        //dataPersistenceObjects = FindAllDataPersistenceObjects();
+        
+        if (gameData == null)
+        {
+            Debug.LogError("GameData instance is not assigned!");
             return;
-
-        gameData = loadedGameData;
-        foreach (IDataPersistence dataPersistenceObj in dataPersistenceObjects)
+        }
+        
+        dataHandler.Load(gameData);
+        
+        /*foreach (IDataPersistence dataPersistenceObj in dataPersistenceObjects)
         {
             dataPersistenceObj.LoadData(gameData);
-        }
+        }*/
     }
-
 
 
     public void SaveGame()
@@ -72,10 +79,10 @@ public class DataPersistanceManager : MonoBehaviour
         {
             return;
         }
-        foreach (IDataPersistence dataPersistenceObj in dataPersistenceObjects)
+        /*foreach (IDataPersistence dataPersistenceObj in dataPersistenceObjects)
         {
             dataPersistenceObj.SaveData(ref gameData);
-        }
+        }*/
         dataHandler.Save(gameData);
     }
 
@@ -95,7 +102,7 @@ public class DataPersistanceManager : MonoBehaviour
 
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        dataPersistenceObjects = FindAllDataPersistenceObjects();
+        //dataPersistenceObjects = FindAllDataPersistenceObjects();
         if (SceneManager.GetActiveScene().buildIndex == 0)
             LoadGame();
     }
@@ -110,13 +117,13 @@ public class DataPersistanceManager : MonoBehaviour
         SaveGame();
     }*/
 
-    private List<IDataPersistence> FindAllDataPersistenceObjects()
+    /*private List<IDataPersistence> FindAllDataPersistenceObjects()
     {
         IEnumerable<IDataPersistence> dataPersistenceObjects =
             FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<IDataPersistence>();
 
         return new List<IDataPersistence>(dataPersistenceObjects); 
-    }
+    }*/
 
     public bool HasGameData()
     {

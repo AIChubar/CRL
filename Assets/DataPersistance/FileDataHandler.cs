@@ -17,24 +17,22 @@ public class FileDataHandler
         this.dataFileName = dataFileName;
     }
 
-    public GameData Load()
+    public void Load(GameData existingGameData)
     {
         string fullPath = Path.Combine(dataDirPath, dataFileName);
-        GameData loadedData = ScriptableObject.CreateInstance<GameData>(); 
         if (File.Exists(fullPath))
         {
             try
             {
                 string dataToLoad = File.ReadAllText(fullPath);
                 GameDataSerializable serializableData = JsonUtility.FromJson<GameDataSerializable>(dataToLoad);
-                serializableData.ApplyToGameData(loadedData);
+                serializableData.ApplyToGameData(existingGameData);
             }
             catch (Exception e)
             {
                 Debug.LogError("Error occurred when trying to load data from file: " + fullPath + "\n" + e);
             }
         }
-        return loadedData;
     }
 
 
