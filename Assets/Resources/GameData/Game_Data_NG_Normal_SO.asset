@@ -15,7 +15,7 @@ MonoBehaviour:
   RTP: 0.95
   baseMoney: 2000
   money: 2000
-  spinsLeft: 1
+  spinsLeft: 10
   wagerLeft: 2000
   targetMoney: 1000
   betAmount: 10
@@ -28,7 +28,4 @@ MonoBehaviour:
     BaseValue: 1
   payoutBonus:
     BaseValue: 0
-  playerItems:
-  - {fileID: 11400000, guid: 1fcc6ddd63304a94b9455d5391fa6cd7, type: 2}
-  - {fileID: 11400000, guid: a72e5350fb2fc8e45966959f53d76949, type: 2}
-  - {fileID: 11400000, guid: 892f29e81c332b54fac014504e3a881a, type: 2}
+  playerItems: []

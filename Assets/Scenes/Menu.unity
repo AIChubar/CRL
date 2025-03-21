@@ -1684,8 +1684,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc76117d9399c364289fd8c24179e376, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameData: {fileID: 11400000, guid: 6058881341e928d4c9215b9d078b0341, type: 2}
-  newGameData: {fileID: 11400000, guid: 3818c758750776a43960d4ea6893340b, type: 2}
+  gameData: {fileID: 11400000, guid: 3818c758750776a43960d4ea6893340b, type: 2}
+  newGameData: {fileID: 11400000, guid: 6058881341e928d4c9215b9d078b0341, type: 2}
   fileName: data.game
 --- !u!4 &1909339159
 Transform:
