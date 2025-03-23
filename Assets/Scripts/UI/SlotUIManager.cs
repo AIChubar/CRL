@@ -31,7 +31,10 @@ public class SlotUIManager : MonoBehaviour
     private GameData gameData;
     private SlotMachine slotMachine;
     private float currentWin;
-
+    
+    public GameObject slotSymbolPrefab;     
+    public GameObject slotPanel;            
+    private string[,] currentSlotGrid;
     void Start()
     {
 
@@ -113,5 +116,52 @@ public class SlotUIManager : MonoBehaviour
     {
         instructionText.text = result;
         UpdateUI();
+    }
+    
+    
+    public void UpdateSlotUI(string[,] slotGrid)
+    {
+        currentSlotGrid = slotGrid;
+        foreach (Transform child in slotPanel.transform)
+        {
+            Destroy(child.gameObject);
+        }
+
+        GridLayoutGroup grid = slotPanel.GetComponent<GridLayoutGroup>();
+        SetupGridLayout(slotGrid.GetLength(0), slotGrid.GetLength(1), grid);
+
+
+        for (int row = 0; row < slotGrid.GetLength(0); row++)
+        {
+            for (int col = 0; col < slotGrid.GetLength(1); col++)
+            {
+                CreateSymbolUI(slotSymbolPrefab, slotPanel, slotGrid, row, col, grid.cellSize.x, grid.cellSize.y);
+            }
+        }
+    }
+    
+    private void SetupGridLayout(int rows, int cols, GridLayoutGroup grid)
+    {
+        if (grid == null)
+        {
+            grid = slotPanel.AddComponent<GridLayoutGroup>();
+        }
+
+        float panelWidth = 1200f;
+        float panelHeight = 750f;
+        float maxCellWidth = panelWidth / cols;
+        float maxCellHeight = panelHeight / rows;
+
+        grid.cellSize = new Vector2(maxCellWidth - maxCellWidth / 10f, maxCellHeight - maxCellHeight / 10f);
+        grid.spacing = new Vector2(maxCellWidth / 10f, maxCellHeight / 10f);
+        grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+        grid.constraintCount = cols;
+        grid.childAlignment = TextAnchor.MiddleCenter;
+    }
+    public void UpdateSingleSymbol(int row, int col, string newSymbol)
+    {
+        currentSlotGrid[row, col] = newSymbol;
+        Transform symbolTransform = slotPanel.transform.GetChild(row * currentSlotGrid.GetLength(1) + col);
+        symbolTransform.GetComponent<TMP_Text>().text = newSymbol;
     }
 }

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-public static class SlotCalculator
+public class SlotCalculator
 {
     /// <summary>
     /// Calculates the win amount based on the slot grid.
@@ -12,7 +12,7 @@ public static class SlotCalculator
     /// <param name="wildSymbol">The wild symbol that can substitute any symbol.</param>
     /// <param name="slotSymbols">Array of regular slot symbols.</param>
     /// <returns>Total win amount.</returns>
-    public static int CalculateWin(string[,] slotGrid, int betAmount, int rows, int columns, string wildSymbol, string[] slotSymbols)
+    public int CalculateWin(string[,] slotGrid, int betAmount, int rows, int columns, string wildSymbol, string[] slotSymbols)
     {
         int totalWin = 0;
         Dictionary<string, int[]> symbolCountPerColumn = new Dictionary<string, int[]>();

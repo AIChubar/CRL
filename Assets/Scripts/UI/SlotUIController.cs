@@ -62,7 +62,7 @@ public class SlotUIController
     public float FinishChangingSymbol()
     {
         slotUIManager.UpdateButtons(SlotMode.WaitingForConfirm);
-        float newWin = slotMachine.CalculateWin(gameData.betAmount);
+        float newWin = slotMachine.GetLastWin();
         slotUIManager.UpdateResultText($"Current win: ${newWin}");
         return newWin;
     }

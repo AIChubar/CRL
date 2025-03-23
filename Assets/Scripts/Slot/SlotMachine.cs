@@ -10,13 +10,14 @@ public class SlotMachine : MonoBehaviour
 
     
     private SlotConfig currentSlotConfig;
-    public GameObject slotPanel;            
-    public GameObject slotSymbolPrefab;     
 
     private string[,] slotGrid;             
 
     private List<SlotReel> reels;
     
+    private SlotCalculator slotCalculator;
+    private int lastWinAmount = 0; // Store last win value
+
     private void Start()
     {
         currentSlotConfig = firstSlotConfig;
@@ -28,72 +29,38 @@ public class SlotMachine : MonoBehaviour
         slotGrid = new string[currentSlotConfig.rows, currentSlotConfig.columns];
     }
 
+    public void Setup(SlotCalculator slotCalculator)
+    {
+        this.slotCalculator = slotCalculator;
+    }
+
     public int SpinSlot(int betAmount, bool simulateOnly = false)
-{
-    if (!simulateOnly)
     {
-        foreach (Transform child in slotPanel.transform)
+        for (int col = 0; col < currentSlotConfig.columns; col++)
         {
-            Destroy(child.gameObject);
-        }
-    }
-
-    for (int col = 0; col < currentSlotConfig.columns; col++)
-    {
-        string[] reelSymbols = reels[col].GenerateSymbols();
-        for (int row = 0; row < currentSlotConfig.rows; row++)
-        {
-            slotGrid[row, col] = reelSymbols[row];
-        }
-    }
-
-    if (!simulateOnly)
-    {
-        GridLayoutGroup grid = slotPanel.GetComponent<GridLayoutGroup>();
-        if (grid == null)
-        {
-            grid = slotPanel.AddComponent<GridLayoutGroup>();
-        }
-
-        float panelWidth = 1200f;
-        float panelHeight = 750f;
-
-        float maxCellWidth = panelWidth / currentSlotConfig.columns;
-        float maxCellHeight = panelHeight / currentSlotConfig.rows;
-
-        float spacingX = maxCellWidth / 10f;
-        float spacingY = maxCellHeight / 10f;
-
-        float cellWidth = maxCellWidth - spacingX;
-        float cellHeight = maxCellHeight - spacingY;
-
-        grid.cellSize = new Vector2(cellWidth, cellHeight);
-        grid.spacing = new Vector2(spacingX, spacingY);
-        grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
-        grid.constraintCount = currentSlotConfig.columns;
-        grid.childAlignment = TextAnchor.MiddleCenter;
-
-        for (int row = 0; row < currentSlotConfig.rows; row++)
-        {
-            for (int col = 0; col < currentSlotConfig.columns; col++)
+            string[] reelSymbols = reels[col].GenerateSymbols();
+            for (int row = 0; row < currentSlotConfig.rows; row++)
             {
-                GameManager.instance.slotUIManager.CreateSymbolUI(slotSymbolPrefab, slotPanel, slotGrid, row, col,
-                    cellWidth, cellHeight);
+                slotGrid[row, col] = reelSymbols[row];
             }
         }
+        
+        if (!simulateOnly)
+        {
+            GameManager.instance.slotUIManager.UpdateSlotUI(slotGrid);
+        }
+        lastWinAmount = slotCalculator.CalculateWin(slotGrid, betAmount, currentSlotConfig.rows, currentSlotConfig.columns, currentSlotConfig.wildSymbol, currentSlotConfig.slotSymbols);
+
+        return lastWinAmount;
     }
 
-    return SlotCalculator.CalculateWin(slotGrid, betAmount, currentSlotConfig.rows, currentSlotConfig.columns, currentSlotConfig.wildSymbol, currentSlotConfig.slotSymbols);
-}
 
-
+    public int GetLastWin()
+    {
+        return lastWinAmount;
+    }
 
     
-    public int CalculateWin(int betAmount)
-    {
-        return SlotCalculator.CalculateWin(slotGrid, betAmount, currentSlotConfig.rows, currentSlotConfig.columns, currentSlotConfig.wildSymbol, currentSlotConfig.slotSymbols);
-        
-    }
 
     public void RandomizeSymbol(int row, int col)
     {
@@ -101,8 +68,8 @@ public class SlotMachine : MonoBehaviour
         possibleSymbols.Remove(slotGrid[row, col]);
         slotGrid[row, col] = possibleSymbols[Random.Range(0, possibleSymbols.Count)];
 
-        Transform symbolTransform = slotPanel.transform.GetChild(row * currentSlotConfig.columns + col);
-        symbolTransform.GetComponent<TMP_Text>().text = slotGrid[row, col];
+        GameManager.instance.slotUIManager.UpdateSingleSymbol(row, col, slotGrid[row, col]);
+        
     }
 
     
