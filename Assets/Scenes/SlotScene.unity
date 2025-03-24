@@ -1375,7 +1375,7 @@ MonoBehaviour:
   m_Intensity: 1
   m_LightVolumeIntensity: 1
   m_LightVolumeEnabled: 0
-  m_ApplyToSortingLayers: 00000000
+  m_ApplyToSortingLayers: 00000000ebb80332
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0
@@ -4983,7 +4983,7 @@ Transform:
   m_GameObject: {fileID: 1792177406}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 505.93628, y: 472.5985, z: -5.3599415}
+  m_LocalPosition: {x: 0, y: 0, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5029,6 +5029,7 @@ MonoBehaviour:
   pauseManager: {fileID: 578404816}
   slotSymbolPrefab: {fileID: 2839914543519101735, guid: 60490f4a8dc255742ab0a0cf18ce16a0, type: 3}
   slotPanel: {fileID: 1235117831}
+  linePrefab: {fileID: 6494969749161934401, guid: 07e0edca841d6a347b14cdef5551fae7, type: 3}
 --- !u!1 &1801036804
 GameObject:
   m_ObjectHideFlags: 0
@@ -5775,16 +5776,16 @@ Canvas:
   m_GameObject: {fileID: 1998462948}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
-  m_Camera: {fileID: 0}
+  m_RenderMode: 1
+  m_Camera: {fileID: 519420031}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
-  m_VertexColorAlwaysGammaSpace: 0
-  m_AdditionalShaderChannelsFlag: 25
+  m_VertexColorAlwaysGammaSpace: 1
+  m_AdditionalShaderChannelsFlag: 7
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
