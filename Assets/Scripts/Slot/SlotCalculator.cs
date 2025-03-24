@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEditor;
 
 public class SlotCalculator
 {
@@ -12,42 +13,57 @@ public class SlotCalculator
     /// <param name="wildSymbol">The wild symbol that can substitute any symbol.</param>
     /// <param name="slotSymbols">Array of regular slot symbols.</param>
     /// <returns>Total win amount.</returns>
-    public int CalculateWin(string[,] slotGrid, int betAmount, int rows, int columns, string wildSymbol, string[] slotSymbols)
+    public int CalculateWin(SlotGrid slotGrid, int betAmount, SlotConfig slotConfig)
     {
         int totalWin = 0;
-        Dictionary<string, int[]> symbolCountPerColumn = new Dictionary<string, int[]>();
+        Dictionary<Symbol, int[]> symbolCountPerColumn = new Dictionary<Symbol, int[]>();
+        Dictionary<Symbol, int[]> symbolCountPerColumnWild = new Dictionary<Symbol, int[]>();
 
-        foreach (string symbol in slotSymbols)
+        foreach (Symbol symbol in slotConfig.symbols)
         {
-            symbolCountPerColumn[symbol] = new int[columns];
+            if (symbol.isWild)
+                symbolCountPerColumnWild[symbol] = new int[slotConfig.columns];
+            else
+                symbolCountPerColumn[symbol] = new int[slotConfig.columns];
         }
-        if (!symbolCountPerColumn.ContainsKey(wildSymbol))
-            symbolCountPerColumn[wildSymbol] = new int[columns];
 
-        for (int col = 0; col < columns; col++)
+        for (int col = 0; col < slotConfig.columns; col++)
         {
-            for (int row = 0; row < rows; row++)
+            for (int row = 0; row < slotConfig.rows; row++)
             {
-                string symbol = slotGrid[row, col];
+                Symbol symbol = slotGrid.GetSymbol(row, col);
                 if (symbolCountPerColumn.ContainsKey(symbol))
                     symbolCountPerColumn[symbol][col]++;
+                if (symbolCountPerColumnWild.ContainsKey(symbol))
+                    symbolCountPerColumnWild[symbol][col]++;
+
             }
         }
 
         foreach (var entry in symbolCountPerColumn)
         {
-            string symbol = entry.Key;
             int[] counts = entry.Value;
-            if (symbol != wildSymbol)
-            {
-                for (int col = 0; col < columns; col++)
-                {
-                    counts[col] += symbolCountPerColumn[wildSymbol][col];
-                }
-            }
             bool valid = true;
             int multiplier = 1;
-            for (int col = 0; col < columns; col++)
+
+            int nonWildAppearance = 0;
+            foreach (int count in counts)
+                nonWildAppearance += count;
+            
+            if (nonWildAppearance == 0)
+                continue;
+
+            foreach (var wildEntry in symbolCountPerColumnWild)
+            {
+                int[] wildCounts = wildEntry.Value;
+
+                for (int col = 0; col < slotConfig.columns; col++)
+                {
+                    counts[col] += wildCounts[col];
+                }
+            }
+            
+            for (int col = 0; col < slotConfig.columns; col++)
             {
                 if (counts[col] <= 0)
                 {
@@ -56,12 +72,38 @@ public class SlotCalculator
                 }
                 multiplier *= counts[col];
             }
+
             if (valid)
             {
                 totalWin += betAmount * multiplier;
             }
         }
+        foreach (var entry in symbolCountPerColumnWild)
+        {
+            int[] counts = entry.Value;
+            bool valid = true;
+            int multiplier = 1;
 
+            for (int col = 0; col < slotConfig.columns; col++)
+            {
+                if (counts[col] <= 0)
+                {
+                    valid = false;
+                    break;  
+                }
+                multiplier *= counts[col];
+            }
+
+            if (valid)
+            {
+                totalWin += betAmount * multiplier;
+            }
+        }
         return totalWin;
+    }
+
+    private void CalculateWinningLines()
+    {
+        
     }
 }

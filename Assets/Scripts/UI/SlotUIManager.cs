@@ -32,9 +32,10 @@ public class SlotUIManager : MonoBehaviour
     private SlotMachine slotMachine;
     private float currentWin;
     
+    private SlotGrid slotGrid;
+    
     public GameObject slotSymbolPrefab;     
     public GameObject slotPanel;            
-    private string[,] currentSlotGrid;
     void Start()
     {
 
@@ -48,7 +49,7 @@ public class SlotUIManager : MonoBehaviour
         // Attach button listeners dynamically
         spinButton.onClick.AddListener(slotUIController.Spin);
         confirmButton.onClick.AddListener(slotUIController.ConfirmSpin);
-        changeButton.onClick.AddListener(() => isChangingSymbol = true);
+        changeButton.onClick.AddListener(slotUIController.StartChangingSymbol);
         increaseButton.onClick.AddListener(slotUIController.IncreaseBet);
         decreaseButton.onClick.AddListener(slotUIController.DecreaseBet);
         restartButton.onClick.AddListener(slotUIController.Restart);
@@ -60,10 +61,11 @@ public class SlotUIManager : MonoBehaviour
         finishRoundButton.onClick.AddListener(slotUIController.FinishRound);
     }
 
-    public void Setup(GameData gameData, SlotMachine slotMachine)
+    public void Setup(GameData gameData, SlotMachine slotMachine, SlotGrid slotGrid)
     {
         this.gameData = gameData;
         this.slotMachine = slotMachine;
+        this.slotGrid = slotGrid;
     }
 
     public void UpdateUI()
@@ -85,10 +87,10 @@ public class SlotUIManager : MonoBehaviour
         increaseButton.interactable = (mode == SlotMode.ReadyForSpin);
         decreaseButton.interactable = (mode == SlotMode.ReadyForSpin);
     }
-    public void CreateSymbolUI(GameObject slotSymbolPrefab, GameObject slotPanel,  string[,] slotGrid, int row, int col, float cellWidth, float cellHeight)
+    public void CreateSymbolUI(GameObject slotSymbolPrefab, GameObject slotPanel, int row, int col, float cellWidth, float cellHeight)
     {
         GameObject newSymbol = Instantiate(slotSymbolPrefab, slotPanel.transform);
-        newSymbol.GetComponent<TMP_Text>().text = slotGrid[row, col];
+        newSymbol.GetComponent<TMP_Text>().text = slotGrid.GetSymbol(row, col).ch;
 
         RectTransform rectTransform = newSymbol.GetComponent<RectTransform>();
         rectTransform.sizeDelta = new Vector2(cellWidth, cellHeight);
@@ -119,28 +121,28 @@ public class SlotUIManager : MonoBehaviour
     }
     
     
-    public void UpdateSlotUI(string[,] slotGrid)
+    public void UpdateSlotUI()
     {
-        currentSlotGrid = slotGrid;
         foreach (Transform child in slotPanel.transform)
         {
             Destroy(child.gameObject);
         }
 
         GridLayoutGroup grid = slotPanel.GetComponent<GridLayoutGroup>();
-        SetupGridLayout(slotGrid.GetLength(0), slotGrid.GetLength(1), grid);
+        SetupGridLayout(slotGrid.GetRowColumnLength().rows, slotGrid.GetRowColumnLength().columns, grid);
 
 
-        for (int row = 0; row < slotGrid.GetLength(0); row++)
+
+        for (int row = 0; row < slotGrid.GetRowColumnLength().rows; row++)
         {
-            for (int col = 0; col < slotGrid.GetLength(1); col++)
+            for (int col = 0; col < slotGrid.GetRowColumnLength().columns; col++)
             {
-                CreateSymbolUI(slotSymbolPrefab, slotPanel, slotGrid, row, col, grid.cellSize.x, grid.cellSize.y);
+                CreateSymbolUI(slotSymbolPrefab, slotPanel, row, col, grid.cellSize.x, grid.cellSize.y);
             }
         }
     }
     
-    private void SetupGridLayout(int rows, int cols, GridLayoutGroup grid)
+    private void SetupGridLayout(int rows, int columns, GridLayoutGroup grid)
     {
         if (grid == null)
         {
@@ -149,19 +151,19 @@ public class SlotUIManager : MonoBehaviour
 
         float panelWidth = 1200f;
         float panelHeight = 750f;
-        float maxCellWidth = panelWidth / cols;
+        float maxCellWidth = panelWidth / columns;
         float maxCellHeight = panelHeight / rows;
 
         grid.cellSize = new Vector2(maxCellWidth - maxCellWidth / 10f, maxCellHeight - maxCellHeight / 10f);
         grid.spacing = new Vector2(maxCellWidth / 10f, maxCellHeight / 10f);
         grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
-        grid.constraintCount = cols;
+        grid.constraintCount = columns;
         grid.childAlignment = TextAnchor.MiddleCenter;
     }
-    public void UpdateSingleSymbol(int row, int col, string newSymbol)
+    public void UpdateSingleSymbol(int row, int col, Symbol newSymbol)
     {
-        currentSlotGrid[row, col] = newSymbol;
-        Transform symbolTransform = slotPanel.transform.GetChild(row * currentSlotGrid.GetLength(1) + col);
-        symbolTransform.GetComponent<TMP_Text>().text = newSymbol;
+        slotGrid.SetSymbol(row, col, newSymbol);
+        Transform symbolTransform = slotPanel.transform.GetChild(row * slotGrid.GetRowColumnLength().rows + col);
+        symbolTransform.GetComponent<TMP_Text>().text = newSymbol.ch;
     }
 }

@@ -6,12 +6,12 @@ public class GameManager : MonoBehaviour
 {
     [HideInInspector]public static GameManager instance;
   
-    [SerializeField]public SlotUIManager slotUIManager;
+    [SerializeField]private SlotUIManager slotUIManager;
     
     public GameData gameData;
     
     public SlotMachine slotMachine;
-    
+    private SymbolManager symbolManager;
     private SlotCalculator slotCalculator;
 
     private void Awake()
@@ -29,8 +29,6 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         slotCalculator = new SlotCalculator();
-        
-        slotUIManager.Setup(gameData, slotMachine);
-        slotMachine.Setup(slotCalculator);
+        slotMachine.Setup(slotCalculator, slotUIManager, gameData);
     }
 }

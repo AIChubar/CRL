@@ -9,12 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 81b42943dad0c3b47b5ac5a4009e39da, type: 3}
-  m_Name: FirstSlot
+  m_Script: {fileID: 11500000, guid: 8691b0373c6e7ae4ab129d2666f4ad82, type: 3}
+  m_Name: Symbol_Apple
   m_EditorClassIdentifier: 
-  symbols:
-  - {fileID: 0}
-  wildSymbol: {fileID: 0}
-  wildChance: 0.04
-  rows: 3
-  columns: 3
+  symbolName: 
+  probability: 0
+  sprite: {fileID: 0}
+  ch: "\U0001F34E"

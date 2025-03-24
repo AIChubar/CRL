@@ -1,38 +1,78 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class SlotReel
 {
-    public int numberOfSymbols;     // Например, 3 символа (количество строк)
-    public float wildChance;        // Шанс выпадения Wild (например, 0.02)
-    public string wildSymbol;       // Wild-символ, например "⭐"
-    public string[] reelSymbols;    // Массив обычных символов (например, {"🍎", "🍒", "🍋", "🍉", "🍌"})
 
-    public SlotReel(int numberOfSymbols, float wildChance, string wildSymbol, string[] reelSymbols)
+    public List<Symbol> reelSymbols; // List of possible symbols
+    private Dictionary<Symbol, float> symbolProbabilities; // Precomputed probabilities
+    private List<KeyValuePair<Symbol, float>> cumulativeList; // Precomputed cumulative probabilities
+
+    public SlotReel(List<Symbol> reelSymbols)
     {
-        this.numberOfSymbols = numberOfSymbols;
-        this.wildChance = wildChance;
-        this.wildSymbol = wildSymbol;
         this.reelSymbols = reelSymbols;
+        ComputeSymbolProbabilities();
     }
 
-    /// <summary>
-    /// Генерирует набор символов для данного барабана.
-    /// </summary>
-    public string[] GenerateSymbols()
+    
+    public void ComputeSymbolProbabilities()
     {
-        string[] symbols = new string[numberOfSymbols];
-        for (int i = 0; i < numberOfSymbols; i++)
+        symbolProbabilities = new Dictionary<Symbol, float>();
+        cumulativeList = new List<KeyValuePair<Symbol, float>>();
+
+        float assignedProb = 0f;
+        List<Symbol> unassignedSymbols = new List<Symbol>();
+
+        // Identify assigned probabilities and collect unassigned symbols
+        foreach (var symbol in reelSymbols)
         {
-            if (Random.value < wildChance)
+            if (symbol.probability > 0)
             {
-                symbols[i] = wildSymbol;
+                symbolProbabilities[symbol] = symbol.probability;
+                assignedProb += symbol.probability;
             }
             else
             {
-                int randomIndex = Random.Range(0, reelSymbols.Length);
-                symbols[i] = reelSymbols[randomIndex];
+                unassignedSymbols.Add(symbol);
             }
         }
+
+        // Distribute remaining probability among unassigned symbols
+        float remainingProb = Mathf.Max(0, 1f - assignedProb);
+        float equalProb = unassignedSymbols.Count > 0 ? remainingProb / unassignedSymbols.Count : 0;
+
+        foreach (var symbol in unassignedSymbols)
+        {
+            symbolProbabilities[symbol] = equalProb;
+        }
+
+        // Build cumulative probability list for fast weighted selection
+        float cumulativeSum = 0f;
+        foreach (var kvp in symbolProbabilities)
+        {
+            cumulativeSum += kvp.Value;
+            cumulativeList.Add(new KeyValuePair<Symbol, float>(kvp.Key, cumulativeSum));
+        }
+    }
+
+    public List<Symbol> GenerateSymbols()
+    {
+        List<Symbol> symbols = new List<Symbol>();
+        int numberOfSymbols = reelSymbols.Count;
+
+        for (int i = 0; i < numberOfSymbols; i++)
+        {
+            float rand = Random.value;
+            foreach (var kvp in cumulativeList)
+            {
+                if (rand <= kvp.Value)
+                {
+                    symbols.Add(kvp.Key);
+                    break;
+                }
+            }
+        }
+
         return symbols;
     }
 }

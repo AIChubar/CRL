@@ -49,6 +49,21 @@ public class SlotUIController
         slotUIManager.UpdateInstructionText("");
         CheckLevelEnd();
     }
+    
+    public void StartChangingSymbol()
+    {
+        if (gameData.changePrice > gameData.money)
+        {
+            slotUIManager.UpdateInstructionText("Not enough money to change symbol!");
+            return;
+        }
+        gameData.money -= gameData.changePrice;
+        slotUIManager.isChangingSymbol = true;
+        
+        slotUIManager.UpdateButtons(SlotMode.ChangingSymbols);
+
+        slotUIManager.UpdateInstructionText("Pick symbol you want to change!");
+    }
 
     public void ChangeSymbol(int row, int col)
     {
@@ -56,16 +71,15 @@ public class SlotUIController
 
         slotUIManager.isChangingSymbol = false;
         slotMachine.RandomizeSymbol(row, col);
-        currentWin = FinishChangingSymbol();
+        slotUIManager.UpdateButtons(SlotMode.WaitingForConfirm);
+
+        currentWin = slotMachine.CalculateWin();
+        slotUIManager.UpdateResultText($"Current win: ${currentWin}");
+        slotUIManager.UpdateInstructionText("");
+
     }
 
-    public float FinishChangingSymbol()
-    {
-        slotUIManager.UpdateButtons(SlotMode.WaitingForConfirm);
-        float newWin = slotMachine.GetLastWin();
-        slotUIManager.UpdateResultText($"Current win: ${newWin}");
-        return newWin;
-    }
+
 
     public void IncreaseBet()
     {

@@ -419,7 +419,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.000061035156, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &267371262
@@ -4974,8 +4974,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   firstSlotConfig: {fileID: 11400000, guid: 1d8dece67bba3e3449d70af789909cca, type: 2}
   secondSlotConfig: {fileID: 11400000, guid: 1d8dece67bba3e3449d70af789909cca, type: 2}
-  slotPanel: {fileID: 1235117831}
-  slotSymbolPrefab: {fileID: 2839914543519101735, guid: 60490f4a8dc255742ab0a0cf18ce16a0, type: 3}
 --- !u!4 &1792177408
 Transform:
   m_ObjectHideFlags: 0
@@ -5029,6 +5027,8 @@ MonoBehaviour:
   finishRoundButton: {fileID: 577437916}
   finishRoundText: {fileID: 1063709480}
   pauseManager: {fileID: 578404816}
+  slotSymbolPrefab: {fileID: 2839914543519101735, guid: 60490f4a8dc255742ab0a0cf18ce16a0, type: 3}
+  slotPanel: {fileID: 1235117831}
 --- !u!1 &1801036804
 GameObject:
   m_ObjectHideFlags: 0

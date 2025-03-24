@@ -11,64 +11,82 @@ public class SlotMachine : MonoBehaviour
     
     private SlotConfig currentSlotConfig;
 
-    private string[,] slotGrid;             
+    private SlotGrid slotGrid;             
 
     private List<SlotReel> reels;
+    
+    private SymbolManager symbolManager;
     
     private SlotCalculator slotCalculator;
     private int lastWinAmount = 0; // Store last win value
 
+    private SlotUIManager slotUIManager;
+
+    private int currentBetAmount;
+    
     private void Start()
     {
+        
+    }
+
+    public void Setup(SlotCalculator slotCalculator, SlotUIManager slotUIManager, GameData gameData)
+    {
         currentSlotConfig = firstSlotConfig;
+        this.slotCalculator = slotCalculator;
+        this.symbolManager = new SymbolManager(currentSlotConfig.symbols);
+        this.slotUIManager = slotUIManager;
+        slotGrid = new SlotGrid(currentSlotConfig.rows, currentSlotConfig.columns, symbolManager);
+        slotUIManager.Setup(gameData, this, slotGrid);
+        
+        CreateReels();
+
+    }
+
+    private void CreateReels()
+    {
         reels = new List<SlotReel>();
         for (int i = 0; i < currentSlotConfig.columns; i++)
         {
-            reels.Add(new SlotReel(currentSlotConfig.rows, currentSlotConfig.wildChance, currentSlotConfig.wildSymbol, currentSlotConfig.slotSymbols));
+            reels.Add(new SlotReel(currentSlotConfig.symbols));
         }
-        slotGrid = new string[currentSlotConfig.rows, currentSlotConfig.columns];
     }
-
-    public void Setup(SlotCalculator slotCalculator)
-    {
-        this.slotCalculator = slotCalculator;
-    }
-
+    
     public int SpinSlot(int betAmount, bool simulateOnly = false)
     {
+        currentBetAmount = betAmount;
         for (int col = 0; col < currentSlotConfig.columns; col++)
         {
-            string[] reelSymbols = reels[col].GenerateSymbols();
+            List<Symbol> reelSymbols = reels[col].GenerateSymbols();
             for (int row = 0; row < currentSlotConfig.rows; row++)
             {
-                slotGrid[row, col] = reelSymbols[row];
+                slotGrid.SetSymbol(row, col, reelSymbols[row]);
             }
         }
         
         if (!simulateOnly)
         {
-            GameManager.instance.slotUIManager.UpdateSlotUI(slotGrid);
+            slotUIManager.UpdateSlotUI();
         }
-        lastWinAmount = slotCalculator.CalculateWin(slotGrid, betAmount, currentSlotConfig.rows, currentSlotConfig.columns, currentSlotConfig.wildSymbol, currentSlotConfig.slotSymbols);
+        
+        
+        lastWinAmount = slotCalculator.CalculateWin(slotGrid, currentBetAmount, currentSlotConfig);
 
         return lastWinAmount;
     }
 
 
-    public int GetLastWin()
-    {
-        return lastWinAmount;
-    }
+    public int CalculateWin() => slotCalculator.CalculateWin(slotGrid, currentBetAmount, currentSlotConfig);
+    
 
     
 
     public void RandomizeSymbol(int row, int col)
     {
-        List<string> possibleSymbols = new List<string>(currentSlotConfig.slotSymbols) { currentSlotConfig.wildSymbol };
-        possibleSymbols.Remove(slotGrid[row, col]);
-        slotGrid[row, col] = possibleSymbols[Random.Range(0, possibleSymbols.Count)];
+        List<Symbol> possibleSymbols = new List<Symbol>(currentSlotConfig.symbols);
+        possibleSymbols.Remove(slotGrid.GetSymbol(row, col));
+        slotGrid.SetSymbol(row, col, possibleSymbols[Random.Range(0, possibleSymbols.Count)]);
 
-        GameManager.instance.slotUIManager.UpdateSingleSymbol(row, col, slotGrid[row, col]);
+        slotUIManager.UpdateSingleSymbol(row, col, slotGrid.GetSymbol(row, col));
         
     }
 
