@@ -1,109 +1,60 @@
 using System.Collections.Generic;
+using NUnit.Framework;
 using UnityEditor;
 
 public class SlotCalculator
 {
-    /// <summary>
-    /// Calculates the win amount based on the slot grid.
-    /// </summary>
-    /// <param name="slotGrid">2D array of symbols representing the slot grid.</param>
-    /// <param name="betAmount">Bet amount per spin.</param>
-    /// <param name="rows">Number of rows in the grid.</param>
-    /// <param name="columns">Number of columns in the grid.</param>
-    /// <param name="wildSymbol">The wild symbol that can substitute any symbol.</param>
-    /// <param name="slotSymbols">Array of regular slot symbols.</param>
-    /// <returns>Total win amount.</returns>
+
+    public List<List<(int, int)>> winningLines =  new List<List<(int, int)>>();
     public int CalculateWin(SlotGrid slotGrid, int betAmount, SlotConfig slotConfig)
     {
         int totalWin = 0;
-        Dictionary<Symbol, int[]> symbolCountPerColumn = new Dictionary<Symbol, int[]>();
-        Dictionary<Symbol, int[]> symbolCountPerColumnWild = new Dictionary<Symbol, int[]>();
+        winningLines = new List<List<(int, int)>>();
 
-        foreach (Symbol symbol in slotConfig.symbols)
+        // Iterate through each row in the first column
+        for (int startRow = 0; startRow < slotConfig.rows; startRow++)
         {
-            if (symbol.isWild)
-                symbolCountPerColumnWild[symbol] = new int[slotConfig.columns];
-            else
-                symbolCountPerColumn[symbol] = new int[slotConfig.columns];
-        }
+            Symbol targetSymbol = slotGrid.GetSymbol(startRow, 0);
 
-        for (int col = 0; col < slotConfig.columns; col++)
-        {
-            for (int row = 0; row < slotConfig.rows; row++)
+            // Store all possible winning paths starting from this symbol
+            List<List<(int, int)>> possibleWins = new List<List<(int, int)>> { new List<(int, int)> { (startRow, 0) } };
+
+            // Iterate through the remaining columns
+            for (int col = 1; col < slotConfig.columns; col++)
             {
-                Symbol symbol = slotGrid.GetSymbol(row, col);
-                if (symbolCountPerColumn.ContainsKey(symbol))
-                    symbolCountPerColumn[symbol][col]++;
-                if (symbolCountPerColumnWild.ContainsKey(symbol))
-                    symbolCountPerColumnWild[symbol][col]++;
+                List<List<(int, int)>> newPossibleWins = new List<List<(int, int)>>();
 
-            }
-        }
-
-        foreach (var entry in symbolCountPerColumn)
-        {
-            int[] counts = entry.Value;
-            bool valid = true;
-            int multiplier = 1;
-
-            int nonWildAppearance = 0;
-            foreach (int count in counts)
-                nonWildAppearance += count;
-            
-            if (nonWildAppearance == 0)
-                continue;
-
-            foreach (var wildEntry in symbolCountPerColumnWild)
-            {
-                int[] wildCounts = wildEntry.Value;
-
-                for (int col = 0; col < slotConfig.columns; col++)
+                for (int row = 0; row < slotConfig.rows; row++)
                 {
-                    counts[col] += wildCounts[col];
+                    if (slotGrid.GetSymbol(row, col) == targetSymbol)
+                    {
+                        // Extend each current winning path with the new symbol found
+                        foreach (var winPath in possibleWins)
+                        {
+                            List<(int, int)> newWinPath = new List<(int, int)>(winPath) { (row, col) };
+                            newPossibleWins.Add(newWinPath);
+                        }
+                    }
                 }
-            }
-            
-            for (int col = 0; col < slotConfig.columns; col++)
-            {
-                if (counts[col] <= 0)
-                {
-                    valid = false;
+
+                // If no matches in this column, stop checking further
+                if (newPossibleWins.Count == 0)
                     break;
-                }
-                multiplier *= counts[col];
+
+                possibleWins = newPossibleWins;
             }
 
-            if (valid)
-            {
-                totalWin += betAmount * multiplier;
-            }
+            // Add completed winning lines
+            winningLines.AddRange(possibleWins);
         }
-        foreach (var entry in symbolCountPerColumnWild)
+
+        // Calculate the total win based on the number of winning lines
+        foreach (var line in winningLines)
         {
-            int[] counts = entry.Value;
-            bool valid = true;
-            int multiplier = 1;
-
-            for (int col = 0; col < slotConfig.columns; col++)
-            {
-                if (counts[col] <= 0)
-                {
-                    valid = false;
-                    break;  
-                }
-                multiplier *= counts[col];
-            }
-
-            if (valid)
-            {
-                totalWin += betAmount * multiplier;
-            }
+            totalWin += betAmount * line.Count;
         }
+
         return totalWin;
     }
-
-    private void CalculateWinningLines()
-    {
-        
-    }
+    
 }

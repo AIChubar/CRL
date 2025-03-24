@@ -35,7 +35,11 @@ public class SlotUIManager : MonoBehaviour
     private SlotGrid slotGrid;
     
     public GameObject slotSymbolPrefab;     
-    public GameObject slotPanel;            
+    public GameObject slotPanel;
+
+    public GameObject linePrefab;
+    
+    private WinningLineDrawer winningLineDrawer;
     void Start()
     {
 
@@ -66,7 +70,12 @@ public class SlotUIManager : MonoBehaviour
         this.gameData = gameData;
         this.slotMachine = slotMachine;
         this.slotGrid = slotGrid;
+        winningLineDrawer = new WinningLineDrawer();
+        winningLineDrawer.Setup(this.transform,this, linePrefab);
     }
+    
+    public void DrawWinningLines(List<List<(int,int)>> winningLines, SlotGrid slotGrid) => winningLineDrawer.DrawWinningLines(winningLines, slotGrid);
+
 
     public void UpdateUI()
     {
@@ -87,7 +96,7 @@ public class SlotUIManager : MonoBehaviour
         increaseButton.interactable = (mode == SlotMode.ReadyForSpin);
         decreaseButton.interactable = (mode == SlotMode.ReadyForSpin);
     }
-    public void CreateSymbolUI(GameObject slotSymbolPrefab, GameObject slotPanel, int row, int col, float cellWidth, float cellHeight)
+    public void CreateSymbolUI(GameObject slotSymbolPrefab, GameObject slotPanel, int row, int col, float cellWidth, float cellHeight) //not efficient
     {
         GameObject newSymbol = Instantiate(slotSymbolPrefab, slotPanel.transform);
         newSymbol.GetComponent<TMP_Text>().text = slotGrid.GetSymbol(row, col).ch;
@@ -98,6 +107,7 @@ public class SlotUIManager : MonoBehaviour
 
         int r = row, c = col;
         newSymbol.GetComponent<Button>().onClick.AddListener(() => slotUIController.ChangeSymbol(r, c));
+        slotGrid.RegisterSymbolInstance(row,col,newSymbol);
     }
     
     
@@ -121,7 +131,7 @@ public class SlotUIManager : MonoBehaviour
     }
     
     
-    public void UpdateSlotUI()
+    public void UpdateSlotUI() // not efficient
     {
         foreach (Transform child in slotPanel.transform)
         {

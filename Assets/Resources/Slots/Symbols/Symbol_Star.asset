@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Symbol_Star
   m_EditorClassIdentifier: 
   symbolName: 
-  probability: 0
+  probability: 0.02
   sprite: {fileID: 0}
-  ch: "\U0001F349"
+  ch: "\u2B50"
+  isWild: 1

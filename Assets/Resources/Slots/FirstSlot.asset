@@ -13,8 +13,11 @@ MonoBehaviour:
   m_Name: FirstSlot
   m_EditorClassIdentifier: 
   symbols:
-  - {fileID: 0}
-  wildSymbol: {fileID: 0}
-  wildChance: 0.04
+  - {fileID: 11400000, guid: c53bc9160d76cd648affa6a8d2806e36, type: 2}
+  - {fileID: 11400000, guid: ff9bb1e04fe61ee41b53f6e982f220c0, type: 2}
+  - {fileID: 11400000, guid: 49862f4f7a48d8346b359b521c68bb63, type: 2}
+  - {fileID: 11400000, guid: 0a860641ab80a874f88b09b6512086be, type: 2}
+  - {fileID: 11400000, guid: ba1dc6eb4b3b5aa42ba3e468f846f88f, type: 2}
+  - {fileID: 11400000, guid: 7f1511ed5864f934494b42a49ed78bef, type: 2}
   rows: 3
   columns: 3

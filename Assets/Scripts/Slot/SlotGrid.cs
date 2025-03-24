@@ -1,10 +1,13 @@
 using System;
+using UnityEngine;
 
 public class SlotGrid
 {
     private Symbol[,] grid;
     private int rows, columns;
     private SymbolManager symbolManager;
+    
+    private GameObject[,] symbolInstances;
 
     public SlotGrid(int rows, int columns, SymbolManager symbolManager)
     {
@@ -12,10 +15,19 @@ public class SlotGrid
         this.columns = columns;
         this.symbolManager = symbolManager;
         grid = new Symbol[rows, columns];
+        symbolInstances = new GameObject[rows, columns];
         FillGrid();
     }
 
-    
+    public void RegisterSymbolInstance(int row, int col, GameObject instance)
+    {
+        symbolInstances[row, col] = instance;
+    }
+
+    public GameObject GetSymbolInstance(int row, int col)
+    {
+        return symbolInstances[row, col];
+    }
     
     private void FillGrid()
     {

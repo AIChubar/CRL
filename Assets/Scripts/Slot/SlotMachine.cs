@@ -24,6 +24,8 @@ public class SlotMachine : MonoBehaviour
 
     private int currentBetAmount;
     
+    
+    
     private void Start()
     {
         
@@ -71,6 +73,11 @@ public class SlotMachine : MonoBehaviour
         
         lastWinAmount = slotCalculator.CalculateWin(slotGrid, currentBetAmount, currentSlotConfig);
 
+        if (!simulateOnly)
+        {
+            slotUIManager.DrawWinningLines(slotCalculator.winningLines, slotGrid);
+        }
+        
         return lastWinAmount;
     }
 

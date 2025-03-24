@@ -32,7 +32,6 @@ public class SlotUIController
             gameData.money -= gameData.betAmount;
             gameData.wagerLeft -= gameData.betAmount;
             currentWin = slotMachine.SpinSlot(gameData.betAmount, false) * slotUIManager.winCoef;
-
             slotUIManager.UpdateResultText($"Current win: ${currentWin}");
         }
         else
