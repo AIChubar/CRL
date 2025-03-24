@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ac1f7eae610d1e4daf895b683cbeb05, type: 3}
+  m_Name: Game_Data_Saved_SO
+  m_EditorClassIdentifier: 
+  RTP: 0.95
+  baseMoney: 2000
+  money: 2000
+  spinsLeft: 8
+  wagerLeft: 1980
+  targetMoney: 4000
+  betAmount: 10
+  changePrice: 5
+  currentLevel: 2
+  gold: 10
+  wildLuck:
+    BaseValue: 1
+  payoutMult:
+    BaseValue: 1
+  payoutBonus:
+    BaseValue: 0
+  playerItems:
+  - {fileID: 11400000, guid: 9b22e839ec6245a4480353b0a084701c, type: 2}
+  - {fileID: 11400000, guid: 28d0e8858548b1f43b744cdbc521e054, type: 2}
