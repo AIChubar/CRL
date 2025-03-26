@@ -14,11 +14,11 @@ public class PauseManager : MonoBehaviour
     public GameObject winLoseMenu;
 
     public GameObject pauseMenu;
-    private PlayerInput playerInput;
+    //private PlayerInput playerInput;
 
     private void Awake()
     {
-        playerInput = new PlayerInput();
+        //playerInput = new PlayerInput();
 
     }
 
@@ -33,19 +33,19 @@ public class PauseManager : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if (playerInput.Player.Pause.triggered)
+        /*if (playerInput.Player.Pause.triggered)
         {
             PauseGame();
-        }
+        }*/
     }
     private void OnEnable()
     {
-        playerInput.Enable();
+        //playerInput.Enable();
     }
 
     private void OnDisable()
     {
-        playerInput.Disable();
+        //playerInput.Disable();
     }
     public void PauseGame()
     {

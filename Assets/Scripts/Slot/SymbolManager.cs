@@ -31,4 +31,9 @@ public class SymbolManager
         }
         return symbols[0];
     }
+
+    internal Symbol GetSymbolByIndex(int i)
+    {
+        return symbols[i];
+    }
 }

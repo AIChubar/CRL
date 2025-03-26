@@ -45,6 +45,17 @@ public class SlotGrid
         return (rows, columns );
     }
 
+    public void SetGridTest(SlotGridTestCase predefinedGrid)
+    {
+        for (int r = 0; r < predefinedGrid.grid.Count; r++)
+        {
+            for (int c = 0; c < predefinedGrid.grid[r].rowValues.Count; c++)
+            {
+                grid[r, c] = symbolManager.GetSymbolByIndex(predefinedGrid.grid[r].rowValues[c]);
+            }
+        }
+    }
+
     public Symbol GetSymbol(int row, int column)
     {
         return grid[row, column];
