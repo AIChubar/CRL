@@ -82,19 +82,23 @@ public class SlotMachine : MonoBehaviour
     }
 
 
-    public int CalculateWin() => slotCalculator.CalculateWin(slotGrid, currentBetAmount, currentSlotConfig);
+    //public int CalculateWin() => slotCalculator.CalculateWin(slotGrid, currentBetAmount, currentSlotConfig);
     
 
     
 
-    public void RandomizeSymbol(int row, int col)
+    public int RandomizeSymbolCalculate(int row, int col)
     {
         List<Symbol> possibleSymbols = new List<Symbol>(currentSlotConfig.symbols);
         possibleSymbols.Remove(slotGrid.GetSymbol(row, col));
         slotGrid.SetSymbol(row, col, possibleSymbols[Random.Range(0, possibleSymbols.Count)]);
 
         slotUIManager.UpdateSingleSymbol(row, col, slotGrid.GetSymbol(row, col));
-        
+        lastWinAmount = slotCalculator.CalculateWin(slotGrid, currentBetAmount, currentSlotConfig);
+
+        slotUIManager.DrawWinningLines(slotCalculator.winningLines, slotGrid);
+
+        return lastWinAmount;
     }
 
     

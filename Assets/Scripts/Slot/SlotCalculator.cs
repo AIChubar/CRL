@@ -37,7 +37,10 @@ public class SlotCalculator
                 }
 
                 if (newPossibleWins.Count == 0)
+                {
+                    possibleWins.Clear();
                     break;
+                }
 
                 possibleWins = newPossibleWins;
             }

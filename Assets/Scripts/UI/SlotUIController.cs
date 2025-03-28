@@ -66,13 +66,13 @@ public class SlotUIController
 
     public void ChangeSymbol(int row, int col)
     {
-        if (!slotUIManager.isChangingSymbol) return;
+        if (!slotUIManager.isChangingSymbol) return;//??
 
         slotUIManager.isChangingSymbol = false;
-        slotMachine.RandomizeSymbol(row, col);
-        slotUIManager.UpdateButtons(SlotMode.WaitingForConfirm);
+        currentWin = slotMachine.RandomizeSymbolCalculate(row, col) * slotUIManager.winCoef;
 
-        currentWin = slotMachine.CalculateWin();
+
+        slotUIManager.UpdateButtons(SlotMode.WaitingForConfirm);
         slotUIManager.UpdateResultText($"Current win: ${currentWin}");
         slotUIManager.UpdateInstructionText("");
 
