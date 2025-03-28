@@ -12,7 +12,7 @@ public class NewTestScript
 
     private SlotConfig slotConfig;
     private SymbolManager symbolManager;
-
+    private SlotGridTestCase[] testCases;
     private SlotGrid slotGrid;
 
     [SetUp]
@@ -23,8 +23,11 @@ public class NewTestScript
         Assert.NotNull(slotConfig, "Failed to load SlotConfig ScriptableObject.");
         symbolManager = new SymbolManager(slotConfig.symbols);
         slotCalculator = new SlotCalculator();
+        testCases = Resources.LoadAll<SlotGridTestCase>("Tests/SlotTestCases");
+        Assert.IsNotNull(testCases, "Failed to load test cases.");
+
     }
-   
+
     /*// A Test behaves as an ordinary method
     [Test]
     public void FullBoardSameSymbols()
@@ -36,8 +39,6 @@ public class NewTestScript
     [Test]
     public void TestPredefinedGrids()
     {
-        SlotGridTestCase[] testCases = Resources.LoadAll<SlotGridTestCase>("Tests/SlotTestCases");
-        Assert.IsNotNull(testCases, "Failed to load test cases.");
 
         foreach (var testCase in testCases)
         {

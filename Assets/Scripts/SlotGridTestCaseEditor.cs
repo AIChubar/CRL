@@ -5,68 +5,58 @@ using UnityEngine;
 [CustomEditor(typeof(SlotGridTestCase))]
 public class SlotGridTestCaseEditor : Editor
 {
+    private SlotGridTestCase testCase;
+    private SerializedProperty gridProperty;
+    private SerializedProperty columnsProperty;
+
     private void OnEnable()
     {
-        SlotGridTestCase testCase = (SlotGridTestCase)target;
-
-        // Initialize grid if it's null or empty
-        if (testCase.grid == null)
-        {
-            testCase.grid = new List<GridRow>();
-        }
-
-        if (testCase.grid.Count == 0)
-        {
-            for (int i = 0; i < 3; i++) // Example: 3 rows, adjust as needed
-            {
-                testCase.grid.Add(new GridRow { rowValues = new List<int>(new int[testCase.columns]) });
-            }
-        }
+        testCase = (SlotGridTestCase)target;
+        gridProperty = serializedObject.FindProperty("grid");
+        columnsProperty = serializedObject.FindProperty("columns");
     }
 
     public override void OnInspectorGUI()
     {
-        SlotGridTestCase testCase = (SlotGridTestCase)target;
-
         serializedObject.Update();
 
         // Input field for columns
-        testCase.columns = EditorGUILayout.IntField("Columns", testCase.columns);
-
-        // Ensure grid has at least one row
-        if (testCase.grid == null)
-        {
-            testCase.grid = new List<GridRow>();
-        }
+        EditorGUILayout.PropertyField(columnsProperty);
 
         // Ensure row count matches the number of elements
-        int rowCount = testCase.grid.Count;
+        int rowCount = gridProperty.arraySize;
         int newRowCount = EditorGUILayout.IntField("Rows", rowCount);
 
         if (newRowCount != rowCount)
         {
             // Add or remove rows as needed
-            while (testCase.grid.Count < newRowCount)
+            while (gridProperty.arraySize < newRowCount)
             {
-                testCase.grid.Add(new GridRow { rowValues = new List<int>(new int[testCase.columns]) });
+                gridProperty.InsertArrayElementAtIndex(gridProperty.arraySize);
+                SerializedProperty newRow = gridProperty.GetArrayElementAtIndex(gridProperty.arraySize - 1);
+                newRow.FindPropertyRelative("rowValues").arraySize = testCase.columns;
             }
-            while (testCase.grid.Count > newRowCount)
+            while (gridProperty.arraySize > newRowCount)
             {
-                testCase.grid.RemoveAt(testCase.grid.Count - 1);
+                gridProperty.arraySize--;
             }
         }
 
         // Display grid in a table format with rows and columns
-        for (int r = 0; r < testCase.grid.Count; r++)
+        for (int r = 0; r < gridProperty.arraySize; r++)
         {
+            SerializedProperty row = gridProperty.GetArrayElementAtIndex(r);
+            SerializedProperty rowValues = row.FindPropertyRelative("rowValues");
+
             EditorGUILayout.BeginHorizontal();
             for (int c = 0; c < testCase.columns; c++)
             {
-                if (testCase.grid[r].rowValues.Count < testCase.columns)
+                if (rowValues.arraySize < testCase.columns)
                 {
-                    testCase.grid[r].rowValues.Add(0); // Fill missing columns
+                    rowValues.arraySize = testCase.columns;
                 }
-                testCase.grid[r].rowValues[c] = EditorGUILayout.IntField(testCase.grid[r].rowValues[c], GUILayout.Width(30));
+                SerializedProperty value = rowValues.GetArrayElementAtIndex(c);
+                EditorGUILayout.PropertyField(value, GUIContent.none, GUILayout.Width(30));
             }
             EditorGUILayout.EndHorizontal();
         }

@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b00b3695c64a89945b1bfe82f1d8c825, type: 3}
-  m_Name: 132
+  m_Name: AllSameSymbol
   m_EditorClassIdentifier: 
-  columns: 0
+  columns: 3
   grid:
-  - rowValues: 
-  - rowValues: 
-  - rowValues: 
-  expectedResult: 0
+  - rowValues: 000000000000000000000000
+  - rowValues: 000000000000000000000000
+  - rowValues: 000000000000000000000000
+  expectedResult: 27
