@@ -1,16 +1,18 @@
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using UnityEditor;
 
 public class SlotCalculator
 {
-    public List<List<(int, int)>> winningLines = new List<List<(int, int)>>();
+    public List<(List<(int, int)> line, Symbol symbol)> winningLines = new List<(List<(int, int)>, Symbol)>();
+    public Dictionary<Symbol, List<(int, int)>> playingPositions = new Dictionary<Symbol, List<(int, int)>>();
 
     public int CalculateWin(SlotGrid slotGrid, int betAmount, SlotConfig slotConfig)
     {
         int totalWin = 0;
-        winningLines = new List<List<(int, int)>>();
-
+        winningLines = new List<(List<(int, int)>, Symbol)>();
+        playingPositions = new Dictionary<Symbol, List<(int, int)>>();
         for (int startRow = 0; startRow < slotConfig.rows; startRow++)
         {
             List<List<(int, int)>> possibleWins = new List<List<(int, int)>> { new List<(int, int)> { (startRow, 0) } };
@@ -27,7 +29,6 @@ public class SlotCalculator
                     {
                         Symbol? assignedSymbol = DetermineAssignedSymbol(winPath, slotGrid);
 
-                        // A valid extension: same symbol or wild (wild adapts)
                         if (currentSymbol == assignedSymbol || currentSymbol.isWild || assignedSymbol == null)
                         {
                             List<(int, int)> newWinPath = new List<(int, int)>(winPath) { (row, col) };
@@ -45,12 +46,19 @@ public class SlotCalculator
                 possibleWins = newPossibleWins;
             }
 
-            winningLines.AddRange(possibleWins);
-        }
+            foreach (var winPath in possibleWins)
+            {
+                Symbol winningSymbol = DetermineAssignedSymbol(winPath, slotGrid) ?? slotGrid.GetSymbol(winPath[0].Item1, winPath[0].Item2);
+                winningLines.Add((winPath, winningSymbol));
 
-        foreach (var line in winningLines)
-        {
-            totalWin += betAmount;
+                if (!playingPositions.ContainsKey(winningSymbol))
+                {
+                    playingPositions[winningSymbol] = new List<(int, int)>();
+                }
+                playingPositions[winningSymbol].AddRange(winPath.Where(pos => !playingPositions[winningSymbol].Contains(pos)));
+
+                totalWin += betAmount; // Adjust based on symbol payouts
+            }
         }
 
         return totalWin;

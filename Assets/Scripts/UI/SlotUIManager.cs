@@ -40,6 +40,8 @@ public class SlotUIManager : MonoBehaviour
     public GameObject linePrefab;
     
     private WinningLineDrawer winningLineDrawer;
+    private WinningPositionsDrawer winningPositionsDrawer;
+
     void Start()
     {
 
@@ -72,9 +74,12 @@ public class SlotUIManager : MonoBehaviour
         this.slotGrid = slotGrid;
         winningLineDrawer = new WinningLineDrawer();
         winningLineDrawer.Setup(this.transform,this, linePrefab);
+        winningPositionsDrawer = new WinningPositionsDrawer();
+        winningPositionsDrawer.Setup(this.transform, this);
     }
     
-    public void DrawWinningLines(List<List<(int,int)>> winningLines, SlotGrid slotGrid) => winningLineDrawer.DrawWinningLines(winningLines, slotGrid);
+    public void DrawWinningLines(List<(List<(int, int)> line, Symbol symbol)> winningLines, SlotGrid slotGrid) => winningLineDrawer.DrawWinningLines(winningLines, slotGrid);
+    public void AnimatePositions(Dictionary<Symbol, List<(int, int)>> playingPositions, SlotGrid slotGrid) => winningPositionsDrawer.AnimatePositions(playingPositions, slotGrid);
 
 
     public void UpdateUI()

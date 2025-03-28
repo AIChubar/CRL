@@ -46,17 +46,17 @@ public class WinningLineDrawer
         this.linePrefab = linePrefab;
     }
 
-    public void DrawWinningLines(List<List<(int, int)>> winningLines, SlotGrid slotGrid)
+    public void DrawWinningLines(List<(List<(int, int)> line, Symbol symbol)> winningLines, SlotGrid slotGrid)
     {
         ClearLines();  // Remove previous lines
         coroutineRunner.StartCoroutine(DrawLinesSequentially(winningLines, slotGrid));
     }
 
-    private IEnumerator DrawLinesSequentially(List<List<(int, int)>> winningLines, SlotGrid slotGrid)
+    private IEnumerator DrawLinesSequentially(List<(List<(int, int)> line, Symbol symbol)> winningLines, SlotGrid slotGrid)
     {
         for (int i = 0; i < winningLines.Count; i++)
         {
-            var line = winningLines[i];
+            var line = winningLines[i].line;
             if (line.Count < 2) continue; // Skip invalid lines
 
             GameObject newLineObj = Object.Instantiate(linePrefab, parent);
@@ -90,7 +90,7 @@ public class WinningLineDrawer
             lr.positionCount = i + 1;
             lr.SetPosition(i, pos);
 
-            yield return new WaitForSeconds(0.2f);
+            yield return new WaitForSeconds(0.1f);
         }
     }
 
