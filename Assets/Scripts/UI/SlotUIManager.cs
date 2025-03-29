@@ -44,7 +44,6 @@ public class SlotUIManager : MonoBehaviour
 
     void Start()
     {
-
         slotUIController = new SlotUIController();
         slotUIController.Setup(gameData, slotMachine, this);
 
@@ -52,7 +51,6 @@ public class SlotUIManager : MonoBehaviour
         UpdateButtons(SlotMode.ReadyForSpin);
         UpdateUI();
 
-        // Attach button listeners dynamically
         spinButton.onClick.AddListener(slotUIController.Spin);
         confirmButton.onClick.AddListener(slotUIController.ConfirmSpin);
         changeButton.onClick.AddListener(slotUIController.StartChangingSymbol);
@@ -72,15 +70,25 @@ public class SlotUIManager : MonoBehaviour
         this.gameData = gameData;
         this.slotMachine = slotMachine;
         this.slotGrid = slotGrid;
-        winningLineDrawer = new WinningLineDrawer();
-        winningLineDrawer.Setup(this.transform,this, linePrefab);
-        winningPositionsDrawer = new WinningPositionsDrawer();
-        winningPositionsDrawer.Setup(this.transform, this);
-    }
-    
-    public void DrawWinningLines(List<(List<(int, int)> line, Symbol symbol)> winningLines, SlotGrid slotGrid) => winningLineDrawer.DrawWinningLines(winningLines, slotGrid);
-    public void AnimatePositions(Dictionary<Symbol, List<(int, int)>> playingPositions, SlotGrid slotGrid) => winningPositionsDrawer.AnimatePositions(playingPositions, slotGrid);
 
+        winningLineDrawer = new WinningLineDrawer(this, EnableButtons);
+        winningLineDrawer.Setup(this.transform, linePrefab);
+
+        winningPositionsDrawer = new WinningPositionsDrawer(this, EnableButtons);
+        winningPositionsDrawer.Setup(this.transform);
+    }
+
+    public void DrawWinningLines(List<(List<(int, int)> line, Symbol symbol)> winningLines, SlotGrid slotGrid)
+    {
+        DisableButtons();
+        winningLineDrawer.DrawWinningLines(winningLines, slotGrid);
+    }
+
+    public void AnimatePositions(Dictionary<Symbol, List<(int, int)>> playingPositions, SlotGrid slotGrid)
+    {
+        DisableButtons();
+        winningPositionsDrawer.AnimatePositions(playingPositions, slotGrid);
+    }
 
     public void UpdateUI()
     {
@@ -92,7 +100,15 @@ public class SlotUIManager : MonoBehaviour
         changePriceText.text = $"${gameData.changePrice}";
         goldText.text = $"Gold: ${gameData.gold}";
     }
+    public void DisableButtons()
+    {
+        UpdateButtons(SlotMode.AllDisabled);
+    }
 
+    public void EnableButtons()
+    {
+        UpdateButtons(SlotMode.WaitingForConfirm);
+    }
     public void UpdateButtons(SlotMode mode)
     {
         spinButton.interactable = (mode == SlotMode.ReadyForSpin);

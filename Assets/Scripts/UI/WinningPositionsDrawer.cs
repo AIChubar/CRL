@@ -5,21 +5,25 @@ using UnityEngine;
 public class WinningPositionsDrawer
 {
     private MonoBehaviour coroutineRunner;
+    private CoroutineTracker coroutineTracker;
     private Transform parent;
     private float animationDuration = 0.3f;
     private float scaleMultiplier = 1.5f;
 
-    public WinningPositionsDrawer() { }
+    public WinningPositionsDrawer(MonoBehaviour runner, System.Action onAnimationsFinished)
+    {
+        this.coroutineRunner = runner;
+        this.coroutineTracker = new CoroutineTracker(runner, onAnimationsFinished);
+    }
 
-    public void Setup(Transform parent, MonoBehaviour coroutineRunner)
+    public void Setup(Transform parent)
     {
         this.parent = parent;
-        this.coroutineRunner = coroutineRunner;
     }
 
     public void AnimatePositions(Dictionary<Symbol, List<(int, int)>> playingPositions, SlotGrid slotGrid)
     {
-        coroutineRunner.StartCoroutine(AnimateWinningSymbolsSequentially(playingPositions, slotGrid));
+        coroutineTracker.StartTrackedCoroutine(AnimateWinningSymbolsSequentially(playingPositions, slotGrid));
     }
 
     private IEnumerator AnimateWinningSymbolsSequentially(Dictionary<Symbol, List<(int, int)>> playingPositions, SlotGrid slotGrid)
@@ -54,7 +58,6 @@ public class WinningPositionsDrawer
             originalScales[symbol] = symbol.transform.localScale;
         }
 
-        // Scale up
         while (elapsedTime < animationDuration)
         {
             elapsedTime += Time.deltaTime;
@@ -68,7 +71,6 @@ public class WinningPositionsDrawer
 
         elapsedTime = 0f;
 
-        // Scale down
         while (elapsedTime < animationDuration)
         {
             elapsedTime += Time.deltaTime;

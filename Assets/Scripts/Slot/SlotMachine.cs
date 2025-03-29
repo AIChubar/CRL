@@ -73,7 +73,7 @@ public class SlotMachine : MonoBehaviour
         
         lastWinAmount = slotCalculator.CalculateWin(slotGrid, currentBetAmount, currentSlotConfig);
 
-        if (!simulateOnly)
+        if (!simulateOnly && slotCalculator.winningLines.Count > 0)
         {
             slotUIManager.DrawWinningLines(slotCalculator.winningLines, slotGrid);
             slotUIManager.AnimatePositions(slotCalculator.playingPositions, slotGrid);
