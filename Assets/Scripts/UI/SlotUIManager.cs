@@ -84,7 +84,7 @@ public class SlotUIManager : MonoBehaviour
         winningLineDrawer.DrawWinningLines(winningLines, slotGrid);
     }
 
-    public void AnimatePositions(Dictionary<Symbol, List<(int, int)>> playingPositions, SlotGrid slotGrid)
+    public void AnimatePositions(Dictionary<Symbol, SymbolPositions> playingPositions, SlotGrid slotGrid)
     {
         DisableButtons();
         winningPositionsDrawer.AnimatePositions(playingPositions, slotGrid);

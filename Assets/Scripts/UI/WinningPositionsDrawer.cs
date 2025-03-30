@@ -16,18 +16,21 @@ public class WinningPositionsDrawer
         this.parent = parent;
     }
 
-    public void AnimatePositions(Dictionary<Symbol, List<(int, int)>> playingPositions, SlotGrid slotGrid)
+    public void AnimatePositions(Dictionary<Symbol, SymbolPositions> playingPositions, SlotGrid slotGrid)
     {
         coroutineTracker.StartTrackedCoroutine(AnimateWinningSymbolsSequentially(playingPositions, slotGrid));
     }
 
-    private IEnumerator AnimateWinningSymbolsSequentially(Dictionary<Symbol, List<(int, int)>> playingPositions, SlotGrid slotGrid)
+    private IEnumerator AnimateWinningSymbolsSequentially(Dictionary<Symbol, SymbolPositions> playingPositions, SlotGrid slotGrid)
     {
         foreach (var entry in playingPositions)
         {
+            if(entry.Value.WasShown)
+                continue;
+            entry.Value.WasShown = true;
             List<GameObject> symbolInstances = new List<GameObject>();
 
-            foreach (var (row, column) in entry.Value)
+            foreach (var (row, column) in entry.Value.Positions)
             {
                 GameObject symbolInstance = slotGrid.GetSymbolInstance(row, column);
                 if (symbolInstance != null)

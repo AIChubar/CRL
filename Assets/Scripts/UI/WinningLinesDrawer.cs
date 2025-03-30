@@ -44,7 +44,7 @@ public class WinningLineDrawer
     private IEnumerator DrawLineSegments(LineRenderer lr, List<(int row, int column)> line, SlotGrid slotGrid)
     {
         lr.positionCount = 0;
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(0.01f);
 
         for (int i = 0; i < line.Count; i++)
         {
@@ -55,7 +55,7 @@ public class WinningLineDrawer
             lr.positionCount = i + 1;
             lr.SetPosition(i, pos);
 
-            yield return new WaitForSeconds(0.4f);
+            yield return new WaitForSeconds(0.01f);
         }
     }
 

@@ -72,7 +72,6 @@ public class SlotUIController
         currentWin = slotMachine.RandomizeSymbolCalculate(row, col) * slotUIManager.winCoef;
 
 
-        slotUIManager.UpdateButtons(SlotMode.WaitingForConfirm);
         slotUIManager.UpdateResultText($"Current win: ${currentWin}");
         slotUIManager.UpdateInstructionText("");
 

@@ -73,10 +73,10 @@ public class SlotMachine : MonoBehaviour
         
         lastWinAmount = slotCalculator.CalculateWin(slotGrid, currentBetAmount, currentSlotConfig);
 
-        if (!simulateOnly && slotCalculator.winningLines.Count > 0)
+        if (!simulateOnly)
         {
             slotUIManager.DrawWinningLines(slotCalculator.winningLines, slotGrid);
-            slotUIManager.AnimatePositions(slotCalculator.playingPositions, slotGrid);
+            slotUIManager.AnimatePositions(slotCalculator.currentPositions, slotGrid);
         }
         
         return lastWinAmount;
@@ -95,10 +95,10 @@ public class SlotMachine : MonoBehaviour
         slotGrid.SetSymbol(row, col, possibleSymbols[Random.Range(0, possibleSymbols.Count)]);
 
         slotUIManager.UpdateSingleSymbol(row, col, slotGrid.GetSymbol(row, col));
-        lastWinAmount = slotCalculator.CalculateWin(slotGrid, currentBetAmount, currentSlotConfig);
+        lastWinAmount = slotCalculator.CalculateWin(slotGrid, currentBetAmount, currentSlotConfig, true);
 
         slotUIManager.DrawWinningLines(slotCalculator.winningLines, slotGrid);
-        slotUIManager.AnimatePositions(slotCalculator.playingPositions, slotGrid);
+        slotUIManager.AnimatePositions(slotCalculator.currentPositions, slotGrid);
         return lastWinAmount;
     }
 
