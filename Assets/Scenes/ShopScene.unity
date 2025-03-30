@@ -430,12 +430,6 @@ MonoBehaviour:
   buyButton: {fileID: 1453022954}
   itemButtonPrefab: {fileID: 7975587973700007349, guid: 1a04f6f3aed5d324ea35054badac67e6, type: 3}
   allItems:
-  - {fileID: 11400000, guid: 0ce4288f9ab23384b8ed2046d16cc30c, type: 2}
-  - {fileID: 11400000, guid: 1fcc6ddd63304a94b9455d5391fa6cd7, type: 2}
-  - {fileID: 11400000, guid: 074f5a30217be40448e0e5fa4a855e2b, type: 2}
-  - {fileID: 11400000, guid: 9b22e839ec6245a4480353b0a084701c, type: 2}
-  - {fileID: 11400000, guid: 28d0e8858548b1f43b744cdbc521e054, type: 2}
-  - {fileID: 11400000, guid: a72e5350fb2fc8e45966959f53d76949, type: 2}
   - {fileID: 11400000, guid: 8b159a99dad967541a11f14e29204fa6, type: 2}
   - {fileID: 11400000, guid: 892f29e81c332b54fac014504e3a881a, type: 2}
   - {fileID: 11400000, guid: fa4d874d9af12be479158da01fa8311f, type: 2}

@@ -66,13 +66,13 @@ public class CharacterStat
         
     }
     
-    public virtual bool RemoveAllModifiersFromSource(object source)
+    public virtual bool RemoveAllModifiersFromStat(StatType stat)
     {
         bool didRemove = false;
  
         for (int i = statModifiers.Count - 1; i >= 0; i--)
         {
-            if (statModifiers[i].Source == source)
+            if (statModifiers[i].StatType == stat)
             {
                 isDirty = true;
                 didRemove = true;

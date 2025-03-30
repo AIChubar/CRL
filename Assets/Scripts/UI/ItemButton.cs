@@ -30,7 +30,7 @@ public class ItemButton : MonoBehaviour
     public void SetButton(Item item)
     {
         this.item = item;
-        InitializeStatModifiers();
+        //InitializeStatModifiers();
         nameText.text = item.itemName;
         priceText.text = item.price.ToString();
         descriptionText.text = "";
@@ -41,7 +41,7 @@ public class ItemButton : MonoBehaviour
         image = GetComponent<Image>();
     }
 
-    public void InitializeStatModifiers()
+    /*public void InitializeStatModifiers()
     {
         foreach (var stat in item.itemStats)
         {
@@ -54,7 +54,7 @@ public class ItemButton : MonoBehaviour
             };
             item.statModifiers.Add(new StatModifier(stat.value, stat.statModType, source, nameof(stat.statType)));
         }
-    }
+    }*/
     
     public void OnClicked()
     {
@@ -72,10 +72,15 @@ public class ItemButton : MonoBehaviour
     {
         foreach (StatModifier mod in statModifiers)
         {
-            if (mod.Source is CharacterStat targetStat)
+            CharacterStat targetStat = mod.StatType switch
             {
+                StatType.PayoutBonus  => GameManager.instance.gameData.payoutBonus,
+                StatType.PayoutMult => GameManager.instance.gameData.payoutMult,
+                StatType.WildLuck   => GameManager.instance.gameData.wildLuck,
+                _                => null // Default fallback
+            };
+            if (targetStat != null)
                 targetStat.AddModifier(mod);
-            }
         }
     }
     
@@ -83,10 +88,15 @@ public class ItemButton : MonoBehaviour
     {
         foreach (StatModifier mod in statModifiers)
         {
-            if (mod.Source is CharacterStat targetStat)
+            CharacterStat targetStat = mod.StatType switch
             {
+                StatType.PayoutBonus  => GameManager.instance.gameData.payoutBonus,
+                StatType.PayoutMult => GameManager.instance.gameData.payoutMult,
+                StatType.WildLuck   => GameManager.instance.gameData.wildLuck,
+                _                => null // Default fallback
+            };
+            if (targetStat != null)
                 targetStat.RemoveModifier(mod);
-            }
         }
     }
 }

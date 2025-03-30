@@ -1,3 +1,6 @@
+using UnityEngine;
+
+
 public enum StatModType
 {
     Flat = 100,
@@ -5,36 +8,22 @@ public enum StatModType
     PercentMult = 300,
 }
 
-/// <summary>
-/// Stat modifier of a certain type. Could be flat and percentage additive and multiplicative.
-/// </summary>
-[System.Serializable]
-public class StatModifier
-{
-    public readonly float Value;
-    public readonly StatModType Type;
-    public readonly int Order;
-    public readonly object Source;
-    public readonly string Description;
 
-    public StatModifier(float value, StatModType type, int order, object source, string description = "null")
+[CreateAssetMenu(fileName = "StatModifier", menuName = "Stat Modifier")]
+public class StatModifier : ScriptableObject
+{
+    public StatType StatType; // New field to specify which stat it modifies
+    public float Value;
+    public StatModType Type;
+    public int Order;
+    public string Description;
+
+    public StatModifier(StatType affectedStat, float value, StatModType type, int order = 0, string description = "")
     {
+        StatType = affectedStat;
         Value = value;
         Type = type;
         Order = order;
-        Source = source;
         Description = description;
     }
-
-    // Requires Value and Type. Calls the "Main" constructor and sets Order and Source to their default values: (int)type and null, respectively.
-    public StatModifier(float value, StatModType type) : this(value, type, (int)type, null) { }
- 
-    // Requires Value, Type and Order. Sets Source to its default value: null
-    public StatModifier(float value, StatModType type, int order) : this(value, type, order, null) { }
- 
-    // Requires Value, Type and Source. Sets Order to its default value: (int)Type
-    public StatModifier(float value, StatModType type, object source) : this(value, type, (int)type, source) { }
-    
-    // Requires Value, Type, Source and Description. Sets Order to its default value: (int)Type
-    public StatModifier(float value, StatModType type, object source, string description) : this(value, type, (int)type, source, description) { }
 }

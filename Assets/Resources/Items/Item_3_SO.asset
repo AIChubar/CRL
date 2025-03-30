@@ -14,4 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: King
   price: 7
+  statModifiers:
+  - {fileID: 11400000, guid: 77ddac867dfa13743a729a6786df09f0, type: 2}
   rarity: 2
