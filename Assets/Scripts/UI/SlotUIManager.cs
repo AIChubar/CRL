@@ -41,7 +41,7 @@ public class SlotUIManager : MonoBehaviour
     
     private WinningLineDrawer winningLineDrawer;
     private WinningPositionsDrawer winningPositionsDrawer;
-
+    private CoroutineTracker coroutineTracker;
     void Start()
     {
         slotUIController = new SlotUIController();
@@ -70,12 +70,12 @@ public class SlotUIManager : MonoBehaviour
         this.gameData = gameData;
         this.slotMachine = slotMachine;
         this.slotGrid = slotGrid;
+        coroutineTracker = new CoroutineTracker(this, EnableButtons);
+        winningLineDrawer = new WinningLineDrawer();
+        winningLineDrawer.Setup(this.transform, linePrefab, coroutineTracker);
 
-        winningLineDrawer = new WinningLineDrawer(this, EnableButtons);
-        winningLineDrawer.Setup(this.transform, linePrefab);
-
-        winningPositionsDrawer = new WinningPositionsDrawer(this, EnableButtons);
-        winningPositionsDrawer.Setup(this.transform);
+        winningPositionsDrawer = new WinningPositionsDrawer();
+        winningPositionsDrawer.Setup(this.transform, coroutineTracker);
     }
 
     public void DrawWinningLines(List<(List<(int, int)> line, Symbol symbol)> winningLines, SlotGrid slotGrid)

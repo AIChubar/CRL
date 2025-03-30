@@ -9,13 +9,11 @@ public class WinningLineDrawer
     private CoroutineTracker coroutineTracker;
     private Transform parent;
 
-    public WinningLineDrawer(MonoBehaviour runner, System.Action onAnimationsFinished)
-    {
-        this.coroutineTracker = new CoroutineTracker(runner, onAnimationsFinished);
-    }
+ 
 
-    public void Setup(Transform parent, GameObject linePrefab)
+    public void Setup(Transform parent, GameObject linePrefab, CoroutineTracker coroutineTracker)
     {
+        this.coroutineTracker = coroutineTracker;
         this.parent = parent;
         this.linePrefab = linePrefab;
     }

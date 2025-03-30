@@ -4,20 +4,15 @@ using UnityEngine;
 
 public class WinningPositionsDrawer
 {
-    private MonoBehaviour coroutineRunner;
     private CoroutineTracker coroutineTracker;
     private Transform parent;
     private float animationDuration = 0.3f;
     private float scaleMultiplier = 1.5f;
 
-    public WinningPositionsDrawer(MonoBehaviour runner, System.Action onAnimationsFinished)
-    {
-        this.coroutineRunner = runner;
-        this.coroutineTracker = new CoroutineTracker(runner, onAnimationsFinished);
-    }
 
-    public void Setup(Transform parent)
+    public void Setup(Transform parent, CoroutineTracker coroutineTracker)
     {
+        this.coroutineTracker = coroutineTracker;
         this.parent = parent;
     }
 
@@ -43,7 +38,7 @@ public class WinningPositionsDrawer
 
             if (symbolInstances.Count > 0)
             {
-                yield return coroutineRunner.StartCoroutine(AnimateSymbolScaling(symbolInstances));
+                yield return coroutineTracker.StartTrackedCoroutine(AnimateSymbolScaling(symbolInstances));
             }
         }
     }

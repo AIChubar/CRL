@@ -5,7 +5,7 @@ using UnityEngine;
 public class CoroutineTracker
 {
     private MonoBehaviour coroutineRunner;
-    private HashSet<Coroutine> activeCoroutines = new HashSet<Coroutine>();
+    private HashSet<IEnumerator> activeCoroutines = new HashSet<IEnumerator>();
 
     private System.Action onAllCoroutinesFinished;
 
@@ -18,22 +18,20 @@ public class CoroutineTracker
     public Coroutine StartTrackedCoroutine(IEnumerator coroutine)
     {
         Coroutine startedCoroutine = coroutineRunner.StartCoroutine(TrackCoroutine(coroutine));
-        activeCoroutines.Add(startedCoroutine);
+        activeCoroutines.Add(coroutine);
         return startedCoroutine;
     }   
 
-
     private IEnumerator TrackCoroutine(IEnumerator coroutine)
     {
-        Coroutine runningCoroutine = coroutineRunner.StartCoroutine(coroutine);
-        yield return runningCoroutine;  // Wait for the coroutine to finish
-        activeCoroutines.Remove(runningCoroutine);
+        yield return coroutineRunner.StartCoroutine(coroutine); 
+        activeCoroutines.Remove(coroutine);
+        
         if (activeCoroutines.Count == 0)
         {
             onAllCoroutinesFinished?.Invoke();
         }
     }
 
-
-    public bool IsRunning => activeCoroutines.Count  > 0;
+    public bool IsRunning => activeCoroutines.Count > 0;
 }
