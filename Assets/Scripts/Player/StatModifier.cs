@@ -18,12 +18,5 @@ public class StatModifier : ScriptableObject
     public int Order;
     public string Description;
 
-    public StatModifier(StatType affectedStat, float value, StatModType type, int order = 0, string description = "")
-    {
-        StatType = affectedStat;
-        Value = value;
-        Type = type;
-        Order = order;
-        Description = description;
-    }
+    
 }

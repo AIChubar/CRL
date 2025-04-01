@@ -1,7 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using System.ComponentModel;
-
 
 public enum StatType
 {
@@ -27,15 +25,20 @@ public class GameData : ScriptableObject
     public int currentLevel;
     public int gold;
 
-    [SerializeField]public CharacterStat wildLuck;
-    [SerializeField]public CharacterStat payoutMult;
-    [SerializeField]public CharacterStat payoutBonus;
-    
+    [SerializeField] public CharacterStat wildLuck;
+    [SerializeField] public CharacterStat payoutMult;
+    [SerializeField] public CharacterStat payoutBonus;
+
     public List<Item> playerItems;
-    
-    public void CopyFrom(GameData other)
+
+    [SerializeField] public SlotConfig slotConfig; // Assigned in Inspector
+    [SerializeField] public List<int> columnBuffs = new List<int>();
+
+    public void CopyFrom(GameData other, SlotConfig slotConfig)
     {
         if (other == null) return;
+        this.slotConfig = slotConfig;
+        EnsureColumnBuffsSize(); // Ensure correct size
 
         RTP = other.RTP;
         baseMoney = other.baseMoney;
@@ -54,5 +57,27 @@ public class GameData : ScriptableObject
 
         playerItems = new List<Item>(other.playerItems); // Assumes Item is a reference type
     }
-}
 
+    private void EnsureColumnBuffsSize()
+    {
+        if (slotConfig == null) return;
+
+        int requiredSize = slotConfig.columns;
+
+        if (columnBuffs.Count != requiredSize)
+        {
+            while (columnBuffs.Count < requiredSize)
+                columnBuffs.Add(0); // Default value
+
+            if (columnBuffs.Count > requiredSize)
+                columnBuffs.RemoveRange(requiredSize, columnBuffs.Count - requiredSize);
+        }
+    }
+
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        EnsureColumnBuffsSize();
+    }
+#endif
+}

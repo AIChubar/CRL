@@ -46,7 +46,7 @@ public class DataPersistanceManager : MonoBehaviour
     public void NewGame()
     {
         
-        gameData.CopyFrom(newGameData);
+        gameData.CopyFrom(newGameData, GameManager.instance.gameData.slotConfig);
         //dataPersistenceObjects = FindAllDataPersistenceObjects();
         /*foreach (IDataPersistence dataPersistenceObj in dataPersistenceObjects)
         {

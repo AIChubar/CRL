@@ -11,4 +11,5 @@ public class SlotConfig : ScriptableObject
     [Header("Grid Settings")]
     public int rows = 3;
     public int columns = 3;
+
 }

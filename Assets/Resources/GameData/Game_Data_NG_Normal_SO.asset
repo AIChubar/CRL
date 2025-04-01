@@ -29,3 +29,5 @@ MonoBehaviour:
   payoutBonus:
     BaseValue: 0
   playerItems: []
+  slotConfig: {fileID: 11400000, guid: 1d8dece67bba3e3449d70af789909cca, type: 2}
+  columnBuffs: 000000000100000000000000

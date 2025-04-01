@@ -29,6 +29,6 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         slotCalculator = new SlotCalculator();
-        slotMachine.Setup(slotCalculator, slotUIManager, gameData);
+        slotMachine.SetUp(slotCalculator, slotUIManager, gameData);
     }
 }

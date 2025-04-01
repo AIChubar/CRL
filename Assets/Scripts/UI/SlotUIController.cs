@@ -9,7 +9,7 @@ public class SlotUIController
     private SlotUIManager slotUIManager;
     private float currentWin = 0;
 
-    public void Setup(GameData gameData, SlotMachine slotMachine, SlotUIManager slotUIManager)
+    public void SetUp(GameData gameData, SlotMachine slotMachine, SlotUIManager slotUIManager)
     {
         this.gameData = gameData;
         this.slotMachine = slotMachine;

@@ -10,7 +10,7 @@ public class WinningPositionsDrawer
     private float scaleMultiplier = 1.5f;
 
 
-    public void Setup(Transform parent, CoroutineTracker coroutineTracker)
+    public void SetUp(Transform parent, CoroutineTracker coroutineTracker)
     {
         this.coroutineTracker = coroutineTracker;
         this.parent = parent;

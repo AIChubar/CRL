@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class SlotGrid
@@ -9,8 +10,11 @@ public class SlotGrid
     
     private GameObject[,] symbolInstances;
 
-    public SlotGrid(int rows, int columns, SymbolManager symbolManager)
+    private List<int> columnBuffs;
+
+    public SlotGrid(int rows, int columns, List<int> columnBuffs, SymbolManager symbolManager)
     {
+        this.columnBuffs = columnBuffs;
         this.rows = rows;
         this.columns = columns;
         this.symbolManager = symbolManager;

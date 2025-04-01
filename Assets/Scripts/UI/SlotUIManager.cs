@@ -32,7 +32,6 @@ public class SlotUIManager : MonoBehaviour
     private SlotMachine slotMachine;
     private float currentWin;
     
-    private SlotGrid slotGrid;
     
     public GameObject slotSymbolPrefab;     
     public GameObject slotPanel;
@@ -42,10 +41,12 @@ public class SlotUIManager : MonoBehaviour
     private WinningLineDrawer winningLineDrawer;
     private WinningPositionsDrawer winningPositionsDrawer;
     private CoroutineTracker coroutineTracker;
+    
+    private SlotGridManager slotGridCreator;
     void Start()
     {
         slotUIController = new SlotUIController();
-        slotUIController.Setup(gameData, slotMachine, this);
+        slotUIController.SetUp(gameData, slotMachine, this);
 
         SetFinishButton(false);
         UpdateButtons(SlotMode.ReadyForSpin);
@@ -65,17 +66,18 @@ public class SlotUIManager : MonoBehaviour
         finishRoundButton.onClick.AddListener(slotUIController.FinishRound);
     }
 
-    public void Setup(GameData gameData, SlotMachine slotMachine, SlotGrid slotGrid)
+    public void SetUp(GameData gameData, SlotMachine slotMachine, SlotGrid slotGrid)
     {
         this.gameData = gameData;
         this.slotMachine = slotMachine;
-        this.slotGrid = slotGrid;
         coroutineTracker = new CoroutineTracker(this, EnableButtons);
         winningLineDrawer = new WinningLineDrawer();
-        winningLineDrawer.Setup(this.transform, linePrefab, coroutineTracker);
+        winningLineDrawer.SetUp(this.transform, linePrefab, coroutineTracker);
 
         winningPositionsDrawer = new WinningPositionsDrawer();
-        winningPositionsDrawer.Setup(this.transform, coroutineTracker);
+        winningPositionsDrawer.SetUp(this.transform, coroutineTracker);
+        
+        slotGridCreator = new SlotGridManager(slotGrid, slotPanel, slotSymbolPrefab, slotUIController);
     }
 
     public void DrawWinningLines(List<(List<(int, int)> line, Symbol symbol)> winningLines, SlotGrid slotGrid)
@@ -117,19 +119,6 @@ public class SlotUIManager : MonoBehaviour
         increaseButton.interactable = (mode == SlotMode.ReadyForSpin);
         decreaseButton.interactable = (mode == SlotMode.ReadyForSpin);
     }
-    public void CreateSymbolUI(GameObject slotSymbolPrefab, GameObject slotPanel, int row, int col, float cellWidth, float cellHeight) //not efficient
-    {
-        GameObject newSymbol = Instantiate(slotSymbolPrefab, slotPanel.transform);
-        newSymbol.GetComponent<TMP_Text>().text = slotGrid.GetSymbol(row, col).ch;
-
-        RectTransform rectTransform = newSymbol.GetComponent<RectTransform>();
-        rectTransform.sizeDelta = new Vector2(cellWidth, cellHeight);
-        rectTransform.localScale = Vector3.one;
-
-        int r = row, c = col;
-        newSymbol.GetComponent<Button>().onClick.AddListener(() => slotUIController.ChangeSymbol(r, c));
-        slotGrid.RegisterSymbolInstance(row,col,newSymbol);
-    }
     
     
     public void SetFinishButton(bool interactable)
@@ -150,51 +139,14 @@ public class SlotUIManager : MonoBehaviour
         instructionText.text = result;
         UpdateUI();
     }
-    
-    
-    public void UpdateSlotUI() // not efficient
+
+    public void SetUpGrid()
     {
-        foreach (Transform child in slotPanel.transform)
-        {
-            Destroy(child.gameObject);
-        }
-
-        GridLayoutGroup grid = slotPanel.GetComponent<GridLayoutGroup>();
-        SetupGridLayout(slotGrid.GetRowColumnLength().rows, slotGrid.GetRowColumnLength().columns, grid);
-
-
-
-        for (int row = 0; row < slotGrid.GetRowColumnLength().rows; row++)
-        {
-            for (int col = 0; col < slotGrid.GetRowColumnLength().columns; col++)
-            {
-                CreateSymbolUI(slotSymbolPrefab, slotPanel, row, col, grid.cellSize.x, grid.cellSize.y);
-            }
-        }
+        slotGridCreator.SetUpSlotUI();
     }
     
-    private void SetupGridLayout(int rows, int columns, GridLayoutGroup grid)
-    {
-        if (grid == null)
-        {
-            grid = slotPanel.AddComponent<GridLayoutGroup>();
-        }
-
-        float panelWidth = 1200f;
-        float panelHeight = 750f;
-        float maxCellWidth = panelWidth / columns;
-        float maxCellHeight = panelHeight / rows;
-
-        grid.cellSize = new Vector2(maxCellWidth - maxCellWidth / 10f, maxCellHeight - maxCellHeight / 10f);
-        grid.spacing = new Vector2(maxCellWidth / 10f, maxCellHeight / 10f);
-        grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
-        grid.constraintCount = columns;
-        grid.childAlignment = TextAnchor.MiddleCenter;
-    }
     public void UpdateSingleSymbol(int row, int col, Symbol newSymbol)
     {
-        slotGrid.SetSymbol(row, col, newSymbol);
-        Transform symbolTransform = slotPanel.transform.GetChild(row * slotGrid.GetRowColumnLength().rows + col);
-        symbolTransform.GetComponent<TMP_Text>().text = newSymbol.ch;
+        slotGridCreator.UpdateSingleSymbol(row, col, newSymbol);
     }
 }

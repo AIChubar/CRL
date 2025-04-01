@@ -11,7 +11,7 @@ public class WinningLineDrawer
 
  
 
-    public void Setup(Transform parent, GameObject linePrefab, CoroutineTracker coroutineTracker)
+    public void SetUp(Transform parent, GameObject linePrefab, CoroutineTracker coroutineTracker)
     {
         this.coroutineTracker = coroutineTracker;
         this.parent = parent;
