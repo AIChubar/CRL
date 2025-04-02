@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [System.Serializable]
@@ -20,12 +21,12 @@ public class GameDataSerializable
     public float payoutBonus;
 
     public List<string> playerItemNames = new List<string>(); // Store item names
-    public SlotConfig slotConfig; // Assigned in Inspector
-    public List<int> columnBuffs = new List<int>();
+    public string slotConfigName;
+
+    public List<int> columnBuffs = new List<int>();// Assigned in Inspector
     public GameDataSerializable(GameData data)
     {
-        slotConfig = data.slotConfig;
-        columnBuffs = data.columnBuffs;
+        slotConfigName = data.slotConfig.name;
         RTP = data.RTP;
         baseMoney = data.baseMoney;
         money = data.money;
@@ -37,10 +38,13 @@ public class GameDataSerializable
         currentLevel = data.currentLevel;
         gold = data.gold;
         
-        wildLuck = data.wildLuck.Value;
-        payoutMult = data.payoutMult.Value;
-        payoutBonus = data.payoutBonus.Value;
-
+        wildLuck = data.wildLuck.BaseValue;
+        payoutMult = data.payoutMult.BaseValue;
+        payoutBonus = data.payoutBonus.BaseValue;
+        /*foreach (var column in data.columnBuffs)
+        {
+            columnBuffs.Add((int)column.BaseValue); // Save only the item name
+        }*/
         foreach (var item in data.playerItems)
         {
             playerItemNames.Add(item.name); // Save only the item name
@@ -63,6 +67,10 @@ public class GameDataSerializable
         data.wildLuck = new CharacterStat(wildLuck);
         data.payoutMult = new CharacterStat(payoutMult);
         data.payoutBonus = new CharacterStat(payoutBonus);
+        /*for (int i = 0; i < columnBuffs.Count; i++)
+        {
+            data.columnBuffs.Add(new CharacterStat(columnBuffs[i])); 
+        }*/
         data.playerItems = new List<Item>();
         data.playerItems.Clear();
         foreach (var itemName in playerItemNames)
@@ -77,5 +85,16 @@ public class GameDataSerializable
                 Debug.LogWarning($"Item '{itemName}' not found in Resources folder!");
             }
         }
+        SlotConfig slotConfig = Resources.Load<SlotConfig>($"Slots/{slotConfigName}");
+        if (slotConfig != null)
+            data.slotConfig = slotConfig;
+        else
+        {
+            Debug.LogWarning($"Slot '{slotConfigName}' not found in Resources folder!");
+        }
+        
+        data.ApplyAllModifiers();
     }
+    
+    
 }

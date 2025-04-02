@@ -30,4 +30,8 @@ MonoBehaviour:
     BaseValue: 0
   playerItems: []
   slotConfig: {fileID: 11400000, guid: 26d7c73c6e18bab43b714d0a788bdbd9, type: 2}
-  columnBuffs: 00000000010000000000000001000000
+  columnBuffs:
+  - BaseValue: 0
+  - BaseValue: 0
+  - BaseValue: 0
+  - BaseValue: 0

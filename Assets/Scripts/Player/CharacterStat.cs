@@ -26,12 +26,19 @@ public class CharacterStat
         get {
             if(isDirty || lastBaseValue != BaseValue) {
                 lastBaseValue = BaseValue;
+                _value = CalculateFinalValue(); // This line is missing in your code
                 isDirty = false;
             }
             return _value;
         }
     }
-    
+    public virtual int ValueInt
+    {
+        get
+        {
+            return (int)Math.Ceiling(Value); // Round up to the nearest integer
+        }
+    }
     public CharacterStat()
     {
         statModifiers = new List<StatModifier>();
@@ -96,25 +103,24 @@ public class CharacterStat
     {
         float finalValue = BaseValue;
         float sumPercentAdd = 0;
-        
-        for (int i = 0; i < statModifiers.Count; i++)
+
+        foreach (var mod in statModifiers)
         {
-            StatModifier mod = statModifiers[i];
- 
-            if (mod.Type == StatModType.Flat)
+
+            if (mod.StatModType == StatModType.Flat)
             {
                 finalValue += mod.Value;
             }
-            else if (mod.Type == StatModType.PercentAdd)
+            else if (mod.StatModType == StatModType.PercentAdd)
             {
                 sumPercentAdd += mod.Value;
-                if (i + 1 >= statModifiers.Count || statModifiers[i + 1].Type != StatModType.PercentAdd)
+                if (statModifiers.IndexOf(mod) + 1 >= statModifiers.Count || statModifiers[statModifiers.IndexOf(mod) + 1].StatModType != StatModType.PercentAdd)
                 {
                     finalValue *= 1 + sumPercentAdd;
                     sumPercentAdd = 0;
                 }
             }
-            else if (mod.Type == StatModType.PercentMult)
+            else if (mod.StatModType == StatModType.PercentMult)
             {
                 finalValue *= 1 + mod.Value;
             }

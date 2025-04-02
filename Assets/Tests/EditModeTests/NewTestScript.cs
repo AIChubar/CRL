@@ -53,7 +53,7 @@ public class NewTestScript
     {
         int rows = testCase.grid.Count;
         int columns = testCase.grid[0].rowValues.Count;
-        slotGrid = new SlotGrid(rows, columns, new List<int>(columns) , symbolManager);
+        slotGrid = new SlotGrid(rows, columns, new List<CharacterStat>(columns) , symbolManager);
         int[, ]  grid = new int[rows, columns];
         
         //slotGrid.SetGridTest(testCase);

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-
 [System.Serializable]
 [CreateAssetMenu(fileName = "Item", menuName = "Item")]
 public class Item : ScriptableObject
@@ -9,10 +8,8 @@ public class Item : ScriptableObject
     public string itemName;
     public int price;
     public List<StatModifier> statModifiers;
-    public ItemRarity rarity; // New rarity field
+    public ItemRarity rarity;
     
-    public List<ItemStat> itemStats = new List<ItemStat>();
-
     public enum ItemRarity
     {
         Common,
@@ -34,11 +31,13 @@ public class Item : ScriptableObject
             _ => 1f
         };
     }
-}
 
-public class ItemStat
+  
+}
+    
+/*public class ItemStat
 {
     public StatType statType;
     public StatModType statModType;
     public float value;
-}
+}*/

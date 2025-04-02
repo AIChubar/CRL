@@ -68,37 +68,7 @@ public class ItemButton : MonoBehaviour
         image.color = new Color32(245, 124, 124, 255);
     }
     
-    public void ApplyModifiers(List<StatModifier> statModifiers)
-    {
-        foreach (StatModifier mod in statModifiers)
-        {
-            CharacterStat targetStat = mod.StatType switch
-            {
-                StatType.PayoutBonus  => GameManager.instance.gameData.payoutBonus,
-                StatType.PayoutMult => GameManager.instance.gameData.payoutMult,
-                StatType.WildLuck   => GameManager.instance.gameData.wildLuck,
-                _                => null // Default fallback
-            };
-            if (targetStat != null)
-                targetStat.AddModifier(mod);
-        }
-    }
     
-    public void RemoveModifiers(List<StatModifier> statModifiers)
-    {
-        foreach (StatModifier mod in statModifiers)
-        {
-            CharacterStat targetStat = mod.StatType switch
-            {
-                StatType.PayoutBonus  => GameManager.instance.gameData.payoutBonus,
-                StatType.PayoutMult => GameManager.instance.gameData.payoutMult,
-                StatType.WildLuck   => GameManager.instance.gameData.wildLuck,
-                _                => null // Default fallback
-            };
-            if (targetStat != null)
-                targetStat.RemoveModifier(mod);
-        }
-    }
 }
 
 

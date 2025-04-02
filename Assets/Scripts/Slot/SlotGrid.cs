@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class SlotGrid
@@ -9,17 +10,17 @@ public class SlotGrid
     private SymbolManager symbolManager;
     
     private GameObject[,] symbolInstances;
-    private List<int> columnBuffs;
+    private List<CharacterStat> columnBuffs;
     private int maxRows;
 
-    public SlotGrid(int rows, int columns, List<int> columnBuffs, SymbolManager symbolManager)
+    public SlotGrid(int rows, int columns, List<CharacterStat> columnBuffs, SymbolManager symbolManager)
     {
         this.columnBuffs = columnBuffs;
         this.rows = rows;
         this.columns = columns;
         this.symbolManager = symbolManager;
 
-        int maxBuff = columnBuffs.Count > 0 ? Mathf.Max(columnBuffs.ToArray()) : 0;
+        int maxBuff = columnBuffs.Count > 0 ? Mathf.Max(columnBuffs.Select(buff => buff.ValueInt).ToArray()) : 0;
         maxRows = rows + maxBuff; // Define grid height based on max buff
 
         grid = new Symbol[maxRows, columns];
@@ -32,7 +33,7 @@ public class SlotGrid
     {
         for (int c = 0; c < columns; c++)
         {
-            int activeRows = rows + columnBuffs[c]; // How many rows are valid in this column
+            int activeRows = rows + columnBuffs[c].ValueInt; // How many rows are valid in this column
 
             for (int r = 0; r < activeRows; r++)
             {
@@ -75,7 +76,7 @@ public class SlotGrid
 
     public bool IsValidPosition(int row, int column)
     {
-        return column >= 0 && column < columns && row >= 0 && row < (rows + columnBuffs[column]);
+        return column >= 0 && column < columns && row >= 0 && row < (rows + columnBuffs[column].ValueInt);
     }
 
 }

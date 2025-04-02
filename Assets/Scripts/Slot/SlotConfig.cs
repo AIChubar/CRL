@@ -11,5 +11,28 @@ public class SlotConfig : ScriptableObject
     [Header("Grid Settings")]
     public int rows = 3;
     public int columns = 3;
+    
+    [SerializeField] public List<int> columnBuffs = new List<int>();
 
+    private void EnsureColumnBuffsSize()
+    {
+
+        int requiredSize = columns;
+
+        if (columnBuffs.Count != requiredSize)
+        {
+            while (columnBuffs.Count < requiredSize)
+                columnBuffs.Add(0); // Default value
+
+            if (columnBuffs.Count > requiredSize)
+                columnBuffs.RemoveRange(requiredSize, columnBuffs.Count - requiredSize);
+        }
+    }
+
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        EnsureColumnBuffsSize();
+    }
+#endif
 }

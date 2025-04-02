@@ -1,12 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum StatType
-{
-    WildLuck, 
-    PayoutMult, 
-    PayoutBonus
-}
 
 /// <summary>
 /// Class containing all data that needs to be saved.
@@ -32,12 +26,12 @@ public class GameData : ScriptableObject
     public List<Item> playerItems;
 
     [SerializeField] public SlotConfig slotConfig; // Assigned in Inspector
-    [SerializeField] public List<int> columnBuffs = new List<int>();
+    
+    [HideInInspector]public List<CharacterStat> columnBuffs = new List<CharacterStat>();
 
     public void CopyFrom(GameData other)
     {
         if (other == null) return;
-        EnsureColumnBuffsSize(); // Ensure correct size
 
         RTP = other.RTP;
         baseMoney = other.baseMoney;
@@ -50,34 +44,66 @@ public class GameData : ScriptableObject
         currentLevel = other.currentLevel;
         gold = other.gold;
         slotConfig = other.slotConfig;
-        columnBuffs = other.columnBuffs;
         wildLuck = new CharacterStat(other.wildLuck.Value);
         payoutMult = new CharacterStat(other.payoutMult.Value);
         payoutBonus = new CharacterStat(other.payoutBonus.Value);
-
-        playerItems = new List<Item>(other.playerItems); // Assumes Item is a reference type
+        playerItems = new List<Item>(other.playerItems);
+        columnBuffs.Clear();
+        foreach (int val in slotConfig.columnBuffs)
+            columnBuffs.Add(new CharacterStat(val));
+        RemoveAllModifiers();
+        ApplyAllModifiers();
     }
 
-    private void EnsureColumnBuffsSize()
+    public void ApplyAllModifiers()
     {
-        if (slotConfig == null) return;
-
-        int requiredSize = slotConfig.columns;
-
-        if (columnBuffs.Count != requiredSize)
+        foreach (var item in playerItems)
         {
-            while (columnBuffs.Count < requiredSize)
-                columnBuffs.Add(0); // Default value
-
-            if (columnBuffs.Count > requiredSize)
-                columnBuffs.RemoveRange(requiredSize, columnBuffs.Count - requiredSize);
+            foreach (var mod in item.statModifiers)
+            {
+                if (mod.IsColumnSpecific)
+                {
+                    columnBuffs[mod.ColumnIndex].AddModifier(mod);
+                }
+                else
+                {
+                    CharacterStat targetStat = mod.StatType switch
+                    {
+                        StatType.PayoutBonus  => GameManager.instance.gameData.payoutBonus,
+                        StatType.PayoutMult => GameManager.instance.gameData.payoutMult,
+                        StatType.WildLuck   => GameManager.instance.gameData.wildLuck,
+                        _ => null
+                    };
+                    if (targetStat != null)
+                        targetStat.AddModifier(mod);
+                }
+            }
         }
     }
-
-#if UNITY_EDITOR
-    private void OnValidate()
+    public void RemoveAllModifiers()
     {
-        EnsureColumnBuffsSize();
+        foreach (var item in playerItems)
+        {
+            foreach (var mod in item.statModifiers)
+            {
+                if (mod.IsColumnSpecific)
+                {
+                    columnBuffs[mod.ColumnIndex].RemoveModifier(mod);
+                }
+                else
+                {
+                    CharacterStat targetStat = mod.StatType switch
+                    {
+                        StatType.PayoutBonus  => GameManager.instance.gameData.payoutBonus,
+                        StatType.PayoutMult => GameManager.instance.gameData.payoutMult,
+                        StatType.WildLuck   => GameManager.instance.gameData.wildLuck,
+                        _ => null
+                    };
+                    if (targetStat != null)
+                        targetStat.RemoveModifier(mod);
+                }
+            }
+        }
     }
-#endif
+    
 }

@@ -30,7 +30,7 @@ public class FileDataHandler
             }
             catch (Exception e)
             {
-                Debug.LogError("Error occurred when trying to load data from file: " + fullPath + "\n" + e);
+                Debug.Log("Error occurred when trying to load data from file: " + fullPath + "\n" + e);
             }
         }
     }

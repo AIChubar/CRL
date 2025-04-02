@@ -21,7 +21,7 @@ public class SlotGridManager
         this.slotUIController = slotUIController;
     }
 
-    public void SetUpSlotUI(List<int> columnBuffs)
+    public void SetUpSlotUI(List<CharacterStat> columnBuffs)
     {
         ClearPreviousUI();
 
@@ -69,13 +69,13 @@ public class SlotGridManager
         }
     }
 
-    private void PopulateColumns(List<int> columnBuffs)
+    private void PopulateColumns(List<CharacterStat> columnBuffs)
     {
         int columnCount = slotGrid.GetRowColumnLength().columns;
 
         for (int col = 0; col < columnCount; col++)
         {
-            int buff = columnBuffs.ElementAtOrDefault(col); // Prevent out-of-range errors
+            int buff = (int)columnBuffs.ElementAtOrDefault(col)!.ValueInt; // Prevent out-of-range errors
             int actualRows = slotGrid.GetRowColumnLength().rows + buff;
 
             for (int row = 0; row < actualRows; row++)

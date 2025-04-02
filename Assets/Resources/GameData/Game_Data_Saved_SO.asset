@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   RTP: 0.95
   baseMoney: 2000
-  money: 1990
-  spinsLeft: 9
-  wagerLeft: 1990
+  money: 2000
+  spinsLeft: 10
+  wagerLeft: 2000
   targetMoney: 1000
   betAmount: 10
   changePrice: 5
@@ -30,4 +30,8 @@ MonoBehaviour:
     BaseValue: 0
   playerItems: []
   slotConfig: {fileID: 11400000, guid: 26d7c73c6e18bab43b714d0a788bdbd9, type: 2}
-  columnBuffs: 00000000010000000000000001000000
+  columnBuffs:
+  - BaseValue: 2
+  - BaseValue: 0
+  - BaseValue: 1
+  - BaseValue: 0
