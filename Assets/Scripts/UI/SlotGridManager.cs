@@ -1,79 +1,112 @@
+using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class SlotGridManager
 {
-    private SlotGrid slotGrid;
     private GameObject slotPanel;
     private GameObject slotSymbolPrefab;
+    private SlotGrid slotGrid;
     private SlotUIController slotUIController;
-    public SlotGridManager(SlotGrid slotGrid, GameObject slotPanel, GameObject slotSymbolPrefab, SlotUIController slotUIController)
+
+    private List<GameObject> columnContainers = new List<GameObject>();
+
+    public SlotGridManager(GameObject slotPanel, GameObject slotSymbolPrefab, SlotGrid slotGrid, SlotUIController slotUIController)
     {
-        this.slotGrid = slotGrid;
         this.slotPanel = slotPanel;
         this.slotSymbolPrefab = slotSymbolPrefab;
+        this.slotGrid = slotGrid;
         this.slotUIController = slotUIController;
     }
-    
-    public void SetUpSlotUI() // not efficient
+
+    public void SetUpSlotUI(List<int> columnBuffs)
+    {
+        ClearPreviousUI();
+
+        // Ensure the parent panel has a HorizontalLayoutGroup
+        HorizontalLayoutGroup hlg = slotPanel.GetComponent<HorizontalLayoutGroup>();
+        if (hlg == null)
+        {
+            hlg = slotPanel.AddComponent<HorizontalLayoutGroup>();
+            hlg.childAlignment = TextAnchor.MiddleCenter;
+            hlg.spacing = 20; // Adjust spacing between columns
+            hlg.childControlWidth = true;
+            hlg.childForceExpandWidth = false;
+        }
+
+        CreateColumnContainers();
+        PopulateColumns(columnBuffs);
+    }
+
+
+    private void ClearPreviousUI()
     {
         foreach (Transform child in slotPanel.transform)
         {
-            Object.Destroy(child.gameObject);
+            GameObject.Destroy(child.gameObject);
         }
+        columnContainers.Clear();
+    }
 
-        GridLayoutGroup grid = slotPanel.GetComponent<GridLayoutGroup>();
-        SetUpGridLayout(slotGrid.GetRowColumnLength().rows, slotGrid.GetRowColumnLength().columns, grid);
+    private void CreateColumnContainers()
+    {
+        int columnCount = slotGrid.GetRowColumnLength().columns;
 
-
-
-        for (int row = 0; row < slotGrid.GetRowColumnLength().rows; row++)
+        for (int col = 0; col < columnCount; col++)
         {
-            for (int col = 0; col < slotGrid.GetRowColumnLength().columns; col++)
+            GameObject columnContainer = new GameObject("Column_" + col);
+            columnContainer.transform.SetParent(slotPanel.transform, false);
+
+            VerticalLayoutGroup vlg = columnContainer.AddComponent<VerticalLayoutGroup>();
+            vlg.childAlignment = TextAnchor.MiddleCenter;
+            vlg.spacing = 10;
+            vlg.childControlHeight = true;
+            vlg.childForceExpandHeight = false;
+
+            columnContainers.Add(columnContainer);
+        }
+    }
+
+    private void PopulateColumns(List<int> columnBuffs)
+    {
+        int columnCount = slotGrid.GetRowColumnLength().columns;
+
+        for (int col = 0; col < columnCount; col++)
+        {
+            int buff = columnBuffs.ElementAtOrDefault(col); // Prevent out-of-range errors
+            int actualRows = slotGrid.GetRowColumnLength().rows + buff;
+
+            for (int row = 0; row < actualRows; row++)
             {
-                CreateSymbolUI(slotSymbolPrefab, slotPanel, row, col, grid.cellSize.x, grid.cellSize.y);
+                if (slotGrid.IsValidPosition(row, col))
+                {
+                    CreateSymbol(row, col);
+                }
             }
         }
     }
-    
-    private void SetUpGridLayout(int rows, int columns, GridLayoutGroup grid)
-    {
-        if (grid == null)
-        {
-            grid = slotPanel.AddComponent<GridLayoutGroup>();
-        }
-        float panelWidth = 1200f;
-        float panelHeight = 750f;
-        float maxCellWidth = panelWidth / columns;
-        float maxCellHeight = panelHeight / rows;
 
-        grid.cellSize = new Vector2(maxCellWidth - maxCellWidth / 10f, maxCellHeight - maxCellHeight / 10f);
-        grid.spacing = new Vector2(maxCellWidth / 10f, maxCellHeight / 10f);
-        grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
-        grid.constraintCount = columns;
-        grid.childAlignment = TextAnchor.MiddleCenter;
-    }
-    
-    public void CreateSymbolUI(GameObject slotSymbolPrefab, GameObject slotPanel, int row, int col, float cellWidth, float cellHeight) //not efficient
+    private void CreateSymbol(int row, int col)
     {
-        GameObject newSymbol = Object.Instantiate(slotSymbolPrefab, slotPanel.transform);
+        GameObject newSymbol = GameObject.Instantiate(slotSymbolPrefab, columnContainers[col].transform);
         newSymbol.GetComponent<TMP_Text>().text = slotGrid.GetSymbol(row, col).ch;
+        newSymbol.GetComponent<Button>().onClick.AddListener(() => slotUIController.ChangeSymbol(row, col));
 
-        RectTransform rectTransform = newSymbol.GetComponent<RectTransform>();
-        rectTransform.sizeDelta = new Vector2(cellWidth, cellHeight);
-        rectTransform.localScale = Vector3.one;
-
-        int r = row, c = col;
-        newSymbol.GetComponent<Button>().onClick.AddListener(() => slotUIController.ChangeSymbol(r, c));
-        slotGrid.RegisterSymbolInstance(row,col,newSymbol);
+        slotGrid.RegisterSymbolInstance(row, col, newSymbol);
     }
-    
+
     public void UpdateSingleSymbol(int row, int col, Symbol newSymbol)
     {
-        slotGrid.SetSymbol(row, col, newSymbol);
-        Transform symbolTransform = slotPanel.transform.GetChild(row * slotGrid.GetRowColumnLength().rows + col);
-        symbolTransform.GetComponent<TMP_Text>().text = newSymbol.ch;
-    }
+        if (!slotGrid.IsValidPosition(row, col)) return;
 
+        slotGrid.SetSymbol(row, col, newSymbol);
+
+        GameObject symbolInstance = slotGrid.GetSymbolInstance(row, col);
+        if (symbolInstance != null)
+        {
+            symbolInstance.GetComponent<TMP_Text>().text = newSymbol.ch;
+        }
+    }
 }

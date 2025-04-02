@@ -34,10 +34,9 @@ public class GameData : ScriptableObject
     [SerializeField] public SlotConfig slotConfig; // Assigned in Inspector
     [SerializeField] public List<int> columnBuffs = new List<int>();
 
-    public void CopyFrom(GameData other, SlotConfig slotConfig)
+    public void CopyFrom(GameData other)
     {
         if (other == null) return;
-        this.slotConfig = slotConfig;
         EnsureColumnBuffsSize(); // Ensure correct size
 
         RTP = other.RTP;
@@ -50,7 +49,8 @@ public class GameData : ScriptableObject
         changePrice = other.changePrice;
         currentLevel = other.currentLevel;
         gold = other.gold;
-
+        slotConfig = other.slotConfig;
+        columnBuffs = other.columnBuffs;
         wildLuck = new CharacterStat(other.wildLuck.Value);
         payoutMult = new CharacterStat(other.payoutMult.Value);
         payoutBonus = new CharacterStat(other.payoutBonus.Value);

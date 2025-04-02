@@ -42,9 +42,23 @@ public class SlotUIManager : MonoBehaviour
     private WinningPositionsDrawer winningPositionsDrawer;
     private CoroutineTracker coroutineTracker;
     
-    private SlotGridManager slotGridCreator;
+    private SlotGridManager slotGridManager;
     void Start()
     {
+        
+    }
+
+    public void SetUp(GameData gameData, SlotMachine slotMachine, SlotGrid slotGrid)
+    {
+        this.gameData = gameData;
+        this.slotMachine = slotMachine;
+        coroutineTracker = new CoroutineTracker(this, EnableButtons);
+        winningLineDrawer = new WinningLineDrawer();
+        winningLineDrawer.SetUp(this.transform, linePrefab, coroutineTracker);
+
+        winningPositionsDrawer = new WinningPositionsDrawer();
+        winningPositionsDrawer.SetUp(this.transform, coroutineTracker);
+        
         slotUIController = new SlotUIController();
         slotUIController.SetUp(gameData, slotMachine, this);
 
@@ -64,20 +78,8 @@ public class SlotUIManager : MonoBehaviour
         pauseToMenuButton.onClick.AddListener(slotUIController.ToMenu);
         toShopButton.onClick.AddListener(slotUIController.ToShop);
         finishRoundButton.onClick.AddListener(slotUIController.FinishRound);
-    }
-
-    public void SetUp(GameData gameData, SlotMachine slotMachine, SlotGrid slotGrid)
-    {
-        this.gameData = gameData;
-        this.slotMachine = slotMachine;
-        coroutineTracker = new CoroutineTracker(this, EnableButtons);
-        winningLineDrawer = new WinningLineDrawer();
-        winningLineDrawer.SetUp(this.transform, linePrefab, coroutineTracker);
-
-        winningPositionsDrawer = new WinningPositionsDrawer();
-        winningPositionsDrawer.SetUp(this.transform, coroutineTracker);
         
-        slotGridCreator = new SlotGridManager(slotGrid, slotPanel, slotSymbolPrefab, slotUIController);
+        slotGridManager = new SlotGridManager(slotPanel, slotSymbolPrefab,slotGrid , slotUIController);
     }
 
     public void DrawWinningLines(List<(List<(int, int)> line, Symbol symbol)> winningLines, SlotGrid slotGrid)
@@ -142,11 +144,11 @@ public class SlotUIManager : MonoBehaviour
 
     public void SetUpGrid()
     {
-        slotGridCreator.SetUpSlotUI();
+        slotGridManager.SetUpSlotUI(gameData.columnBuffs);
     }
     
     public void UpdateSingleSymbol(int row, int col, Symbol newSymbol)
     {
-        slotGridCreator.UpdateSingleSymbol(row, col, newSymbol);
+        slotGridManager.UpdateSingleSymbol(row, col, newSymbol);
     }
 }

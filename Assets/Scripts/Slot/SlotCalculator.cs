@@ -10,90 +10,98 @@ public class SlotCalculator
     private Dictionary<Symbol, SymbolPositions> playingPositions = new Dictionary<Symbol, SymbolPositions>();
     
     public Dictionary<Symbol, SymbolPositions> currentPositions = new Dictionary<Symbol, SymbolPositions>();
-    public int CalculateWin(SlotGrid slotGrid, int betAmount, SlotConfig slotConfig, bool isRecalculating = false)
-{
-    int totalWin = 0;
-    winningLines = new List<(List<(int, int)>, Symbol)>();
-    playingPositions = new Dictionary<Symbol, SymbolPositions>();
-
-    for (int startRow = 0; startRow < slotConfig.rows; startRow++)
+    public int CalculateWin(SlotGrid slotGrid, int betAmount, bool isRecalculating = false)
     {
-        List<List<(int, int)>> possibleWins = new List<List<(int, int)>> { new List<(int, int)> { (startRow, 0) } };
+        int totalWin = 0;
+        winningLines = new List<(List<(int, int)>, Symbol)>();
+        playingPositions = new Dictionary<Symbol, SymbolPositions>();
 
-        for (int col = 1; col < slotConfig.columns; col++)
+        for (int startRow = 0; startRow < slotGrid.GetRowColumnLength().rows; startRow++)
         {
-            List<List<(int, int)>> newPossibleWins = new List<List<(int, int)>>();
-
-            for (int row = 0; row < slotConfig.rows; row++)
+            if (!slotGrid.IsValidPosition(startRow, 0))
             {
-                Symbol currentSymbol = slotGrid.GetSymbol(row, col);
+                continue;
+            }
+            List<List<(int, int)>> possibleWins = new List<List<(int, int)>> { new List<(int, int)> { (startRow, 0) } };
+            
+            for (int col = 1; col < slotGrid.GetRowColumnLength().columns; col++)
+            {
+                List<List<(int, int)>> newPossibleWins = new List<List<(int, int)>>();
 
-                foreach (var winPath in possibleWins)
+                for (int row = 0; row < slotGrid.GetRowColumnLength().rows; row++)
                 {
-                    Symbol? assignedSymbol = DetermineAssignedSymbol(winPath, slotGrid);
-
-                    if (currentSymbol == assignedSymbol || currentSymbol.isWild || assignedSymbol == null)
+                    if (!slotGrid.IsValidPosition(row, col))
                     {
-                        List<(int, int)> newWinPath = new List<(int, int)>(winPath) { (row, col) };
-                        newPossibleWins.Add(newWinPath);
+                        continue;
+                    }
+                    Symbol currentSymbol = slotGrid.GetSymbol(row, col);
+
+                    foreach (var winPath in possibleWins)
+                    {
+                        Symbol? assignedSymbol = DetermineAssignedSymbol(winPath, slotGrid);
+
+                        if (currentSymbol == assignedSymbol || currentSymbol.isWild || assignedSymbol == null)
+                        {
+                            List<(int, int)> newWinPath = new List<(int, int)>(winPath) { (row, col) };
+                            newPossibleWins.Add(newWinPath);
+                        }
+                    }
+                }
+
+                if (newPossibleWins.Count == 0)
+                {
+                    possibleWins.Clear();
+                    break;
+                }
+
+                possibleWins = newPossibleWins;
+            }
+
+            foreach (var winPath in possibleWins)
+            {
+                Symbol winningSymbol = DetermineAssignedSymbol(winPath, slotGrid) ?? slotGrid.GetSymbol(winPath[0].Item1, winPath[0].Item2);
+                winningLines.Add((winPath, winningSymbol));
+
+                if (!playingPositions.ContainsKey(winningSymbol))
+                {
+                    playingPositions[winningSymbol] = new SymbolPositions(new List<(int, int)>());
+                }
+
+                foreach (var pos in winPath)
+                {
+                    if (!playingPositions[winningSymbol].Positions.Contains(pos))
+                    {
+                        playingPositions[winningSymbol].Positions.Add(pos);
+                    }
+                }
+
+                totalWin += betAmount; // Adjust based on symbol payouts
+            }
+        }
+
+        // Now compare with previous positions AFTER creating playingPositions
+        if (isRecalculating)
+        {
+            foreach (var symbol in playingPositions.Keys)
+            {
+                if (currentPositions.TryGetValue(symbol, out var prev))
+                {
+                    // Reset WasShown to false if the new count of positions is greater
+                    if (playingPositions[symbol].Positions.Count > prev.Positions.Count)
+                    {
+                        playingPositions[symbol].WasShown = false;
+                    }
+                    else
+                    {
+                        playingPositions[symbol].WasShown = prev.WasShown;
                     }
                 }
             }
-
-            if (newPossibleWins.Count == 0)
-            {
-                possibleWins.Clear();
-                break;
-            }
-
-            possibleWins = newPossibleWins;
         }
 
-        foreach (var winPath in possibleWins)
-        {
-            Symbol winningSymbol = DetermineAssignedSymbol(winPath, slotGrid) ?? slotGrid.GetSymbol(winPath[0].Item1, winPath[0].Item2);
-            winningLines.Add((winPath, winningSymbol));
-
-            if (!playingPositions.ContainsKey(winningSymbol))
-            {
-                playingPositions[winningSymbol] = new SymbolPositions(new List<(int, int)>());
-            }
-
-            foreach (var pos in winPath)
-            {
-                if (!playingPositions[winningSymbol].Positions.Contains(pos))
-                {
-                    playingPositions[winningSymbol].Positions.Add(pos);
-                }
-            }
-
-            totalWin += betAmount; // Adjust based on symbol payouts
-        }
+        currentPositions = playingPositions;
+        return totalWin;
     }
-
-    // Now compare with previous positions AFTER creating playingPositions
-    if (isRecalculating)
-    {
-        foreach (var symbol in playingPositions.Keys)
-        {
-            if (currentPositions.TryGetValue(symbol, out var prev))
-            {
-                // Reset WasShown to false if the new count of positions is greater
-                if (playingPositions[symbol].Positions.Count > prev.Positions.Count)
-                {
-                    playingPositions[symbol].WasShown = false;
-                }
-                else
-                {
-                    playingPositions[symbol].WasShown = prev.WasShown;
-                }
-            }
-        }
-    }
-
-    currentPositions = playingPositions;
-    return totalWin;
-}
 
 
 

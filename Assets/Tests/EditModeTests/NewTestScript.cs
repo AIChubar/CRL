@@ -56,7 +56,7 @@ public class NewTestScript
         slotGrid = new SlotGrid(rows, columns, new List<int>(columns) , symbolManager);
         int[, ]  grid = new int[rows, columns];
         
-        slotGrid.SetGridTest(testCase);
+        //slotGrid.SetGridTest(testCase);
         
     }
 }

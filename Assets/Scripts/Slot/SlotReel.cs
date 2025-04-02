@@ -55,10 +55,9 @@ public class SlotReel
         }
     }
 
-    public List<Symbol> GenerateSymbols()
+    public List<Symbol> GenerateSymbols(int numberOfSymbols)
     {
         List<Symbol> symbols = new List<Symbol>();
-        int numberOfSymbols = reelSymbols.Count;
 
         for (int i = 0; i < numberOfSymbols; i++)
         {

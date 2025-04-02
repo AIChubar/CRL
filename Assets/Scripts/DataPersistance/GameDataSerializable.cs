@@ -20,9 +20,12 @@ public class GameDataSerializable
     public float payoutBonus;
 
     public List<string> playerItemNames = new List<string>(); // Store item names
-
+    public SlotConfig slotConfig; // Assigned in Inspector
+    public List<int> columnBuffs = new List<int>();
     public GameDataSerializable(GameData data)
     {
+        slotConfig = data.slotConfig;
+        columnBuffs = data.columnBuffs;
         RTP = data.RTP;
         baseMoney = data.baseMoney;
         money = data.money;

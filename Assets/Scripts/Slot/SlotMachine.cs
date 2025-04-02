@@ -54,12 +54,12 @@ public class SlotMachine : MonoBehaviour
     public int SpinSlot(int betAmount, bool simulateOnly = false)
     {
         currentBetAmount = betAmount;
-        for (int col = 0; col < gameData.slotConfig.columns; col++)
+        for (int col = 0; col < slotGrid.GetRowColumnLength().columns; col++)
         {
-            List<Symbol> reelSymbols = reels[col].GenerateSymbols();
-            for (int row = 0; row < gameData.slotConfig.rows; row++)
+            List<Symbol> reelSymbols = reels[col].GenerateSymbols(slotGrid.GetRowColumnLength().rows * 10);
+            for (int row = 0; row < slotGrid.GetRowColumnLength().rows; row++)
             {
-                slotGrid.SetSymbol(row, col, reelSymbols[row]);
+                slotGrid.SetSymbol(row, col, reelSymbols[row + slotGrid.GetRowColumnLength().rows*8]);
             }
         }
         
@@ -69,7 +69,7 @@ public class SlotMachine : MonoBehaviour
         }
         
         
-        lastWinAmount = slotCalculator.CalculateWin(slotGrid, currentBetAmount, gameData.slotConfig);
+        lastWinAmount = slotCalculator.CalculateWin(slotGrid, currentBetAmount);
 
         if (!simulateOnly)
         {
@@ -93,7 +93,7 @@ public class SlotMachine : MonoBehaviour
         slotGrid.SetSymbol(row, col, possibleSymbols[Random.Range(0, possibleSymbols.Count)]);
 
         slotUIManager.UpdateSingleSymbol(row, col, slotGrid.GetSymbol(row, col));
-        lastWinAmount = slotCalculator.CalculateWin(slotGrid, currentBetAmount, gameData.slotConfig, true);
+        lastWinAmount = slotCalculator.CalculateWin(slotGrid, currentBetAmount,  true);
 
         slotUIManager.DrawWinningLines(slotCalculator.winningLines, slotGrid);
         slotUIManager.AnimatePositions(slotCalculator.currentPositions, slotGrid);
