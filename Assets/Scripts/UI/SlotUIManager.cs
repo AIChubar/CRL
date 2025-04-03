@@ -43,6 +43,10 @@ public class SlotUIManager : MonoBehaviour
     private CoroutineTracker coroutineTracker;
     
     private SlotGridManager slotGridManager;
+    
+    public GameObject consumableButtonPrefab;
+    public Transform consumableButtonContainer; // Assign UI Panel for items
+
     void Start()
     {
         
@@ -80,6 +84,7 @@ public class SlotUIManager : MonoBehaviour
         finishRoundButton.onClick.AddListener(slotUIController.FinishRound);
         
         slotGridManager = new SlotGridManager(slotPanel, slotSymbolPrefab,slotGrid , slotUIController);
+        LoadConsumables();
     }
 
     public void DrawWinningLines(List<(List<(int, int)> line, Symbol symbol)> winningLines, SlotGrid slotGrid)
@@ -92,6 +97,20 @@ public class SlotUIManager : MonoBehaviour
     {
         DisableButtons();
         winningPositionsDrawer.AnimatePositions(playingPositions, slotGrid);
+    }
+    
+    private void LoadConsumables()
+    {
+        foreach (var item in gameData.consumableItems)
+        {
+            GameObject button = Instantiate(consumableButtonPrefab, consumableButtonContainer);
+            button.GetComponent<ConsumableItemButton>().Setup(item);
+        }
+    }
+
+    public void ReRollColumn()
+    {
+        
     }
 
     public void UpdateUI()

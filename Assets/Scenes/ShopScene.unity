@@ -429,11 +429,8 @@ MonoBehaviour:
   rerollButton: {fileID: 1071663682}
   buyButton: {fileID: 1453022954}
   itemButtonPrefab: {fileID: 7975587973700007349, guid: 1a04f6f3aed5d324ea35054badac67e6, type: 3}
-  allItems:
-  - {fileID: 11400000, guid: 8b159a99dad967541a11f14e29204fa6, type: 2}
-  - {fileID: 11400000, guid: 892f29e81c332b54fac014504e3a881a, type: 2}
-  - {fileID: 11400000, guid: fa4d874d9af12be479158da01fa8311f, type: 2}
-  - {fileID: 11400000, guid: ec02152693f5f8045a6f0205d0184395, type: 2}
+  gameData: {fileID: 11400000, guid: 3818c758750776a43960d4ea6893340b, type: 2}
+  allItems: []
 --- !u!4 &455568477
 Transform:
   m_ObjectHideFlags: 0
@@ -663,8 +660,8 @@ Canvas:
   m_GameObject: {fileID: 645180742}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
-  m_Camera: {fileID: 0}
+  m_RenderMode: 1
+  m_Camera: {fileID: 1537262636}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1

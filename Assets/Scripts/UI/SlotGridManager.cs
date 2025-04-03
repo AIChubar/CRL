@@ -75,7 +75,7 @@ public class SlotGridManager
 
         for (int col = 0; col < columnCount; col++)
         {
-            int buff = (int)columnBuffs.ElementAtOrDefault(col)!.ValueInt; // Prevent out-of-range errors
+            int buff = columnBuffs.ElementAtOrDefault(col)!.ValueInt; // Prevent out-of-range errors
             int actualRows = slotGrid.GetRowColumnLength().rows + buff;
 
             for (int row = 0; row < actualRows; row++)
@@ -90,7 +90,7 @@ public class SlotGridManager
 
     private void CreateSymbol(int row, int col)
     {
-        GameObject newSymbol = GameObject.Instantiate(slotSymbolPrefab, columnContainers[col].transform);
+        GameObject newSymbol = Object.Instantiate(slotSymbolPrefab, columnContainers[col].transform);
         newSymbol.GetComponent<TMP_Text>().text = slotGrid.GetSymbol(row, col).ch;
         newSymbol.GetComponent<Button>().onClick.AddListener(() => slotUIController.ChangeSymbol(row, col));
 

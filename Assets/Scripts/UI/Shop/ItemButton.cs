@@ -34,28 +34,11 @@ public class ItemButton : MonoBehaviour
         nameText.text = item.itemName;
         priceText.text = item.price.ToString();
         descriptionText.text = "";
-        for (int i = 0; i < item.statModifiers.Count; i++)
-        {
-            descriptionText.text += item.statModifiers[i].Description + " " + item.statModifiers[i].Value.ToString() + "\n";
-        }
+        
         image = GetComponent<Image>();
     }
 
-    /*public void InitializeStatModifiers()
-    {
-        foreach (var stat in item.itemStats)
-        {
-            object source = stat.statType switch
-            {
-                StatType.PayoutBonus  => GameManager.instance.gameData.payoutBonus,
-                StatType.PayoutMult => GameManager.instance.gameData.payoutMult,
-                StatType.WildLuck   => GameManager.instance.gameData.wildLuck,
-                _                => stat // Default fallback
-            };
-            item.statModifiers.Add(new StatModifier(stat.value, stat.statModType, source, nameof(stat.statType)));
-        }
-    }*/
-    
+ 
     public void OnClicked()
     {
         if (ShopManager.instance.inputDisabled)

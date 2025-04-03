@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class DataPersistanceManager : MonoBehaviour
 {
+    EventManager eventManager;
     
     [SerializeField]GameData gameData;
     
@@ -29,7 +30,7 @@ public class DataPersistanceManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-
+        eventManager = new EventManager();
         instance = this;
         DontDestroyOnLoad(gameObject);
         this.dataHandler = new FileDataHandler(Application.persistentDataPath, fileName);

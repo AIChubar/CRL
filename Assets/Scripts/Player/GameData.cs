@@ -23,7 +23,8 @@ public class GameData : ScriptableObject
     [SerializeField] public CharacterStat payoutMult;
     [SerializeField] public CharacterStat payoutBonus;
 
-    public List<Item> playerItems;
+    public List<PassiveItem> passiveItems;
+    public List<ConsumableItem> consumableItems;
 
     [SerializeField] public SlotConfig slotConfig; // Assigned in Inspector
     
@@ -47,7 +48,8 @@ public class GameData : ScriptableObject
         wildLuck = new CharacterStat(other.wildLuck.Value);
         payoutMult = new CharacterStat(other.payoutMult.Value);
         payoutBonus = new CharacterStat(other.payoutBonus.Value);
-        playerItems = new List<Item>(other.playerItems);
+        passiveItems = new List<PassiveItem>(other.passiveItems);
+        consumableItems = new List<ConsumableItem>(other.consumableItems);
         columnBuffs.Clear();
         foreach (int val in slotConfig.columnBuffs)
             columnBuffs.Add(new CharacterStat(val));
@@ -57,7 +59,7 @@ public class GameData : ScriptableObject
 
     public void ApplyAllModifiers()
     {
-        foreach (var item in playerItems)
+        foreach (var item in passiveItems)
         {
             foreach (var mod in item.statModifiers)
             {
@@ -69,9 +71,9 @@ public class GameData : ScriptableObject
                 {
                     CharacterStat targetStat = mod.StatType switch
                     {
-                        StatType.PayoutBonus  => GameManager.instance.gameData.payoutBonus,
-                        StatType.PayoutMult => GameManager.instance.gameData.payoutMult,
-                        StatType.WildLuck   => GameManager.instance.gameData.wildLuck,
+                        StatType.PayoutBonus  => payoutBonus,
+                        StatType.PayoutMult => payoutMult,
+                        StatType.WildLuck   => wildLuck,
                         _ => null
                     };
                     if (targetStat != null)
@@ -82,7 +84,7 @@ public class GameData : ScriptableObject
     }
     public void RemoveAllModifiers()
     {
-        foreach (var item in playerItems)
+        foreach (var item in passiveItems)
         {
             foreach (var mod in item.statModifiers)
             {
@@ -94,9 +96,9 @@ public class GameData : ScriptableObject
                 {
                     CharacterStat targetStat = mod.StatType switch
                     {
-                        StatType.PayoutBonus  => GameManager.instance.gameData.payoutBonus,
-                        StatType.PayoutMult => GameManager.instance.gameData.payoutMult,
-                        StatType.WildLuck   => GameManager.instance.gameData.wildLuck,
+                        StatType.PayoutBonus  => payoutBonus,
+                        StatType.PayoutMult => payoutMult,
+                        StatType.WildLuck   => wildLuck,
                         _ => null
                     };
                     if (targetStat != null)

@@ -20,7 +20,7 @@ public class ShopManager : MonoBehaviour
     [SerializeField] private Button rerollButton;
     [SerializeField] private Button buyButton;
     [SerializeField] private GameObject itemButtonPrefab;
-
+    public GameData gameData;
     public List<Item> allItems; // Master list of all items
     private List<Item> availableItems; // Items currently in the pool
     private List<Item> currentShopItems; // Currently displayed shop items
@@ -111,15 +111,23 @@ public class ShopManager : MonoBehaviour
             return;
         }
 
-        if (currentItem.item.price > GameManager.instance.gameData.gold)
+        if (currentItem.item.price > gameData.gold)
         {
             instructionText.text = "Not enough gold!";
             return;
         }
 
-        GameManager.instance.gameData.gold -= currentItem.item.price;
-        GameManager.instance.gameData.playerItems.Add(currentItem.item);
+        ConsumableItem consumable = currentItem.item as ConsumableItem;
+        PassiveItem passive = currentItem.item as PassiveItem;
 
+        if (consumable != null)
+        {
+            gameData.consumableItems.Add(consumable);
+        }
+        else if (passive != null)
+        {
+            gameData.passiveItems.Add(passive);
+        }
         Destroy(currentItem.gameObject);
         currentShopItems.Remove(currentItem.item); // Remove from shop items
         currentItem = null;
@@ -139,6 +147,6 @@ public class ShopManager : MonoBehaviour
 
     public void UpdateUI()
     {
-        goldText.text = "Gold: $" + GameManager.instance.gameData.gold;
+        goldText.text = "Gold: $" + gameData.gold;
     }
 }

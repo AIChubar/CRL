@@ -20,7 +20,8 @@ public class GameDataSerializable
     public float payoutMult;
     public float payoutBonus;
 
-    public List<string> playerItemNames = new List<string>(); // Store item names
+    public List<string> passiveItemNames = new List<string>(); // Store item names
+    public List<string> consumableItemNames = new List<string>(); // Store item names
     public string slotConfigName;
 
     public List<int> columnBuffs = new List<int>();// Assigned in Inspector
@@ -45,9 +46,13 @@ public class GameDataSerializable
         {
             columnBuffs.Add((int)column.BaseValue); // Save only the item name
         }*/
-        foreach (var item in data.playerItems)
+        foreach (var item in data.passiveItems)
         {
-            playerItemNames.Add(item.name); // Save only the item name
+            passiveItemNames.Add(item.name); // Save only the item name
+        }
+        foreach (var item in data.consumableItems)
+        {
+            consumableItemNames.Add(item.name); // Save only the item name
         }
     }
 
@@ -71,14 +76,29 @@ public class GameDataSerializable
         {
             data.columnBuffs.Add(new CharacterStat(columnBuffs[i])); 
         }*/
-        data.playerItems = new List<Item>();
-        data.playerItems.Clear();
-        foreach (var itemName in playerItemNames)
+        data.consumableItems = new List<ConsumableItem>();
+        data.passiveItems = new List<PassiveItem>();
+
+        data.consumableItems.Clear();
+        data.passiveItems.Clear();
+        foreach (var itemName in passiveItemNames)
         {
-            Item loadedItem = Resources.Load<Item>($"Items/{itemName}");
+            PassiveItem loadedItem = Resources.Load<PassiveItem>($"Items/PassiveItems/{itemName}");
             if (loadedItem != null)
             {
-                data.playerItems.Add(loadedItem);
+                data.passiveItems.Add(loadedItem);
+            }
+            else
+            {
+                Debug.LogWarning($"Item '{itemName}' not found in Resources folder!");
+            }
+        }
+        foreach (var itemName in consumableItemNames)
+        {
+            ConsumableItem loadedItem = Resources.Load<ConsumableItem>($"Items/ConsumableItems/{itemName}");
+            if (loadedItem != null)
+            {
+                data.consumableItems.Add(loadedItem);
             }
             else
             {

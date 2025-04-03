@@ -28,7 +28,9 @@ MonoBehaviour:
     BaseValue: 1
   payoutBonus:
     BaseValue: 0
-  playerItems: []
+  passiveItems: []
+  consumableItems:
+  - {fileID: 11400000, guid: 53bd8c7a4f1545842b262159a194093d, type: 2}
   slotConfig: {fileID: 11400000, guid: 26d7c73c6e18bab43b714d0a788bdbd9, type: 2}
   columnBuffs:
   - BaseValue: 0

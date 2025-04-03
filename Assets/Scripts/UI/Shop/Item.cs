@@ -2,12 +2,11 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 [System.Serializable]
-[CreateAssetMenu(fileName = "Item", menuName = "Item")]
+//[CreateAssetMenu(fileName = "Item", menuName = "Item")]
 public class Item : ScriptableObject
 {
     public string itemName;
     public int price;
-    public List<StatModifier> statModifiers;
     public ItemRarity rarity;
     
     public enum ItemRarity
@@ -23,11 +22,11 @@ public class Item : ScriptableObject
     {
         return rarity switch
         {
-            ItemRarity.Common => 50f,
+            ItemRarity.Common => 40f,
             ItemRarity.Uncommon => 30f,
-            ItemRarity.Rare => 15f,
-            ItemRarity.Epic => 4f,
-            ItemRarity.Legendary => 1f,
+            ItemRarity.Rare => 18f,
+            ItemRarity.Epic => 8f,
+            ItemRarity.Legendary => 4f,
             _ => 1f
         };
     }
@@ -35,9 +34,3 @@ public class Item : ScriptableObject
   
 }
     
-/*public class ItemStat
-{
-    public StatType statType;
-    public StatModType statModType;
-    public float value;
-}*/

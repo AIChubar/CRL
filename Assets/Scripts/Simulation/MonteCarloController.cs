@@ -16,10 +16,10 @@ public class MonteCarloController : MonoBehaviour
         
         for (int i = 0; i < simulationRuns; i++)
         {
-            int result = GameManager.instance.slotMachine.SpinSlot(GameManager.instance.gameData.betAmount, true);
-            totalWin += result;
+            //int result = GameManager.instance.slotMachine.SpinSlot(GameManager.instance.gameData.betAmount, true);
+            //totalWin += result;
 
-            if (result > 0)
+            //if (result > 0)
             {
                 totalWins++;
             }
@@ -27,7 +27,7 @@ public class MonteCarloController : MonoBehaviour
 
         averageWin = (float)Math.Round((float)totalWin / simulationRuns, 2 );
         winProbability = (float)Math.Round((float)totalWins / simulationRuns * 100, 2);
-        winCoef = (float)Math.Round(GameManager.instance.gameData.RTP * GameManager.instance.gameData.betAmount / averageWin, 2 );
+        //winCoef = (float)Math.Round(GameManager.instance.gameData.RTP * GameManager.instance.gameData.betAmount / averageWin, 2 );
         //GameManager.instance.winCoef = winCoef;
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
