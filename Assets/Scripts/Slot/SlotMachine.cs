@@ -3,11 +3,11 @@ using TMPro;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
-public class SlotMachine : MonoBehaviour
+public class SlotMachine 
 {
 
     
-    public GameData gameData;
+    private GameData gameData;
 
     private SlotGrid slotGrid;             
 
@@ -24,11 +24,6 @@ public class SlotMachine : MonoBehaviour
     
     
     
-    private void Start()
-    {
-        
-    }
-
     public void SetUp(SlotCalculator slotCalculator, SlotUIManager slotUIManager, GameData gameData)
     {
         this.gameData = gameData;

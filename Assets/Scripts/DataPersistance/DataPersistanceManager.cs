@@ -6,59 +6,33 @@ using UnityEngine.SceneManagement;
 /// <summary>
 /// Script that manages saving and loading data.
 /// </summary>
-public class DataPersistanceManager : MonoBehaviour
+public class DataPersistenceManager
 {
-    EventManager eventManager;
+    private GameData gameData;
     
-    [SerializeField]GameData gameData;
+    private GameData newGameData;
     
-    [SerializeField]GameData newGameData;
-    
-    [Header("File Storage Config")] 
-    [SerializeField] public string fileName;
-    
+    private FileDataHandler dataHandler;
 
-    //private List<IDataPersistence> dataPersistenceObjects;
+    private string fileName;
 
-    public FileDataHandler dataHandler;
-    public static DataPersistanceManager instance { get; private set; }
-
-    public void Awake()
+    public DataPersistenceManager(string fileName, GameData gameData, GameData newGameData)
     {
-        if (instance != null)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        eventManager = new EventManager();
-        instance = this;
-        DontDestroyOnLoad(gameObject);
-        this.dataHandler = new FileDataHandler(Application.persistentDataPath, fileName);
-
-    }
-
-    public FileDataHandler GetNewDataHandler()
-    {
+        this.gameData = gameData;
+        this.newGameData = newGameData;
+        this.fileName = fileName;
         dataHandler = new FileDataHandler(Application.persistentDataPath, fileName);
-        //dataPersistenceObjects = FindAllDataPersistenceObjects();
-        return dataHandler;
     }
-
+    //private List<IDataPersistence> dataPersistenceObjects;
     public void NewGame()
     {
         
         gameData.CopyFrom(newGameData);
-        //dataPersistenceObjects = FindAllDataPersistenceObjects();
-        /*foreach (IDataPersistence dataPersistenceObj in dataPersistenceObjects)
-        {
-            dataPersistenceObj.NewGame();
-        }*/
+        
     }
 
     public void LoadGame()
     {
-        //dataPersistenceObjects = FindAllDataPersistenceObjects();
-        
         if (gameData == null)
         {
             Debug.LogError("GameData instance is not assigned!");
@@ -67,10 +41,6 @@ public class DataPersistanceManager : MonoBehaviour
         
         dataHandler.Load(gameData);
         
-        /*foreach (IDataPersistence dataPersistenceObj in dataPersistenceObjects)
-        {
-            dataPersistenceObj.LoadData(gameData);
-        }*/
     }
 
 
@@ -80,30 +50,14 @@ public class DataPersistanceManager : MonoBehaviour
         {
             return;
         }
-        /*foreach (IDataPersistence dataPersistenceObj in dataPersistenceObjects)
-        {
-            dataPersistenceObj.SaveData(ref gameData);
-        }*/
+        
         dataHandler.Save(gameData);
     }
 
-
-
-    private void OnEnable()
-    {
-        SceneManager.sceneLoaded += OnSceneLoaded;
-        SceneManager.sceneUnloaded += OnSceneUnloaded;
-    }
-
-    private void OnDisable()
-    {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
-        SceneManager.sceneUnloaded -= OnSceneUnloaded;
-    }
+   
 
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        //dataPersistenceObjects = FindAllDataPersistenceObjects();
         if (SceneManager.GetActiveScene().buildIndex == 0)
             LoadGame();
     }
@@ -112,19 +66,6 @@ public class DataPersistanceManager : MonoBehaviour
     {
         
     }
-
-    /*private void OnApplicationQuit()
-    {
-        SaveGame();
-    }*/
-
-    /*private List<IDataPersistence> FindAllDataPersistenceObjects()
-    {
-        IEnumerable<IDataPersistence> dataPersistenceObjects =
-            FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<IDataPersistence>();
-
-        return new List<IDataPersistence>(dataPersistenceObjects); 
-    }*/
 
     public bool HasGameData()
     {

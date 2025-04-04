@@ -122,12 +122,12 @@ public class SlotUIController
     
     public void SaveGame()
     {
-        DataPersistanceManager.instance.SaveGame();
+        GameManager.instance.dataPersistenceManager.SaveGame();
     }
     
     public void LoadGame()
     {
-        DataPersistanceManager.instance.LoadGame();
+        GameManager.instance.dataPersistenceManager.LoadGame();
     }
     
     public void Restart()

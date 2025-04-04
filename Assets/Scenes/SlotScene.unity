@@ -3977,7 +3977,7 @@ GameObject:
   - component: {fileID: 1292554395}
   - component: {fileID: 1292554394}
   m_Layer: 0
-  m_Name: GameManager
+  m_Name: SlotSceneManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3997,7 +3997,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   slotUIManager: {fileID: 1792177409}
   gameData: {fileID: 11400000, guid: 3818c758750776a43960d4ea6893340b, type: 2}
-  slotMachine: {fileID: 1792177407}
 --- !u!4 &1292554395
 Transform:
   m_ObjectHideFlags: 0
@@ -5089,7 +5088,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1792177408}
-  - component: {fileID: 1792177407}
   - component: {fileID: 1792177409}
   m_Layer: 0
   m_Name: SlotMachine
@@ -5098,19 +5096,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1792177407
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1792177406}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5c645554b99964f48a2db322978c13d7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gameData: {fileID: 0}
 --- !u!4 &1792177408
 Transform:
   m_ObjectHideFlags: 0

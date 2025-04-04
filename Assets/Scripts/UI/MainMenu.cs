@@ -20,8 +20,8 @@ public class MainMenu : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Start()
     {
-        DataPersistanceManager.instance.LoadGame();
-        if (!DataPersistanceManager.instance.HasGameData())
+        GameManager.instance.dataPersistenceManager.LoadGame();
+        if (!GameManager.instance.dataPersistenceManager.HasGameData())
         {
             continueGameButton.interactable = false;
             continueText.color = new Color(1, 1, 1, 0.4f);
@@ -30,13 +30,13 @@ public class MainMenu : MonoBehaviour
     
     public void OnNewGameClicked()
     {
-        DataPersistanceManager.instance.NewGame();
+        GameManager.instance.dataPersistenceManager.NewGame();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
     
     public void OnContinueGameClicked()
     {
-        DataPersistanceManager.instance.LoadGame();
+        GameManager.instance.dataPersistenceManager.LoadGame();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 

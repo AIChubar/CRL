@@ -1,24 +1,28 @@
 using UnityEngine;
 
-
-
 public class GameManager : MonoBehaviour
 {
-    //[HideInInspector]public static GameManager instance;
-  
-    [SerializeField]private SlotUIManager slotUIManager;
+    [SerializeField]private GameData gameData;
     
-    public GameData gameData;
+    [SerializeField]private GameData newGameData;
     
-    public SlotMachine slotMachine;
-    private SymbolManager symbolManager;
-    private SlotCalculator slotCalculator;
-
-
-
-    private void Start()
+    public static GameManager instance { get; private set; }
+    public EventManager eventManager;
+    [Header("Saving File name")] 
+    [SerializeField] public string fileName;
+    public DataPersistenceManager dataPersistenceManager;
+    public void Awake()
     {
-        slotCalculator = new SlotCalculator();
-        slotMachine.SetUp(slotCalculator, slotUIManager, gameData);
+        if (instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        instance = this;
+        DontDestroyOnLoad(gameObject);
+        eventManager = new EventManager();
+        dataPersistenceManager = new DataPersistenceManager(fileName, gameData, newGameData);
     }
+
+
 }
