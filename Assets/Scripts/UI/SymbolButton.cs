@@ -1,18 +1,28 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SymbolButton : MonoBehaviour
 {
     private Symbol symbol;
     
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private Button button;
+
+    public int row;
+    public int col;
+
+    public void SetUp(int col, int row)
     {
-        
+        this.row = row;
+        this.col = col;
+        button = GetComponent<Button>();
     }
 
-    // Update is called once per frame
-    void Update()
+    public void DisableButton()
     {
-        
+        button.interactable = false;
+    }
+    public void EnableButton()
+    {
+        button.interactable = true;
     }
 }

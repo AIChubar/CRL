@@ -10,6 +10,7 @@ public enum SlotMode
 {
     ReadyForSpin = 100,
     ChangingSymbols = 200,
+    ChangingColumn = 250,
     WaitingForConfirm = 300,
     AllDisabled = 400,
 }
@@ -19,7 +20,7 @@ public class SlotUIManager : MonoBehaviour
 {
     public List<int> betAmounts = new List<int>() { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 120, 140, 160, 180, 200, 250, 300, 350, 400, 450, 500, 600, 700, 800, 900, 1000 };
     public float winCoef;
-    public bool isChangingSymbol = false;
+    public SlotMode slotMode;
 
     public TextMeshProUGUI moneyText, targetText, wagerText, spinsText, betText, resultText, changePriceText, instructionText, goldText;
     public Button changeButton, confirmButton, spinButton, increaseButton, decreaseButton, restartButton, pauseRestartButton, /*nextLevelButton,*/ continueButton, toMenuButton, pauseToMenuButton, toShopButton;
@@ -45,17 +46,17 @@ public class SlotUIManager : MonoBehaviour
     private SlotGridManager slotGridManager;
     
     public GameObject consumableButtonPrefab;
+    public GameObject columnPrefab
+        ;
     public Transform consumableButtonContainer; // Assign UI Panel for items
 
-    void Start()
-    {
-        
-    }
+    //private List<GameObject> columnContainers;
 
     public void SetUp(GameData gameData, SlotMachine slotMachine, SlotGrid slotGrid)
     {
         this.gameData = gameData;
         this.slotMachine = slotMachine;
+        slotMode = SlotMode.ReadyForSpin;
         coroutineTracker = new CoroutineTracker(this, EnableButtons);
         winningLineDrawer = new WinningLineDrawer();
         winningLineDrawer.SetUp(this.transform, linePrefab, coroutineTracker);
@@ -67,12 +68,12 @@ public class SlotUIManager : MonoBehaviour
         slotUIController.SetUp(gameData, slotMachine, this);
 
         SetFinishButton(false);
-        UpdateButtons(SlotMode.ReadyForSpin);
+        UpdateButtons();
         UpdateUI();
 
         spinButton.onClick.AddListener(slotUIController.Spin);
         confirmButton.onClick.AddListener(slotUIController.ConfirmSpin);
-        changeButton.onClick.AddListener(slotUIController.StartChangingSymbol);
+        changeButton.onClick.AddListener(slotUIController.OnChangeButtonClick);
         increaseButton.onClick.AddListener(slotUIController.IncreaseBet);
         decreaseButton.onClick.AddListener(slotUIController.DecreaseBet);
         restartButton.onClick.AddListener(slotUIController.Restart);
@@ -83,10 +84,47 @@ public class SlotUIManager : MonoBehaviour
         toShopButton.onClick.AddListener(slotUIController.ToShop);
         finishRoundButton.onClick.AddListener(slotUIController.FinishRound);
         
-        slotGridManager = new SlotGridManager(slotPanel, slotSymbolPrefab,slotGrid , slotUIController);
+        slotGridManager = new SlotGridManager(slotPanel, slotSymbolPrefab,slotGrid , slotUIController, columnPrefab);
+        slotGridManager.Setup(gameData.columnBuffs);
+        //columnContainers = slotGridManager.GetColumnContainers();
         LoadConsumables();
+        SubscribeToEvents();
     }
 
+    private void SubscribeToEvents()
+    {
+        GameManager.instance.eventManager.OnConsumableItemUsed.AddListener(OnConsumableItemUsed);
+    }
+
+    public void OnConsumableItemUsed(ConsumableItemType item)
+    {
+        switch (item)
+        {
+            case ConsumableItemType.ColumnRoll:
+                StartChangingColumn();
+                break;
+            case ConsumableItemType.SymbolRoll:
+                StartChangingSymbol();
+                break;
+            case ConsumableItemType.SymbolTypeRoll:
+                break;
+            default: break;
+        }
+    }
+    public void StartChangingSymbol()
+    {
+        slotMode = SlotMode.ChangingSymbols;
+        slotGridManager.EnableSymbolButtons();
+        UpdateButtons();
+        UpdateInstructionText("Pick symbol you want to change!");
+    }
+    
+    public void StartChangingColumn()
+    {
+        slotMode = SlotMode.ChangingColumn;
+        UpdateButtons();
+        UpdateInstructionText("Pick column you want to change!");
+    }
     public void DrawWinningLines(List<(List<(int, int)> line, Symbol symbol)> winningLines, SlotGrid slotGrid)
     {
         DisableButtons();
@@ -108,11 +146,6 @@ public class SlotUIManager : MonoBehaviour
         }
     }
 
-    public void ReRollColumn()
-    {
-        
-    }
-
     public void UpdateUI()
     {
         moneyText.text = $"Money: ${gameData.money:0.00}";
@@ -125,20 +158,22 @@ public class SlotUIManager : MonoBehaviour
     }
     public void DisableButtons()
     {
-        UpdateButtons(SlotMode.AllDisabled);
+        slotMode = SlotMode.AllDisabled;
+        UpdateButtons();
     }
 
     public void EnableButtons()
     {
-        UpdateButtons(SlotMode.WaitingForConfirm);
+        slotMode = SlotMode.WaitingForConfirm;
+        UpdateButtons();
     }
-    public void UpdateButtons(SlotMode mode)
+    public void UpdateButtons()
     {
-        spinButton.interactable = (mode == SlotMode.ReadyForSpin);
-        confirmButton.interactable = (mode == SlotMode.WaitingForConfirm);
-        changeButton.interactable = (mode == SlotMode.WaitingForConfirm);
-        increaseButton.interactable = (mode == SlotMode.ReadyForSpin);
-        decreaseButton.interactable = (mode == SlotMode.ReadyForSpin);
+        spinButton.interactable = (slotMode == SlotMode.ReadyForSpin);
+        confirmButton.interactable = (slotMode == SlotMode.WaitingForConfirm);
+        changeButton.interactable = (slotMode == SlotMode.WaitingForConfirm);
+        increaseButton.interactable = (slotMode == SlotMode.ReadyForSpin);
+        decreaseButton.interactable = (slotMode == SlotMode.ReadyForSpin);
     }
     
     
@@ -161,13 +196,14 @@ public class SlotUIManager : MonoBehaviour
         UpdateUI();
     }
 
-    public void SetUpGrid()
+    public void SetUpGridUI()
     {
-        slotGridManager.SetUpSlotUI(gameData.columnBuffs);
+        slotGridManager.PopulateSymbolButtons();
+        slotGridManager.DisableSymbolButtons();
     }
     
-    public void UpdateSingleSymbol(int row, int col, Symbol newSymbol)
+    public void ReRollSingleSymbol(int row, int col, Symbol newSymbol)
     {
-        slotGridManager.UpdateSingleSymbol(row, col, newSymbol);
+        slotGridManager.ReRollSingleSymbol(row, col, newSymbol);
     }
 }

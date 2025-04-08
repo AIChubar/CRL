@@ -48,7 +48,7 @@ public class WinningLineDrawer
 
         for (int i = 0; i < line.Count; i++)
         {
-            GameObject symbolInstance = slotGrid.GetSymbolInstance(line[i].row, line[i].column);
+            SymbolButton symbolInstance = slotGrid.GetSymbolInstance(line[i].row, line[i].column);
             if (symbolInstance == null) continue;
 
             Vector3 pos = symbolInstance.transform.position;

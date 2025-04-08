@@ -15,4 +15,5 @@ MonoBehaviour:
   itemName: CollumnShaker
   price: 1
   rarity: 0
-  charges: 0
+  cType: 0
+  charges: 3

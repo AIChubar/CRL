@@ -6,11 +6,11 @@ using UnityEngine;
 public class SlotGrid
 {
     private Symbol[,] grid;
-    private int rows, columns;
-    private SymbolManager symbolManager;
-    
-    private GameObject[,] symbolInstances;
+    private SymbolButton[,] symbolInstances;
     private List<CharacterStat> columnBuffs;
+    private SymbolManager symbolManager;
+
+    private int rows, columns;
     private int maxRows;
 
     public SlotGrid(int rows, int columns, List<CharacterStat> columnBuffs, SymbolManager symbolManager)
@@ -21,10 +21,11 @@ public class SlotGrid
         this.symbolManager = symbolManager;
 
         int maxBuff = columnBuffs.Count > 0 ? Mathf.Max(columnBuffs.Select(buff => buff.ValueInt).ToArray()) : 0;
-        maxRows = rows + maxBuff; // Define grid height based on max buff
+        maxRows = rows + maxBuff;
 
-        grid = new Symbol[maxRows, columns];
-        symbolInstances = new GameObject[maxRows, columns];
+        // Now arrays are [column, row]
+        grid = new Symbol[columns, maxRows];
+        symbolInstances = new SymbolButton[columns, maxRows];
 
         FillGrid();
     }
@@ -33,50 +34,55 @@ public class SlotGrid
     {
         for (int c = 0; c < columns; c++)
         {
-            int activeRows = rows + columnBuffs[c].ValueInt; // How many rows are valid in this column
+            int activeRows = rows + columnBuffs[c].ValueInt;
 
             for (int r = 0; r < activeRows; r++)
             {
-                grid[r, c] = symbolManager.GetRandomSymbol(); // Assign valid symbols
+                grid[c, r] = symbolManager.GetRandomSymbol();
             }
         }
     }
-    public (int rows, int columns) GetRowColumnLength()
+
+    public (int columns, int rows) GetColumnRowLength()
     {
-        return (maxRows, columns);
+        return (columns, maxRows);
     }
 
-    public void RegisterSymbolInstance(int row, int col, GameObject instance)
+    public void RegisterSymbolInstance(int col, int row, SymbolButton instance)
     {
-        if (IsValidPosition(row, col))
-            symbolInstances[row, col] = instance;
+        if (IsValidPosition(col, row))
+            symbolInstances[col, row] = instance;
     }
 
-    public GameObject GetSymbolInstance(int row, int col)
+    public SymbolButton GetSymbolInstance(int col, int row)
     {
-        return IsValidPosition(row, col) ? symbolInstances[row, col] : null;
+        return IsValidPosition(col, row) ? symbolInstances[col, row] : null;
     }
 
-    public Symbol GetSymbol(int row, int column)
+    public SymbolButton[,] GetSymbolButtons()
     {
-        return IsValidPosition(row, column) ? grid[row, column] : null;
+        return symbolInstances;
     }
 
-    public void SetSymbol(int row, int column, Symbol newSymbol)
+    public Symbol GetSymbol(int col, int row)
     {
-        if (IsValidPosition(row, column))
-            grid[row, column] = newSymbol;
+        return IsValidPosition(col, row) ? grid[col, row] : null;
     }
 
-    public void SetSymbol(int row, int column, string newch)
+    public void SetSymbol(int col, int row, Symbol newSymbol)
     {
-        if (IsValidPosition(row, column))
-            grid[row, column].ch = newch;
+        if (IsValidPosition(col, row))
+            grid[col, row] = newSymbol;
     }
 
-    public bool IsValidPosition(int row, int column)
+    public void SetSymbol(int col, int row, string newch)
     {
-        return column >= 0 && column < columns && row >= 0 && row < (rows + columnBuffs[column].ValueInt);
+        if (IsValidPosition(col, row))
+            grid[col, row].ch = newch;
     }
 
+    public bool IsValidPosition(int col, int row)
+    {
+        return col >= 0 && col < columns && row >= 0 && row < (rows + columnBuffs[col].ValueInt);
+    }
 }

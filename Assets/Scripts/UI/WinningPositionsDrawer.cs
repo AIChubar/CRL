@@ -28,11 +28,11 @@ public class WinningPositionsDrawer
             if(entry.Value.WasShown)
                 continue;
             entry.Value.WasShown = true;
-            List<GameObject> symbolInstances = new List<GameObject>();
+            List<SymbolButton> symbolInstances = new List<SymbolButton>();
 
             foreach (var (row, column) in entry.Value.Positions)
             {
-                GameObject symbolInstance = slotGrid.GetSymbolInstance(row, column);
+                SymbolButton symbolInstance = slotGrid.GetSymbolInstance(row, column);
                 if (symbolInstance != null)
                 {
                     symbolInstances.Add(symbolInstance);
@@ -46,10 +46,10 @@ public class WinningPositionsDrawer
         }
     }
 
-    private IEnumerator AnimateSymbolScaling(List<GameObject> symbolInstances)
+    private IEnumerator AnimateSymbolScaling(List<SymbolButton> symbolInstances)
     {
         float elapsedTime = 0f;
-        Dictionary<GameObject, Vector3> originalScales = new Dictionary<GameObject, Vector3>();
+        Dictionary<SymbolButton, Vector3> originalScales = new Dictionary<SymbolButton, Vector3>();
 
         foreach (var symbol in symbolInstances)
         {

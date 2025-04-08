@@ -23,8 +23,8 @@ public class SlotUIController
             slotUIManager.UpdateInstructionText("You don't have spins left!");
             return;
         }
-
-        slotUIManager.UpdateButtons(SlotMode.WaitingForConfirm);
+        slotUIManager.slotMode = SlotMode.WaitingForConfirm;
+        slotUIManager.UpdateButtons();
 
         if (gameData.spinsLeft > 0 && gameData.money >= gameData.betAmount && gameData.wagerLeft >= gameData.betAmount)
         {
@@ -42,14 +42,15 @@ public class SlotUIController
 
     public void ConfirmSpin()
     {
-        slotUIManager.UpdateButtons(SlotMode.ReadyForSpin);
+        slotUIManager.slotMode = SlotMode.ReadyForSpin;
+        slotUIManager.UpdateButtons();
         gameData.money += currentWin;
         slotUIManager.UpdateResultText($"You won: ${currentWin}");
         slotUIManager.UpdateInstructionText("");
         CheckLevelEnd();
     }
-    
-    public void StartChangingSymbol()
+
+    public void OnChangeButtonClick()
     {
         if (gameData.changePrice > gameData.money)
         {
@@ -57,20 +58,18 @@ public class SlotUIController
             return;
         }
         gameData.money -= gameData.changePrice;
-        slotUIManager.isChangingSymbol = true;
-        
-        slotUIManager.UpdateButtons(SlotMode.ChangingSymbols);
 
-        slotUIManager.UpdateInstructionText("Pick symbol you want to change!");
+        slotUIManager.StartChangingSymbol();
     }
+    
+    
 
     public void ChangeSymbol(int row, int col)
     {
-        if (!slotUIManager.isChangingSymbol) return;//??
 
-        slotUIManager.isChangingSymbol = false;
+        slotUIManager.slotMode = SlotMode.WaitingForConfirm;
+        slotUIManager.UpdateButtons();
         currentWin = slotMachine.RandomizeSymbolCalculate(row, col) * slotUIManager.winCoef;
-
 
         slotUIManager.UpdateResultText($"Current win: ${currentWin}");
         slotUIManager.UpdateInstructionText("");
@@ -112,7 +111,7 @@ public class SlotUIController
             slotUIManager.UpdateInstructionText("You Lose!");
             slotUIManager.pauseManager.winLoseMenu.SetActive(true);
             slotUIManager.pauseManager.nextLevelButton.gameObject.SetActive(false);
-            slotUIManager.UpdateButtons(SlotMode.AllDisabled);
+            slotUIManager.DisableButtons();
         }
         else
         {
@@ -148,7 +147,7 @@ public class SlotUIController
         gameData.money = gameData.baseMoney;
 
         SaveGame();
-        slotUIManager.UpdateButtons(SlotMode.AllDisabled);
+        slotUIManager.DisableButtons();
     }
 
     
@@ -168,6 +167,8 @@ public class SlotUIController
         //SaveGame();
         SceneManager.LoadScene(2, LoadSceneMode.Single);
     }
+
+   
 }
 
 
