@@ -49,7 +49,7 @@ public class SlotUIManager : MonoBehaviour
     public GameObject columnPrefab
         ;
     public Transform consumableButtonContainer; // Assign UI Panel for items
-
+    private List<ConsumableItemButton> consumableButtons = new List<ConsumableItemButton>();
     //private List<GameObject> columnContainers;
 
     public void SetUp(GameData gameData, SlotMachine slotMachine, SlotGrid slotGrid)
@@ -57,7 +57,7 @@ public class SlotUIManager : MonoBehaviour
         this.gameData = gameData;
         this.slotMachine = slotMachine;
         slotMode = SlotMode.ReadyForSpin;
-        coroutineTracker = new CoroutineTracker(this, EnableButtons);
+        coroutineTracker = new CoroutineTracker(this);
         winningLineDrawer = new WinningLineDrawer();
         winningLineDrawer.SetUp(this.transform, linePrefab, coroutineTracker);
 
@@ -68,8 +68,6 @@ public class SlotUIManager : MonoBehaviour
         slotUIController.SetUp(gameData, slotMachine, this);
 
         SetFinishButton(false);
-        UpdateButtons();
-        UpdateUI();
 
         spinButton.onClick.AddListener(slotUIController.Spin);
         confirmButton.onClick.AddListener(slotUIController.ConfirmSpin);
@@ -88,6 +86,10 @@ public class SlotUIManager : MonoBehaviour
         slotGridManager.Setup(gameData.columnBuffs);
         //columnContainers = slotGridManager.GetColumnContainers();
         LoadConsumables();
+        UpdateUI();
+
+        UpdateButtons();
+
     }
 
     private void OnEnable()
@@ -103,11 +105,19 @@ public class SlotUIManager : MonoBehaviour
     private void UnsubscribeFromEvents()
     {
         GameManager.instance.eventManager.OnConsumableItemUsed.RemoveListener(OnConsumableItemUsed);
+        GameManager.instance.eventManager.OnSpinAnimationEnd.RemoveListener(OnSpinAnimationEnd);
     }
 
     private void SubscribeToEvents()
     {
         GameManager.instance.eventManager.OnConsumableItemUsed.AddListener(OnConsumableItemUsed);
+        GameManager.instance.eventManager.OnSpinAnimationEnd.AddListener(OnSpinAnimationEnd);
+    }
+
+    private void OnSpinAnimationEnd()
+    {
+        slotMode = SlotMode.WaitingForConfirm;
+        UpdateButtons();
     }
 
     public void OnConsumableItemUsed(ConsumableItemType item)
@@ -156,8 +166,10 @@ public class SlotUIManager : MonoBehaviour
     {
         foreach (var item in gameData.consumableItems)
         {
-            GameObject button = Instantiate(consumableButtonPrefab, consumableButtonContainer);
-            button.GetComponent<ConsumableItemButton>().Setup(item);
+            GameObject obj = Instantiate(consumableButtonPrefab, consumableButtonContainer);
+            ConsumableItemButton button = obj.GetComponent<ConsumableItemButton>();
+            button.Setup(item);
+            consumableButtons.Add(button);
         }
     }
 
@@ -177,11 +189,7 @@ public class SlotUIManager : MonoBehaviour
         UpdateButtons();
     }
 
-    public void EnableButtons()
-    {
-        slotMode = SlotMode.WaitingForConfirm;
-        UpdateButtons();
-    }
+
     public void UpdateButtons()
     {
         spinButton.interactable = (slotMode == SlotMode.ReadyForSpin);
@@ -189,6 +197,13 @@ public class SlotUIManager : MonoBehaviour
         changeButton.interactable = (slotMode == SlotMode.WaitingForConfirm);
         increaseButton.interactable = (slotMode == SlotMode.ReadyForSpin);
         decreaseButton.interactable = (slotMode == SlotMode.ReadyForSpin);
+        foreach (var consumableButton in consumableButtons)
+        {
+            if (slotMode == SlotMode.WaitingForConfirm)
+                consumableButton.EnableButton();
+            else
+                consumableButton.DisableButton();
+        }
     }
     
     
@@ -224,8 +239,4 @@ public class SlotUIManager : MonoBehaviour
         slotGridManager.DisableColumnButtons();
     }
 
-    public void ReRollColumn(int col, Symbol newSymbol)
-    {
-        
-    }
 }

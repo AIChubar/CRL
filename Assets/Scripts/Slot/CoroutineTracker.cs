@@ -7,12 +7,10 @@ public class CoroutineTracker
     private MonoBehaviour coroutineRunner;
     private HashSet<IEnumerator> activeCoroutines = new HashSet<IEnumerator>();
 
-    private System.Action onAllCoroutinesFinished;
 
-    public CoroutineTracker(MonoBehaviour runner, System.Action onFinished)
+    public CoroutineTracker(MonoBehaviour runner)
     {
         this.coroutineRunner = runner;
-        this.onAllCoroutinesFinished = onFinished;
     }
 
     public Coroutine StartTrackedCoroutine(IEnumerator coroutine)
@@ -29,7 +27,7 @@ public class CoroutineTracker
         
         if (activeCoroutines.Count == 0)
         {
-            onAllCoroutinesFinished?.Invoke();
+            GameManager.instance.eventManager.OnSpinAnimationEnd?.InvokeEvent();
         }
     }
 

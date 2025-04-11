@@ -21,4 +21,13 @@ public class ConsumableItemButton : MonoBehaviour
             Destroy(gameObject); 
         chargeText.text = "Charges: " + item.charges;
     }
+    
+    public void DisableButton()
+    {
+        button.interactable = false;
+    }
+    public void EnableButton()
+    {
+        button.interactable = true;
+    }
 }

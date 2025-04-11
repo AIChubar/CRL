@@ -26,7 +26,6 @@ public class SymbolButton : MonoBehaviour
     public void EnableButton()
     {
         button.interactable = true;
-        canvasGroup.blocksRaycasts = false;
-
+        canvasGroup.blocksRaycasts = true;
     }
 }
