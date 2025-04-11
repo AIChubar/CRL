@@ -108,7 +108,9 @@ public class SlotGridManager
             GameObject columnContainer = Object.Instantiate(columnPrefab, slotPanel.transform);
             columnContainer.name = "Column " + col;
             columnContainer.transform.SetParent(slotPanel.transform, false);
-            
+            var cl = col;
+            columnContainer.GetComponent<Button>().onClick.AddListener(() => slotUIController.ChangeColumn(cl));
+
             columnContainers.Add(columnContainer);
         }
     }
@@ -150,7 +152,7 @@ public class SlotGridManager
         }
     }
 
-    public void ReRollSingleSymbol(int col, int row, Symbol newSymbol)
+    public void ChangeSingleSymbol(int col, int row, Symbol newSymbol)
     {
         if (!slotGrid.IsValidPosition(col, row)) return;
 

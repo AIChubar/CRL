@@ -30,7 +30,7 @@ MonoBehaviour:
     BaseValue: 0
   passiveItems: []
   consumableItems:
-  - {fileID: 11400000, guid: 53bd8c7a4f1545842b262159a194093d, type: 2}
+  - {fileID: 11400000, guid: 937e2889304c5ce47b8fc277ed3f395a, type: 2}
   slotConfig: {fileID: 11400000, guid: 26d7c73c6e18bab43b714d0a788bdbd9, type: 2}
   columnBuffs:
   - BaseValue: 0

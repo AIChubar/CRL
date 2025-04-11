@@ -88,7 +88,21 @@ public class SlotUIManager : MonoBehaviour
         slotGridManager.Setup(gameData.columnBuffs);
         //columnContainers = slotGridManager.GetColumnContainers();
         LoadConsumables();
+    }
+
+    private void OnEnable()
+    {
         SubscribeToEvents();
+    }
+    
+    private void OnDisable()
+    {
+        UnsubscribeFromEvents();
+    }
+
+    private void UnsubscribeFromEvents()
+    {
+        GameManager.instance.eventManager.OnConsumableItemUsed.RemoveListener(OnConsumableItemUsed);
     }
 
     private void SubscribeToEvents()
@@ -122,6 +136,7 @@ public class SlotUIManager : MonoBehaviour
     public void StartChangingColumn()
     {
         slotMode = SlotMode.ChangingColumn;
+        slotGridManager.EnableColumnButtons();
         UpdateButtons();
         UpdateInstructionText("Pick column you want to change!");
     }
@@ -202,8 +217,15 @@ public class SlotUIManager : MonoBehaviour
         slotGridManager.DisableSymbolButtons();
     }
     
-    public void ReRollSingleSymbol(int row, int col, Symbol newSymbol)
+    public void ChangeSingleSymbol(int row, int col, Symbol newSymbol)
     {
-        slotGridManager.ReRollSingleSymbol(row, col, newSymbol);
+        slotGridManager.ChangeSingleSymbol(row, col, newSymbol);
+        slotGridManager.DisableSymbolButtons();
+        slotGridManager.DisableColumnButtons();
+    }
+
+    public void ReRollColumn(int col, Symbol newSymbol)
+    {
+        
     }
 }

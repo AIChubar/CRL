@@ -6,36 +6,28 @@ using UnityEditor;
 
 public class SlotCalculator
 {
-    public List<(List<(int, int)> line, Symbol symbol)> winningLines = new List<(List<(int, int)>, Symbol)>();
+    public List<(List<(int, int)> line, Symbol symbol)> winningLines { get; private set; } = new List<(List<(int, int)>, Symbol)>();
     private Dictionary<Symbol, SymbolPositions> playingPositions = new Dictionary<Symbol, SymbolPositions>();
-
-    public Dictionary<Symbol, SymbolPositions> currentPositions = new Dictionary<Symbol, SymbolPositions>();
+    public Dictionary<Symbol, SymbolPositions> currentPositions { get; private set; } = new Dictionary<Symbol, SymbolPositions>();
 
     public int CalculateWin(SlotGrid slotGrid, int betAmount, bool isRecalculating = false)
     {
         int totalWin = 0;
-        winningLines = new List<(List<(int, int)>, Symbol)>();
-        playingPositions = new Dictionary<Symbol, SymbolPositions>();
+        ResetState();
 
         for (int startRow = 0; startRow < slotGrid.GetColumnRowLength().rows; startRow++)
         {
-            if (!slotGrid.IsValidPosition(0, startRow))
-            {
-                continue;
-            }
+            if (!slotGrid.IsValidPosition(0, startRow)) continue;
 
-            List<List<(int, int)>> possibleWins = new List<List<(int, int)>> { new List<(int, int)> { (0, startRow) } };
+            var possibleWins = new List<List<(int, int)>> { new List<(int, int)> { (0, startRow) } };
 
             for (int col = 1; col < slotGrid.GetColumnRowLength().columns; col++)
             {
-                List<List<(int, int)>> newPossibleWins = new List<List<(int, int)>>();
+                var newPossibleWins = new List<List<(int, int)>>();
 
                 for (int row = 0; row < slotGrid.GetColumnRowLength().rows; row++)
                 {
-                    if (!slotGrid.IsValidPosition(col, row))
-                    {
-                        continue;
-                    }
+                    if (!slotGrid.IsValidPosition(col, row)) continue;
 
                     Symbol currentSymbol = slotGrid.GetSymbol(col, row);
 
@@ -45,65 +37,72 @@ public class SlotCalculator
 
                         if (currentSymbol == assignedSymbol || currentSymbol.isWild || assignedSymbol == null)
                         {
-                            List<(int, int)> newWinPath = new List<(int, int)>(winPath) { (col, row) };
+                            var newWinPath = new List<(int, int)>(winPath) { (col, row) };
                             newPossibleWins.Add(newWinPath);
                         }
                     }
                 }
 
-                if (newPossibleWins.Count == 0)
-                {
-                    possibleWins.Clear();
-                    break;
-                }
+                if (!newPossibleWins.Any()) break;
 
                 possibleWins = newPossibleWins;
             }
 
-            foreach (var winPath in possibleWins)
-            {
-                Symbol winningSymbol = DetermineAssignedSymbol(winPath, slotGrid) ?? slotGrid.GetSymbol(winPath[0].Item1, winPath[0].Item2);
-                winningLines.Add((winPath, winningSymbol));
-
-                if (!playingPositions.ContainsKey(winningSymbol))
-                {
-                    playingPositions[winningSymbol] = new SymbolPositions(new List<(int, int)>());
-                }
-
-                foreach (var pos in winPath)
-                {
-                    if (!playingPositions[winningSymbol].Positions.Contains(pos))
-                    {
-                        playingPositions[winningSymbol].Positions.Add(pos);
-                    }
-                }
-
-                totalWin += betAmount; // Adjust based on symbol payouts
-            }
+            totalWin += ProcessWinningPaths(possibleWins, slotGrid, betAmount);
         }
 
-        // Now compare with previous positions AFTER creating playingPositions
+        UpdateCurrentPositions(isRecalculating);
+        return totalWin;
+    }
+
+    private void ResetState()
+    {
+        winningLines.Clear();
+        playingPositions.Clear();
+    }
+
+    private int ProcessWinningPaths(List<List<(int, int)>> possibleWins, SlotGrid slotGrid, int betAmount)
+    {
+        int totalWin = 0;
+
+        foreach (var winPath in possibleWins)
+        {
+            Symbol winningSymbol = DetermineAssignedSymbol(winPath, slotGrid) ?? slotGrid.GetSymbol(winPath[0].Item1, winPath[0].Item2);
+            winningLines.Add((winPath, winningSymbol));
+
+            if (!playingPositions.ContainsKey(winningSymbol))
+            {
+                playingPositions[winningSymbol] = new SymbolPositions(new List<(int, int)>());
+            }
+
+            foreach (var pos in winPath)
+            {
+                if (!playingPositions[winningSymbol].Positions.Contains(pos))
+                {
+                    playingPositions[winningSymbol].Positions.Add(pos);
+                }
+            }
+
+            totalWin += betAmount; // Adjust based on symbol payouts
+        }
+
+        return totalWin;
+    }
+
+    private void UpdateCurrentPositions(bool isRecalculating)
+    {
         if (isRecalculating)
         {
             foreach (var symbol in playingPositions.Keys)
             {
                 if (currentPositions.TryGetValue(symbol, out var prev))
                 {
-                    // Reset WasShown to false if the new count of positions is greater
-                    if (playingPositions[symbol].Positions.Count > prev.Positions.Count)
-                    {
-                        playingPositions[symbol].WasShown = false;
-                    }
-                    else
-                    {
-                        playingPositions[symbol].WasShown = prev.WasShown;
-                    }
+                    playingPositions[symbol].WasShown = playingPositions[symbol].Positions.Count > prev.Positions.Count ? false : prev.WasShown;
                 }
             }
         }
 
-        currentPositions = playingPositions;
-        return totalWin;
+        currentPositions = new Dictionary<Symbol, SymbolPositions>(playingPositions);
     }
 
     private Symbol? DetermineAssignedSymbol(List<(int, int)> winPath, SlotGrid slotGrid)
@@ -131,11 +130,10 @@ public class SlotCalculator
 public class SymbolPositions
 {
     public List<(int, int)> Positions { get; }
-    public bool WasShown { get; set; } // Defaults to false
+    public bool WasShown { get; set; } = false;
 
     public SymbolPositions(List<(int, int)> positions)
     {
         Positions = positions;
-        WasShown = false;
     }
 }

@@ -70,13 +70,21 @@ public class SlotUIController
         slotUIManager.slotMode = SlotMode.WaitingForConfirm;
         slotUIManager.UpdateButtons();
         currentWin = slotMachine.RandomizeSymbolCalculate(row, col) * slotUIManager.winCoef;
-
         slotUIManager.UpdateResultText($"Current win: ${currentWin}");
         slotUIManager.UpdateInstructionText("");
-
+        
+    }
+    
+    public void ChangeColumn(int col)
+    {
+        slotUIManager.slotMode = SlotMode.WaitingForConfirm;
+        slotUIManager.UpdateButtons();
+        currentWin = slotMachine.RandomizeColumnCalculate( col) * slotUIManager.winCoef;
+        slotUIManager.UpdateResultText($"Current win: ${currentWin}");
+        slotUIManager.UpdateInstructionText("");
     }
 
-
+    
 
     public void IncreaseBet()
     {

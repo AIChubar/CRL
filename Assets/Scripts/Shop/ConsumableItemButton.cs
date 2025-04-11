@@ -8,12 +8,11 @@ public class ConsumableItemButton : MonoBehaviour
     private ConsumableItem item;
     public TextMeshProUGUI nameText;
     public TextMeshProUGUI chargeText;
-
     public void Setup(ConsumableItem _item)
     {
         item = _item;
         nameText.text = item.itemName;
-        button.onClick.AddListener(() => UseItem());
+        button.onClick.AddListener(UseItem);
         chargeText.text = "Charges: " + item.charges;
     }
     private void UseItem()
@@ -22,5 +21,4 @@ public class ConsumableItemButton : MonoBehaviour
             Destroy(gameObject); 
         chargeText.text = "Charges: " + item.charges;
     }
-        
 }

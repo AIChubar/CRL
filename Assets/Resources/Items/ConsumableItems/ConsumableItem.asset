@@ -9,11 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cf88477464bb2184aa3f373e979e3522, type: 3}
-  m_Name: ColumnRollConsumableItem
+  m_Script: {fileID: 11500000, guid: df62ae659ed242646970569dd7cb8975, type: 3}
+  m_Name: ConsumableItem
   m_EditorClassIdentifier: 
-  itemName: CollumnShaker
+  itemName: bebe
   price: 1
   rarity: 0
   cType: 0
-  charges: 3
+  charges: 32
