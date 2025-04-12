@@ -45,11 +45,13 @@ public class GameData : ScriptableObject
         currentLevel = other.currentLevel;
         gold = other.gold;
         slotConfig = other.slotConfig;
-        wildLuck = new CharacterStat(other.wildLuck.Value);
-        payoutMult = new CharacterStat(other.payoutMult.Value);
-        payoutBonus = new CharacterStat(other.payoutBonus.Value);
+        wildLuck = new CharacterStat(other.wildLuck.BaseValue);
+        payoutMult = new CharacterStat(other.payoutMult.BaseValue);
+        payoutBonus = new CharacterStat(other.payoutBonus.BaseValue);
         passiveItems = new List<PassiveItem>(other.passiveItems);
-        consumableItems = new List<ConsumableItem>(other.consumableItems);
+        consumableItems = new List<ConsumableItem>();
+        foreach (ConsumableItem item in other.consumableItems)
+            consumableItems.Add(Instantiate(item));
         columnBuffs.Clear();
         foreach (int val in slotConfig.columnBuffs)
             columnBuffs.Add(new CharacterStat(val));

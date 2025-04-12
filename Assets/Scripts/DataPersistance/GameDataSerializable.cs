@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 [System.Serializable]
@@ -20,11 +19,11 @@ public class GameDataSerializable
     public float payoutMult;
     public float payoutBonus;
 
-    public List<string> passiveItemNames = new List<string>(); // Store item names
-    public List<string> consumableItemNames = new List<string>(); // Store item names
+    public List<string> passiveItemNames = new List<string>();
     public string slotConfigName;
+    public List<ConsumableItemData> consumableItemData = new List<ConsumableItemData>();
+    public List<int> columnBuffs = new List<int>();
 
-    public List<int> columnBuffs = new List<int>();// Assigned in Inspector
     public GameDataSerializable(GameData data)
     {
         slotConfigName = data.slotConfig.name;
@@ -38,21 +37,28 @@ public class GameDataSerializable
         changePrice = data.changePrice;
         currentLevel = data.currentLevel;
         gold = data.gold;
-        
+
         wildLuck = data.wildLuck.BaseValue;
         payoutMult = data.payoutMult.BaseValue;
         payoutBonus = data.payoutBonus.BaseValue;
-        /*foreach (var column in data.columnBuffs)
+
+        passiveItemNames = new List<string>();
+        foreach (var passive in data.passiveItems)
         {
-            columnBuffs.Add((int)column.BaseValue); // Save only the item name
-        }*/
-        foreach (var item in data.passiveItems)
-        {
-            passiveItemNames.Add(item.name); // Save only the item name
+            passiveItemNames.Add(passive.name);
         }
+
+        consumableItemData = new List<ConsumableItemData>();
         foreach (var item in data.consumableItems)
         {
-            consumableItemNames.Add(item.name); // Save only the item name
+            if (item != null)
+            {
+                consumableItemData.Add(new ConsumableItemData
+                {
+                    itemName = item.name,
+                    savedCharges = item.charges
+                });
+            }
         }
     }
 
@@ -68,53 +74,58 @@ public class GameDataSerializable
         data.changePrice = changePrice;
         data.currentLevel = currentLevel;
         data.gold = gold;
-        
+
         data.wildLuck = new CharacterStat(wildLuck);
         data.payoutMult = new CharacterStat(payoutMult);
         data.payoutBonus = new CharacterStat(payoutBonus);
-        /*for (int i = 0; i < columnBuffs.Count; i++)
-        {
-            data.columnBuffs.Add(new CharacterStat(columnBuffs[i])); 
-        }*/
-        data.consumableItems = new List<ConsumableItem>();
-        data.passiveItems = new List<PassiveItem>();
 
-        data.consumableItems.Clear();
-        data.passiveItems.Clear();
+        data.passiveItems = new List<PassiveItem>();
         foreach (var itemName in passiveItemNames)
         {
             PassiveItem loadedItem = Resources.Load<PassiveItem>($"Items/PassiveItems/{itemName}");
             if (loadedItem != null)
-            {
                 data.passiveItems.Add(loadedItem);
-            }
             else
-            {
-                Debug.LogWarning($"Item '{itemName}' not found in Resources folder!");
-            }
+                Debug.LogWarning($"Passive item '{itemName}' not found in Resources folder!");
         }
-        foreach (var itemName in consumableItemNames)
+        data.consumableItems = new List<ConsumableItem>();
+        foreach (var itemData in consumableItemData)
         {
-            ConsumableItem loadedItem = Resources.Load<ConsumableItem>($"Items/ConsumableItems/{itemName}");
-            if (loadedItem != null)
-            {
-                data.consumableItems.Add(loadedItem);
-            }
+            ConsumableItem runtimeItem = GetRuntimeConsumable(itemData.itemName, itemData.savedCharges);
+            if (runtimeItem != null)
+                data.consumableItems.Add(runtimeItem);
             else
-            {
-                Debug.LogWarning($"Item '{itemName}' not found in Resources folder!");
-            }
+                Debug.LogWarning($"Consumable item '{itemData.itemName}' not found in Resources folder!");
         }
-        SlotConfig slotConfig = Resources.Load<SlotConfig>($"Slots/{slotConfigName}");
-        if (slotConfig != null)
-            data.slotConfig = slotConfig;
+
+        SlotConfig slotConfigLoaded = Resources.Load<SlotConfig>($"Slots/{slotConfigName}");
+        if (slotConfigLoaded != null)
+            data.slotConfig = slotConfigLoaded;
         else
-        {
             Debug.LogWarning($"Slot '{slotConfigName}' not found in Resources folder!");
-        }
-        
+
         data.ApplyAllModifiers();
     }
-    
-    
+
+    public static ConsumableItem GetRuntimeConsumable(string itemName, int savedCharges)
+    {
+        ConsumableItem template = Resources.Load<ConsumableItem>($"Items/ConsumableItems/{itemName}");
+
+        if (template == null)
+        {
+            Debug.LogWarning($"Consumable item '{itemName}' could not be loaded from Resources.");
+            return null;
+        }
+
+        ConsumableItem clone = ScriptableObject.Instantiate(template);
+        clone.charges = savedCharges;
+        return clone;
+    }
+}
+
+[System.Serializable]
+public class ConsumableItemData
+{
+    public string itemName;
+    public int savedCharges;
 }
