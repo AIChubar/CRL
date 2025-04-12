@@ -51,7 +51,12 @@ public class GameData : ScriptableObject
         passiveItems = new List<PassiveItem>(other.passiveItems);
         consumableItems = new List<ConsumableItem>();
         foreach (ConsumableItem item in other.consumableItems)
-            consumableItems.Add(Instantiate(item));
+        {
+            ConsumableItem cloneItem = Instantiate(item);
+            cloneItem.name = item.name;
+            consumableItems.Add(cloneItem);
+            
+        }
         columnBuffs.Clear();
         foreach (int val in slotConfig.columnBuffs)
             columnBuffs.Add(new CharacterStat(val));

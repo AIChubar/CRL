@@ -55,7 +55,7 @@ public class GameDataSerializable
             {
                 consumableItemData.Add(new ConsumableItemData
                 {
-                    itemName = item.name,
+                    savedItemName = item.name,
                     savedCharges = item.charges
                 });
             }
@@ -80,22 +80,22 @@ public class GameDataSerializable
         data.payoutBonus = new CharacterStat(payoutBonus);
 
         data.passiveItems = new List<PassiveItem>();
-        foreach (var itemName in passiveItemNames)
+        foreach (var savedItemName in passiveItemNames)
         {
-            PassiveItem loadedItem = Resources.Load<PassiveItem>($"Items/PassiveItems/{itemName}");
+            PassiveItem loadedItem = Resources.Load<PassiveItem>($"Items/PassiveItems/{savedItemName}");
             if (loadedItem != null)
                 data.passiveItems.Add(loadedItem);
             else
-                Debug.LogWarning($"Passive item '{itemName}' not found in Resources folder!");
+                Debug.LogWarning($"Passive item '{savedItemName}' not found in Resources folder!");
         }
         data.consumableItems = new List<ConsumableItem>();
         foreach (var itemData in consumableItemData)
         {
-            ConsumableItem runtimeItem = GetRuntimeConsumable(itemData.itemName, itemData.savedCharges);
+            ConsumableItem runtimeItem = GetRuntimeConsumable(itemData.savedItemName, itemData.savedCharges);
             if (runtimeItem != null)
                 data.consumableItems.Add(runtimeItem);
             else
-                Debug.LogWarning($"Consumable item '{itemData.itemName}' not found in Resources folder!");
+                Debug.LogWarning($"Consumable item '{itemData.savedItemName}' not found in Resources folder!");
         }
 
         SlotConfig slotConfigLoaded = Resources.Load<SlotConfig>($"Slots/{slotConfigName}");
@@ -107,18 +107,19 @@ public class GameDataSerializable
         data.ApplyAllModifiers();
     }
 
-    public static ConsumableItem GetRuntimeConsumable(string itemName, int savedCharges)
+    public static ConsumableItem GetRuntimeConsumable(string savedItemName, int savedCharges)
     {
-        ConsumableItem template = Resources.Load<ConsumableItem>($"Items/ConsumableItems/{itemName}");
+        ConsumableItem template = Resources.Load<ConsumableItem>($"Items/ConsumableItems/{savedItemName}");
 
         if (template == null)
         {
-            Debug.LogWarning($"Consumable item '{itemName}' could not be loaded from Resources.");
+            Debug.LogWarning($"Consumable item '{savedItemName}' could not be loaded from Resources.");
             return null;
         }
 
         ConsumableItem clone = ScriptableObject.Instantiate(template);
         clone.charges = savedCharges;
+        clone.name = template.name;
         return clone;
     }
 }
@@ -126,6 +127,6 @@ public class GameDataSerializable
 [System.Serializable]
 public class ConsumableItemData
 {
-    public string itemName;
+    public string savedItemName;
     public int savedCharges;
 }

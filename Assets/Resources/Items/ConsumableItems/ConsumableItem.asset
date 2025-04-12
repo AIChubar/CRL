@@ -15,5 +15,5 @@ MonoBehaviour:
   itemName: bebe
   price: 1
   rarity: 0
-  cType: 0
-  charges: 32
+  consumableItemType: 0
+  charges: 3

@@ -426,6 +426,7 @@ MonoBehaviour:
   instructionText: {fileID: 955546653}
   goldText: {fileID: 145622482}
   nextLevelButton: {fileID: 1191044744}
+  menuButton: {fileID: 1093139554}
   rerollButton: {fileID: 1071663682}
   buyButton: {fileID: 1453022954}
   itemButtonPrefab: {fileID: 7975587973700007349, guid: 1a04f6f3aed5d324ea35054badac67e6, type: 3}
@@ -1579,12 +1580,12 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
-        m_MethodName: OnMenuButtonPressed
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_ObjectArgumentAssemblyTypeName: 
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 

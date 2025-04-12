@@ -6,6 +6,8 @@ using UnityEngine;
 public class Item : ScriptableObject
 {
     public string itemName;
+    //[HideInInspector]public string savedItemName;
+
     public int price;
     public ItemRarity rarity;
     

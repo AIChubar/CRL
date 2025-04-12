@@ -17,6 +17,8 @@ public class ShopManager : MonoBehaviour
     public TMP_Text goldText;
     
     [SerializeField] private Button nextLevelButton;
+    [SerializeField] private Button menuButton;
+
     [SerializeField] private Button rerollButton;
     [SerializeField] private Button buyButton;
     [SerializeField] private GameObject itemButtonPrefab;
@@ -36,7 +38,7 @@ public class ShopManager : MonoBehaviour
         nextLevelButton.onClick.AddListener(NextLevel);
         rerollButton.onClick.AddListener(RerollItems);
         buyButton.onClick.AddListener(BuyItem);
-
+        menuButton.onClick.AddListener(OnMenuButtonClick);
         availableItems = new List<Item>(allItems); // Initialize the pool
         currentShopItems = new List<Item>();
 
@@ -140,6 +142,10 @@ public class ShopManager : MonoBehaviour
         SceneManager.LoadScene(1, LoadSceneMode.Single);
     }
 
+    public void OnMenuButtonClick()
+    {
+        SceneManager.LoadScene(0, LoadSceneMode.Single);
+    }
     public void SetCurrentItem(ItemButton item)
     {
         currentItem = item;
