@@ -6,12 +6,17 @@ using UnityEngine;
 public class SlotGrid
 {
     private Symbol[,] grid;
+    
+    private Symbol[,] fullGrid;
+    
     private SymbolButton[,] symbolInstances;
     private List<CharacterStat> columnBuffs;
     private SymbolManager symbolManager;
 
     private int rows, columns;
-    private int maxRows;
+    
+    private int totalRows = 100, totalColumns = 10;
+    private int maxRowsWithBuff;
 
     public SlotGrid(int rows, int columns, List<CharacterStat> columnBuffs, SymbolManager symbolManager)
     {
@@ -21,16 +26,16 @@ public class SlotGrid
         this.symbolManager = symbolManager;
 
         int maxBuff = columnBuffs.Count > 0 ? Mathf.Max(columnBuffs.Select(buff => buff.ValueInt).ToArray()) : 0;
-        maxRows = rows + maxBuff;
+        maxRowsWithBuff = rows + maxBuff;
 
         // Now arrays are [column, row]
-        grid = new Symbol[columns, maxRows];
-        symbolInstances = new SymbolButton[columns, maxRows];
-
-        FillGrid();
+        grid = new Symbol[columns, maxRowsWithBuff];
+        fullGrid = new Symbol[totalColumns, totalRows];
+        symbolInstances = new SymbolButton[columns, maxRowsWithBuff];
+        
     }
 
-    private void FillGrid()
+    public void RollGrid()
     {
         for (int c = 0; c < columns; c++)
         {
@@ -45,7 +50,7 @@ public class SlotGrid
 
     public (int columns, int rows) GetColumnRowLength()
     {
-        return (columns, maxRows);
+        return (columns, maxRowsWithBuff);
     }
 
     public void RegisterSymbolInstance(int col, int row, SymbolButton instance)

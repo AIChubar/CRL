@@ -7,7 +7,7 @@ public class SlotMachine
 {
     private GameData gameData;
     private SlotGrid slotGrid;             
-    private List<SlotReel> reels;
+    //private List<SlotReel> reels;
     private SymbolManager symbolManager;
     private SlotCalculator slotCalculator;
     private int lastWinAmount = 0; // Store last win value
@@ -23,29 +23,14 @@ public class SlotMachine
         slotGrid = new SlotGrid(gameData.slotConfig.rows, gameData.slotConfig.columns, gameData.columnBuffs, symbolManager);
         slotUIManager.SetUp(gameData, this, slotGrid);
 
-        CreateReels();
     }
-
-    private void CreateReels()
-    {
-        reels = new List<SlotReel>();
-        for (int i = 0; i < gameData.slotConfig.columns; i++)
-        {
-            reels.Add(new SlotReel(gameData.slotConfig.symbols));
-        }
-    }
+    
 
     public int SpinSlot(int betAmount, bool simulateOnly = false)
     {
         currentBetAmount = betAmount;
-        for (int col = 0; col < slotGrid.GetColumnRowLength().columns; col++)
-        {
-            List<Symbol> reelSymbols = reels[col].GenerateSymbols(slotGrid.GetColumnRowLength().rows * 10);
-            for (int row = 0; row < slotGrid.GetColumnRowLength().rows; row++)
-            {
-                slotGrid.SetSymbol(col, row, reelSymbols[row + slotGrid.GetColumnRowLength().rows * 8]);
-            }
-        }
+      
+        slotGrid.RollGrid();
 
         if (!simulateOnly)
         {
@@ -88,7 +73,7 @@ public class SlotMachine
     {
         List<Symbol> possibleSymbols = new List<Symbol>(gameData.slotConfig.symbols);
         possibleSymbols.Remove(slotGrid.GetSymbol(col, row));
-        slotGrid.SetSymbol(col, row, possibleSymbols[Random.Range(0, possibleSymbols.Count)]); //RNG
+        slotGrid.SetSymbol(col, row, symbolManager.GetRandomSymbolUnweighted()); //RNG
         slotUIManager.ChangeSingleSymbol(col, row, slotGrid.GetSymbol(col, row));
     }
 }
