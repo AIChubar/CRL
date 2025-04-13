@@ -61,7 +61,7 @@ public class SlotReel
 
         for (int i = 0; i < numberOfSymbols; i++)
         {
-            float rand = Random.value;
+            float rand = GameManager.instance.rngManager.NextFloat();
             foreach (var kvp in cumulativeList)
             {
                 if (rand <= kvp.Value)

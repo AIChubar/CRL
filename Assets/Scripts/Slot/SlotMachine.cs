@@ -88,7 +88,7 @@ public class SlotMachine
     {
         List<Symbol> possibleSymbols = new List<Symbol>(gameData.slotConfig.symbols);
         possibleSymbols.Remove(slotGrid.GetSymbol(col, row));
-        slotGrid.SetSymbol(col, row, possibleSymbols[Random.Range(0, possibleSymbols.Count)]);
+        slotGrid.SetSymbol(col, row, possibleSymbols[Random.Range(0, possibleSymbols.Count)]); //RNG
         slotUIManager.ChangeSingleSymbol(col, row, slotGrid.GetSymbol(col, row));
     }
 }
