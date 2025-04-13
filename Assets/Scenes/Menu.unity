@@ -1702,6 +1702,7 @@ MonoBehaviour:
   gameData: {fileID: 11400000, guid: 3818c758750776a43960d4ea6893340b, type: 2}
   newGameData: {fileID: 11400000, guid: f445807f8f39313459652c64a1db0dbb, type: 2}
   fileName: save.data
+  seed: 1029384756
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

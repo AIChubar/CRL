@@ -22,16 +22,16 @@ public class SlotMachine
         this.slotUIManager = slotUIManager;
         slotGrid = new SlotGrid(gameData.slotConfig.rows, gameData.slotConfig.columns, gameData.columnBuffs, symbolManager);
         slotUIManager.SetUp(gameData, this, slotGrid);
-
     }
-    
+
+    public List<(List<(int, int)> line, Symbol symbol)> GetWinningLines() => slotCalculator.winningLines;
+    public Dictionary<Symbol, SymbolPositions> GetPlayingPositions() => slotCalculator.currentPositions;
 
     public int SpinSlot(int betAmount, bool simulateOnly = false)
     {
         currentBetAmount = betAmount;
       
-        slotGrid.RollGrid();
-
+        slotGrid.RollFullGrid();
         if (!simulateOnly)
         {
             slotUIManager.SetUpGridUI();
@@ -39,22 +39,19 @@ public class SlotMachine
 
         lastWinAmount = slotCalculator.CalculateWin(slotGrid, currentBetAmount);
 
-        if (!simulateOnly)
-        {
-            slotUIManager.DrawWinningLines(slotCalculator.winningLines, slotGrid);
-            slotUIManager.AnimatePositions(slotCalculator.currentPositions, slotGrid);
-        }
 
         return lastWinAmount;
     }
+    
+    
 
     public int RandomizeSymbolCalculate(int col, int row)
     {
         RandomizeSingleSymbol(col, row);
         lastWinAmount = slotCalculator.CalculateWin(slotGrid, currentBetAmount, true);
 
-        slotUIManager.DrawWinningLines(slotCalculator.winningLines, slotGrid);
-        slotUIManager.AnimatePositions(slotCalculator.currentPositions, slotGrid);
+        //slotUIManager.DrawWinningLines(slotCalculator.winningLines, slotGrid);
+        //slotUIManager.AnimatePositions(slotCalculator.currentPositions, slotGrid);
         return lastWinAmount;
     }
 
@@ -64,8 +61,8 @@ public class SlotMachine
             RandomizeSingleSymbol(col, row);
         
         lastWinAmount = slotCalculator.CalculateWin(slotGrid, currentBetAmount, true);
-        slotUIManager.DrawWinningLines(slotCalculator.winningLines, slotGrid);
-        slotUIManager.AnimatePositions(slotCalculator.currentPositions, slotGrid);
+        //slotUIManager.DrawWinningLines(slotCalculator.winningLines, slotGrid);
+        //slotUIManager.AnimatePositions(slotCalculator.currentPositions, slotGrid);
         return lastWinAmount;
     }
 

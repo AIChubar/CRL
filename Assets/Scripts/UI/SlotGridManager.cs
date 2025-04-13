@@ -51,7 +51,7 @@ public class SlotGridManager
         DisableColumnButtons();
         PopulateColumns(columnBuffs);
         DisableSymbolButtons();
-        
+        PopulateSymbolButtons();
     }
 
     public void DisableSymbolButtons()
@@ -148,7 +148,7 @@ public class SlotGridManager
         foreach (SymbolButton symbolButton in symbolButtons)
         {
             if (symbolButton !=  null)
-                symbolButton.GetComponent<TMP_Text>().text = slotGrid.GetSymbol(symbolButton.col, symbolButton.row).ch;
+                symbolButton.SetSymbol(slotGrid.GetSymbol(symbolButton.col, symbolButton.row));
         }
     }
 

@@ -46,27 +46,31 @@ public class SlotUIManager : MonoBehaviour
     private SlotGridManager slotGridManager;
     
     public GameObject consumableButtonPrefab;
-    public GameObject columnPrefab
-        ;
+    public GameObject columnPrefab;
+    private SlotSpinAnimator slotSpinAnimator;
+    private SlotGrid slotGrid;
     public Transform consumableButtonContainer; // Assign UI Panel for items
     private List<ConsumableItemButton> consumableButtons = new List<ConsumableItemButton>();
     //private List<GameObject> columnContainers;
 
     public void SetUp(GameData gameData, SlotMachine slotMachine, SlotGrid slotGrid)
     {
+        this.slotGrid = slotGrid;
         this.gameData = gameData;
         this.slotMachine = slotMachine;
         slotMode = SlotMode.ReadyForSpin;
-        coroutineTracker = new CoroutineTracker(this);
+        coroutineTracker = new CoroutineTracker(this, AnimationType.Result);
         winningLineDrawer = new WinningLineDrawer();
         winningLineDrawer.SetUp(this.transform, linePrefab, coroutineTracker);
 
         winningPositionsDrawer = new WinningPositionsDrawer();
         winningPositionsDrawer.SetUp(this.transform, coroutineTracker);
+
+        slotSpinAnimator = new SlotSpinAnimator(slotGrid, this);
         
         slotUIController = new SlotUIController();
         slotUIController.SetUp(gameData, slotMachine, this);
-
+        
         SetFinishButton(false);
 
         spinButton.onClick.AddListener(slotUIController.Spin);
@@ -105,19 +109,30 @@ public class SlotUIManager : MonoBehaviour
     private void UnsubscribeFromEvents()
     {
         GameManager.instance.eventManager.OnConsumableItemUsed.RemoveListener(OnConsumableItemUsed);
-        GameManager.instance.eventManager.OnSpinAnimationEnd.RemoveListener(OnSpinAnimationEnd);
+        GameManager.instance.eventManager.OnCoroutineEnd.RemoveListener(OnCoroutineEnd);
     }
 
     private void SubscribeToEvents()
     {
         GameManager.instance.eventManager.OnConsumableItemUsed.AddListener(OnConsumableItemUsed);
-        GameManager.instance.eventManager.OnSpinAnimationEnd.AddListener(OnSpinAnimationEnd);
+        GameManager.instance.eventManager.OnCoroutineEnd.AddListener(OnCoroutineEnd);
     }
 
-    private void OnSpinAnimationEnd()
+    private void OnCoroutineEnd(AnimationType animationType)
     {
-        slotMode = SlotMode.WaitingForConfirm;
-        UpdateButtons();
+        switch (animationType)
+        {
+            case AnimationType.Spin:
+                DrawWinningLines(slotMachine.GetWinningLines(), slotGrid);
+                AnimatePositions(slotMachine.GetPlayingPositions(), slotGrid);
+                break;
+            case AnimationType.Result:
+                slotMode = SlotMode.WaitingForConfirm;
+                UpdateButtons();
+                break;
+        }
+        
+        
     }
 
     public void OnConsumableItemUsed(ConsumableItemType item)
@@ -152,13 +167,11 @@ public class SlotUIManager : MonoBehaviour
     }
     public void DrawWinningLines(List<(List<(int, int)> line, Symbol symbol)> winningLines, SlotGrid slotGrid)
     {
-        DisableButtons();
         winningLineDrawer.DrawWinningLines(winningLines, slotGrid);
     }
 
     public void AnimatePositions(Dictionary<Symbol, SymbolPositions> playingPositions, SlotGrid slotGrid)
     {
-        DisableButtons();
         winningPositionsDrawer.AnimatePositions(playingPositions, slotGrid);
     }
     
@@ -228,8 +241,12 @@ public class SlotUIManager : MonoBehaviour
 
     public void SetUpGridUI()
     {
-        slotGridManager.PopulateSymbolButtons();
+        slotSpinAnimator.StartSpin();
+        winningLineDrawer.ClearLines();
         slotGridManager.DisableSymbolButtons();
+        slotGridManager.DisableColumnButtons();
+        DisableButtons();
+
     }
     
     public void ChangeSingleSymbol(int row, int col, Symbol newSymbol)

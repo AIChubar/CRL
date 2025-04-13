@@ -6,11 +6,12 @@ public class CoroutineTracker
 {
     private MonoBehaviour coroutineRunner;
     private HashSet<IEnumerator> activeCoroutines = new HashSet<IEnumerator>();
+    private AnimationType animationType;
 
-
-    public CoroutineTracker(MonoBehaviour runner)
+    public CoroutineTracker(MonoBehaviour runner, AnimationType animationType)
     {
         this.coroutineRunner = runner;
+        this.animationType = animationType;
     }
 
     public Coroutine StartTrackedCoroutine(IEnumerator coroutine)
@@ -27,9 +28,14 @@ public class CoroutineTracker
         
         if (activeCoroutines.Count == 0)
         {
-            GameManager.instance.eventManager.OnSpinAnimationEnd?.InvokeEvent();
+            GameManager.instance.eventManager.OnCoroutineEnd?.InvokeEvent(animationType);
         }
     }
 
     public bool IsRunning => activeCoroutines.Count > 0;
+}
+
+public enum AnimationType
+{
+    Spin, Result
 }
