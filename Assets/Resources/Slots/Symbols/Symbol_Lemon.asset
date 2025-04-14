@@ -14,5 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   symbolName: 
   probability: 0
-  sprite: {fileID: 0}
+  sprite: {fileID: 4474252250847901377, guid: a7635f3381cb63c41ac52dea293d1427, type: 3}
   ch: "\U0001F34B"
+  isWild: 0

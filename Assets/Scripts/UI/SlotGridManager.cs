@@ -37,34 +37,27 @@ public class SlotGridManager
     {
         //ClearPreviousUI();
 
-        HorizontalLayoutGroup hlg = slotPanel.GetComponent<HorizontalLayoutGroup>();
-        if (hlg == null)
-        {
-            hlg = slotPanel.AddComponent<HorizontalLayoutGroup>();
-            hlg.childAlignment = TextAnchor.MiddleCenter;
-            hlg.spacing = 20;
-            hlg.childControlWidth = true;
-            hlg.childForceExpandWidth = false;
-        }
+        
 
         CreateColumnContainers();
         DisableColumnButtons();
         PopulateColumns(columnBuffs);
         DisableSymbolButtons();
         PopulateSymbolButtons();
+        
         foreach (GameObject columnContainer in columnContainers)
         {
-            VerticalLayoutGroup layoutGroup = columnContainer.GetComponent<VerticalLayoutGroup>();
+            CustomVerticalLayoutGroup layoutGroup = columnContainer.GetComponent<CustomVerticalLayoutGroup>();
             if (layoutGroup != null)
             {
-                LayoutRebuilder.ForceRebuildLayoutImmediate(layoutGroup.GetComponent<RectTransform>());
-
-                //layoutGroup.enabled = false;
+                layoutGroup.ApplyLayout();
             }
         }
-        
+        CustomHorizontalLayoutGroup hlg = slotPanel.GetComponent<CustomHorizontalLayoutGroup>();
+        hlg.ApplyLayout();
     }
 
+    
     public void DisableSymbolButtons()
     {
         SymbolButton[,] symbolButtons = slotGrid.GetSymbolButtons();
