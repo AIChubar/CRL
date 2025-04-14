@@ -130,11 +130,7 @@ public class SlotGrid
             grid[col, row] = newSymbol;
     }
 
-    public void SetSymbol(int col, int row, string newch)
-    {
-        if (IsValidPosition(col, row))
-            grid[col, row].ch = newch;
-    }
+  
 
     public bool IsValidPosition(int col, int row)
     {

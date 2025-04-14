@@ -10,10 +10,10 @@ public class SymbolButton : MonoBehaviour
     private CanvasGroup canvasGroup;
     public int row;
     public int col;
-    private TextMeshProUGUI symbolText;
+    //public TextMeshProUGUI symbolText;
+    public Image symbolImage;
     public void SetUp(int col, int row)
     {
-        symbolText = GetComponent<TextMeshProUGUI>();
         this.row = row;
         this.col = col;
         button = GetComponent<Button>();
@@ -23,7 +23,9 @@ public class SymbolButton : MonoBehaviour
     public void SetSymbol(Symbol symbol)
     {
         this.symbol = symbol;
-        symbolText.text = symbol.ch;
+        this.symbolImage.sprite = symbol.sprite;
+        //symbolText.text = symbol.ch;
+        
     }
     
     public void DisableButton()

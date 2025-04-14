@@ -123,8 +123,8 @@ public class SlotUIManager : MonoBehaviour
         switch (animationType)
         {
             case AnimationType.Spin:
-                DrawWinningLines(slotMachine.GetWinningLines(), slotGrid);
-                AnimatePositions(slotMachine.GetPlayingPositions(), slotGrid);
+                DrawWinningLines(slotMachine.GetWinningLines());
+                AnimatePositions(slotMachine.GetPlayingPositions());
                 break;
             case AnimationType.Result:
                 slotMode = SlotMode.WaitingForConfirm;
@@ -165,12 +165,12 @@ public class SlotUIManager : MonoBehaviour
         UpdateButtons();
         UpdateInstructionText("Pick column you want to change!");
     }
-    public void DrawWinningLines(List<(List<(int, int)> line, Symbol symbol)> winningLines, SlotGrid slotGrid)
+    public void DrawWinningLines(List<(List<(int, int)> line, Symbol symbol)> winningLines)
     {
         winningLineDrawer.DrawWinningLines(winningLines, slotGrid);
     }
 
-    public void AnimatePositions(Dictionary<Symbol, SymbolPositions> playingPositions, SlotGrid slotGrid)
+    public void AnimatePositions(Dictionary<Symbol, SymbolPositions> playingPositions)
     {
         winningPositionsDrawer.AnimatePositions(playingPositions, slotGrid);
     }
@@ -246,7 +246,6 @@ public class SlotUIManager : MonoBehaviour
         slotGridManager.DisableSymbolButtons();
         slotGridManager.DisableColumnButtons();
         DisableButtons();
-
     }
     
     public void ChangeSingleSymbol(int row, int col, Symbol newSymbol)

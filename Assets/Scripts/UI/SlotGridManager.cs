@@ -52,6 +52,17 @@ public class SlotGridManager
         PopulateColumns(columnBuffs);
         DisableSymbolButtons();
         PopulateSymbolButtons();
+        foreach (GameObject columnContainer in columnContainers)
+        {
+            VerticalLayoutGroup layoutGroup = columnContainer.GetComponent<VerticalLayoutGroup>();
+            if (layoutGroup != null)
+            {
+                LayoutRebuilder.ForceRebuildLayoutImmediate(layoutGroup.GetComponent<RectTransform>());
+
+                //layoutGroup.enabled = false;
+            }
+        }
+        
     }
 
     public void DisableSymbolButtons()
@@ -110,7 +121,7 @@ public class SlotGridManager
             columnContainer.transform.SetParent(slotPanel.transform, false);
             var cl = col;
             columnContainer.GetComponent<Button>().onClick.AddListener(() => slotUIController.ChangeColumn(cl));
-
+            
             columnContainers.Add(columnContainer);
         }
     }
@@ -161,7 +172,7 @@ public class SlotGridManager
         SymbolButton symbolInstance = slotGrid.GetSymbolInstance(col, row);
         if (symbolInstance != null)
         {
-            symbolInstance.GetComponent<TMP_Text>().text = newSymbol.ch;
+            symbolInstance.GetComponent<SymbolButton>().SetSymbol(newSymbol);
         }
     }
 }
