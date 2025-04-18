@@ -29,10 +29,12 @@ public class SymbolManager
         return null;
     }
 
-    public Symbol GetRandomSymbolUnweighted()
+    public Symbol GetRandomSymbolUnweighted(Symbol symbolToExclude = null)
     {
-        int rand = GameManager.instance.rngManager.NextInt(0, symbols.Count);
-        return symbols[rand];
+        List<Symbol> possibleSymbols = new List<Symbol>(symbols);
+        possibleSymbols.Remove(symbolToExclude);
+        int rand = GameManager.instance.rngManager.NextInt(0, possibleSymbols.Count);
+        return possibleSymbols[rand];
     }
     
     public void ComputeSymbolProbabilities()

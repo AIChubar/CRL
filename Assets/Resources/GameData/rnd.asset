@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ac1f7eae610d1e4daf895b683cbeb05, type: 3}
+  m_Name: rnd
+  m_EditorClassIdentifier: 
+  RTP: 0.95
+  baseMoney: 2000
+  money: 2000
+  spinsLeft: 10
+  wagerLeft: 2000
+  targetMoney: 1000
+  betAmount: 10
+  changePrice: 5
+  currentLevel: 0
+  gold: 0
+  wildLuck:
+    BaseValue: 1
+  payoutMult:
+    BaseValue: 1
+  payoutBonus:
+    BaseValue: 0
+  passiveItems: []
+  consumableItems: []
+  slotConfig: {fileID: 11400000, guid: d1d909419b1fc9c449e94042f76f8a86, type: 2}
+  columnBuffs:
+  - BaseValue: 2
+  - BaseValue: 0
+  - BaseValue: 1
+  - BaseValue: 0

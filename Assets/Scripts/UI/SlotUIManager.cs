@@ -125,14 +125,13 @@ public class SlotUIManager : MonoBehaviour
             case AnimationType.Spin:
                 DrawWinningLines(slotMachine.GetWinningLines());
                 AnimatePositions(slotMachine.GetPlayingPositions());
+                DisableButtons();
                 break;
             case AnimationType.Result:
                 slotMode = SlotMode.WaitingForConfirm;
                 UpdateButtons();
                 break;
         }
-        
-        
     }
 
     public void OnConsumableItemUsed(ConsumableItemType item)
@@ -210,6 +209,8 @@ public class SlotUIManager : MonoBehaviour
         changeButton.interactable = (slotMode == SlotMode.WaitingForConfirm);
         increaseButton.interactable = (slotMode == SlotMode.ReadyForSpin);
         decreaseButton.interactable = (slotMode == SlotMode.ReadyForSpin);
+        consumableButtons.RemoveAll(button => button == null || button.gameObject == null);
+
         foreach (var consumableButton in consumableButtons)
         {
             if (slotMode == SlotMode.WaitingForConfirm)

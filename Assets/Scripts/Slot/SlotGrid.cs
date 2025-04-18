@@ -102,6 +102,11 @@ public class SlotGrid
     {
         return (columns, maxRowsWithBuff);
     }
+    
+    public (int columns, int rows) GetColumnRowLength(int col)
+    {
+        return (columns, rows + columnBuffs[col].ValueInt);
+    }
 
     public void RegisterSymbolInstance(int col, int row, SymbolButton instance)
     {

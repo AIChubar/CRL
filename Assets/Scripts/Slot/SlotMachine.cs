@@ -49,28 +49,29 @@ public class SlotMachine
     {
         RandomizeSingleSymbol(col, row);
         lastWinAmount = slotCalculator.CalculateWin(slotGrid, currentBetAmount, true);
+        slotUIManager.DisableButtons();
 
-        //slotUIManager.DrawWinningLines(slotCalculator.winningLines, slotGrid);
-        //slotUIManager.AnimatePositions(slotCalculator.currentPositions, slotGrid);
+        slotUIManager.DrawWinningLines(GetWinningLines());
+        slotUIManager.AnimatePositions(GetPlayingPositions());
         return lastWinAmount;
     }
 
     public int RandomizeColumnCalculate(int col)
     {
         for (int row = 0; row < slotGrid.GetColumnRowLength().rows; row++)
-            RandomizeSingleSymbol(col, row);
+            RandomizeSingleSymbol(col, row, true);
         
         lastWinAmount = slotCalculator.CalculateWin(slotGrid, currentBetAmount, true);
-        //slotUIManager.DrawWinningLines(slotCalculator.winningLines, slotGrid);
-        //slotUIManager.AnimatePositions(slotCalculator.currentPositions, slotGrid);
+        slotUIManager.DisableButtons();
+        slotUIManager.DrawWinningLines(GetWinningLines());
+        slotUIManager.AnimatePositions(GetPlayingPositions());
         return lastWinAmount;
     }
 
-    private void RandomizeSingleSymbol(int col, int row)
+    private void RandomizeSingleSymbol(int col, int row, bool canBeTheSame = false)
     {
-        List<Symbol> possibleSymbols = new List<Symbol>(gameData.slotConfig.symbols);
-        possibleSymbols.Remove(slotGrid.GetSymbol(col, row));
-        slotGrid.SetSymbol(col, row, symbolManager.GetRandomSymbolUnweighted()); //RNG
+        
+        slotGrid.SetSymbol(col, row, symbolManager.GetRandomSymbolUnweighted(canBeTheSame ? null : slotGrid.GetSymbol(col, row))); 
         slotUIManager.ChangeSingleSymbol(col, row, slotGrid.GetSymbol(col, row));
     }
 }
