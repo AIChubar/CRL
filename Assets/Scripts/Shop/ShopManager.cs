@@ -23,7 +23,7 @@ public class ShopManager : MonoBehaviour
     [SerializeField] private Button buyButton;
     [SerializeField] private GameObject itemButtonPrefab;
     public GameData gameData;
-    public List<Item> allItems; // Master list of all items
+    //[SerializeField] private ShopConfig shopConfig;
     private List<Item> availableItems; // Items currently in the pool
     private List<Item> currentShopItems; // Currently displayed shop items
 
@@ -39,7 +39,7 @@ public class ShopManager : MonoBehaviour
         rerollButton.onClick.AddListener(RerollItems);
         buyButton.onClick.AddListener(BuyItem);
         menuButton.onClick.AddListener(OnMenuButtonClick);
-        availableItems = new List<Item>(allItems); // Initialize the pool
+        availableItems = new List<Item>(gameData.shopConfig.availableItems); // Initialize the pool
         currentShopItems = new List<Item>();
 
         UpdateUI();
@@ -124,14 +124,15 @@ public class ShopManager : MonoBehaviour
 
         if (consumable != null)
         {
-            gameData.consumableItems.Add(consumable);
+            gameData.consumableItems.Add(Instantiate(consumable));
         }
         else if (passive != null)
         {
             gameData.passiveItems.Add(passive);
         }
         Destroy(currentItem.gameObject);
-        currentShopItems.Remove(currentItem.item); // Remove from shop items
+        currentShopItems.Remove(currentItem.item);
+        gameData.shopConfig.availableItems.Remove(currentItem.item);;
         currentItem = null;
 
         UpdateUI();
@@ -153,6 +154,6 @@ public class ShopManager : MonoBehaviour
 
     public void UpdateUI()
     {
-        goldText.text = "Gold: $" + gameData.gold;
+        goldText.text = "Gold: " + gameData.gold;
     }
 }

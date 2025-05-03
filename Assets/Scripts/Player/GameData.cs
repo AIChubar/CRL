@@ -9,15 +9,16 @@ using UnityEngine;
 public class GameData : ScriptableObject
 {
     public float RTP;
-    public float baseMoney;
-    public float money;
-    public int spinsLeft;
-    public int wagerLeft;
+    [HideInInspector]public float baseMoney = 0;
+    [HideInInspector]public float money = 0;
+    [HideInInspector] public int spinsLeft;
     public int targetMoney;
-    public int betAmount;
+    [HideInInspector]public int betAmount = 0;
     public int changePrice;
+    public int tokens;
     public int currentLevel;
     public int gold;
+    public int baseSpins;
 
     [SerializeField] public CharacterStat wildLuck;
     [SerializeField] public CharacterStat payoutMult;
@@ -27,24 +28,25 @@ public class GameData : ScriptableObject
     public List<ConsumableItem> consumableItems;
 
     [SerializeField] public SlotConfig slotConfig; // Assigned in Inspector
-    
+    [SerializeField] public ShopConfig shopConfig;
     [HideInInspector]public List<CharacterStat> columnBuffs = new List<CharacterStat>();
 
     public void CopyFrom(GameData other)
     {
         if (other == null) return;
-
+        tokens = other.tokens;
         RTP = other.RTP;
         baseMoney = other.baseMoney;
         money = other.money;
         spinsLeft = other.spinsLeft;
-        wagerLeft = other.wagerLeft;
         targetMoney = other.targetMoney;
         betAmount = other.betAmount;
         changePrice = other.changePrice;
         currentLevel = other.currentLevel;
         gold = other.gold;
+        shopConfig = other.shopConfig;
         slotConfig = other.slotConfig;
+        baseSpins = other.baseSpins;
         wildLuck = new CharacterStat(other.wildLuck.BaseValue);
         payoutMult = new CharacterStat(other.payoutMult.BaseValue);
         payoutBonus = new CharacterStat(other.payoutBonus.BaseValue);
@@ -64,6 +66,12 @@ public class GameData : ScriptableObject
         ApplyAllModifiers();
     }
 
+    public void Reset()
+    {
+        spinsLeft = baseSpins;
+        money = baseMoney;
+    }
+    
     public void ApplyAllModifiers()
     {
         foreach (var item in passiveItems)
@@ -114,5 +122,7 @@ public class GameData : ScriptableObject
             }
         }
     }
+    
+    
     
 }

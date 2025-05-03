@@ -26,9 +26,9 @@ public class DataPersistenceManager
     //private List<IDataPersistence> dataPersistenceObjects;
     public void NewGame()
     {
-        
         gameData.CopyFrom(newGameData);
-        
+        gameData.Reset();
+        gameData.shopConfig.Reset();
     }
 
     public void LoadGame()

@@ -13,26 +13,25 @@ MonoBehaviour:
   m_Name: Game_Data_Saved_SO
   m_EditorClassIdentifier: 
   RTP: 0.95
-  baseMoney: 2000
-  money: 2290
-  spinsLeft: 0
-  wagerLeft: 1900
-  targetMoney: 1000
-  betAmount: 10
-  changePrice: 5
+  baseMoney: 0
+  money: 2
+  spinsLeft: 8
+  targetMoney: 20
+  betAmount: 1
+  changePrice: 1
+  tokens: 4
   currentLevel: 0
   gold: 0
   wildLuck:
-    BaseValue: 0
+    BaseValue: 1
   payoutMult:
-    BaseValue: 0
+    BaseValue: 1
   payoutBonus:
     BaseValue: 0
   passiveItems: []
   consumableItems: []
-  slotConfig: {fileID: 11400000, guid: 26d7c73c6e18bab43b714d0a788bdbd9, type: 2}
+  slotConfig: {fileID: 11400000, guid: 1d8dece67bba3e3449d70af789909cca, type: 2}
   columnBuffs:
-  - BaseValue: 2
   - BaseValue: 0
-  - BaseValue: 1
+  - BaseValue: 0
   - BaseValue: 0

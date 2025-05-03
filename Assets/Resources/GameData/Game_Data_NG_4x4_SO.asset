@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: Game_Data_NG_4x4_SO
   m_EditorClassIdentifier: 
   RTP: 0.95
-  baseMoney: 2000
-  money: 2000
+  baseMoney: 0
+  money: 0
   spinsLeft: 10
-  wagerLeft: 2000
-  targetMoney: 1000
-  betAmount: 10
-  changePrice: 5
+  targetMoney: 20
+  betAmount: 1
+  changePrice: 1
+  tokens: 5
   currentLevel: 0
   gold: 0
   wildLuck:
@@ -29,9 +29,8 @@ MonoBehaviour:
   payoutBonus:
     BaseValue: 0
   passiveItems: []
-  consumableItems:
-  - {fileID: 11400000, guid: 937e2889304c5ce47b8fc277ed3f395a, type: 2}
-  slotConfig: {fileID: 11400000, guid: 26d7c73c6e18bab43b714d0a788bdbd9, type: 2}
+  consumableItems: []
+  slotConfig: {fileID: 11400000, guid: 1d8dece67bba3e3449d70af789909cca, type: 2}
   columnBuffs:
   - BaseValue: 0
   - BaseValue: 0

@@ -431,7 +431,7 @@ MonoBehaviour:
   buyButton: {fileID: 1453022954}
   itemButtonPrefab: {fileID: 7975587973700007349, guid: 1a04f6f3aed5d324ea35054badac67e6, type: 3}
   gameData: {fileID: 11400000, guid: 3818c758750776a43960d4ea6893340b, type: 2}
-  allItems: []
+  shopConfig: {fileID: 11400000, guid: e3fe027bd7597114d8e311ac35c38f43, type: 2}
 --- !u!4 &455568477
 Transform:
   m_ObjectHideFlags: 0

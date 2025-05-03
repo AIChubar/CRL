@@ -14,9 +14,9 @@ public class SlotSpinAnimator
     private CoroutineTracker coroutineTracker;
 
     public SlotSpinAnimator(SlotGrid slotGrid, MonoBehaviour coroutineRunner,
-                            int symbolSteps = 25,
-                            float symbolStepDuration = 0.2f,
-                            float delayBetweenColumns = 0.2f)
+                            int symbolSteps = 30,
+                            float symbolStepDuration = 0.03f,
+                            float delayBetweenColumns = 0.1f)
     {
         this.slotGrid = slotGrid;
         this.symbolSteps = symbolSteps;

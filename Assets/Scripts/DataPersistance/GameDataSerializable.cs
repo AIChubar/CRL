@@ -14,30 +14,31 @@ public class GameDataSerializable
     public int changePrice;
     public int currentLevel;
     public int gold;
-
+    public int tokens;
     public float wildLuck;
     public float payoutMult;
     public float payoutBonus;
-
+    public int baseSpins;
     public List<string> passiveItemNames = new List<string>();
     public string slotConfigName;
     public List<ConsumableItemData> consumableItemData = new List<ConsumableItemData>();
     public List<int> columnBuffs = new List<int>();
-
+    public string shopConfigName;
     public GameDataSerializable(GameData data)
     {
+        tokens = data.tokens;
         slotConfigName = data.slotConfig.name;
+        shopConfigName = data.shopConfig.name;
         RTP = data.RTP;
         baseMoney = data.baseMoney;
         money = data.money;
         spinsLeft = data.spinsLeft;
-        wagerLeft = data.wagerLeft;
         targetMoney = data.targetMoney;
         betAmount = data.betAmount;
         changePrice = data.changePrice;
         currentLevel = data.currentLevel;
         gold = data.gold;
-
+        baseSpins = data.baseSpins;
         wildLuck = data.wildLuck.BaseValue;
         payoutMult = data.payoutMult.BaseValue;
         payoutBonus = data.payoutBonus.BaseValue;
@@ -68,21 +69,20 @@ public class GameDataSerializable
         data.baseMoney = baseMoney;
         data.money = money;
         data.spinsLeft = spinsLeft;
-        data.wagerLeft = wagerLeft;
         data.targetMoney = targetMoney;
         data.betAmount = betAmount;
         data.changePrice = changePrice;
         data.currentLevel = currentLevel;
         data.gold = gold;
-
+        data.tokens = tokens;
         data.wildLuck = new CharacterStat(wildLuck);
         data.payoutMult = new CharacterStat(payoutMult);
         data.payoutBonus = new CharacterStat(payoutBonus);
-
+        data.baseSpins = baseSpins;
         data.passiveItems = new List<PassiveItem>();
         foreach (var savedItemName in passiveItemNames)
         {
-            PassiveItem loadedItem = Resources.Load<PassiveItem>($"Items/PassiveItems/{savedItemName}");
+            PassiveItem loadedItem = Resources.Load<PassiveItem>($"Shop/PassiveItems/{savedItemName}");
             if (loadedItem != null)
                 data.passiveItems.Add(loadedItem);
             else
@@ -103,13 +103,17 @@ public class GameDataSerializable
             data.slotConfig = slotConfigLoaded;
         else
             Debug.LogWarning($"Slot '{slotConfigName}' not found in Resources folder!");
-
+        ShopConfig shopConfigLoaded = Resources.Load<ShopConfig>($"Shop/{shopConfigName}");
+        if (shopConfigLoaded != null)
+            data.shopConfig = shopConfigLoaded;
+        else
+            Debug.LogWarning($"Shop '{shopConfigName}' not found in Resources folder!");
         data.ApplyAllModifiers();
     }
 
-    public static ConsumableItem GetRuntimeConsumable(string savedItemName, int savedCharges)
+    private ConsumableItem GetRuntimeConsumable(string savedItemName, int savedCharges)
     {
-        ConsumableItem template = Resources.Load<ConsumableItem>($"Items/ConsumableItems/{savedItemName}");
+        ConsumableItem template = Resources.Load<ConsumableItem>($"Shop/ConsumableItems/{savedItemName}");
 
         if (template == null)
         {

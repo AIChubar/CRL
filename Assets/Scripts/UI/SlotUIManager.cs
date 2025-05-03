@@ -20,9 +20,9 @@ public class SlotUIManager : MonoBehaviour
 {
     public List<int> betAmounts = new List<int>() { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 120, 140, 160, 180, 200, 250, 300, 350, 400, 450, 500, 600, 700, 800, 900, 1000 };
     public float winCoef;
-    public SlotMode slotMode;
+    [HideInInspector] public SlotMode slotMode;
 
-    public TextMeshProUGUI moneyText, targetText, wagerText, spinsText, betText, resultText, changePriceText, instructionText, goldText;
+    public TextMeshProUGUI tokensText, moneyText, targetText, wagerText, spinsText, betText, resultText, changePriceText, instructionText, goldText;
     public Button changeButton, confirmButton, spinButton, increaseButton, decreaseButton, restartButton, pauseRestartButton, /*nextLevelButton,*/ continueButton, toMenuButton, pauseToMenuButton, toShopButton;
     [SerializeField] private Button finishRoundButton;
     [SerializeField] private TextMeshProUGUI finishRoundText;
@@ -88,7 +88,6 @@ public class SlotUIManager : MonoBehaviour
         
         slotGridManager = new SlotGridManager(slotPanel, slotSymbolPrefab,slotGrid , slotUIController, columnPrefab);
         slotGridManager.Setup(gameData.columnBuffs);
-        //columnContainers = slotGridManager.GetColumnContainers();
         LoadConsumables();
         UpdateUI();
 
@@ -187,13 +186,14 @@ public class SlotUIManager : MonoBehaviour
 
     public void UpdateUI()
     {
-        moneyText.text = $"Money: ${gameData.money:0.00}";
+        moneyText.text = $"Balance: ${gameData.money:0.00}";
+        tokensText.text = $"Tokens: {gameData.tokens}T";
         spinsText.text = $"Spins Left: {gameData.spinsLeft}";
         betText.text = $"Bet: ${gameData.betAmount}";
         targetText.text = $"Target Money: ${gameData.targetMoney:0.00}";
-        wagerText.text = $"Wager Left: ${gameData.wagerLeft}";
-        changePriceText.text = $"${gameData.changePrice}";
-        goldText.text = $"Gold: ${gameData.gold}";
+        //wagerText.text = $"Wager Left: ${gameData.wagerLeft}";
+        changePriceText.text = $"{gameData.changePrice}T ";
+        goldText.text = $"Gold: {gameData.gold}";
     }
     public void DisableButtons()
     {
@@ -202,7 +202,7 @@ public class SlotUIManager : MonoBehaviour
     }
 
 
-    public void UpdateButtons()
+    public void UpdateButtons() 
     {
         spinButton.interactable = (slotMode == SlotMode.ReadyForSpin);
         confirmButton.interactable = (slotMode == SlotMode.WaitingForConfirm);

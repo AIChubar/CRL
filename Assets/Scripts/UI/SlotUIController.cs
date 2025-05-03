@@ -26,17 +26,17 @@ public class SlotUIController
         slotUIManager.slotMode = SlotMode.WaitingForConfirm;
         slotUIManager.UpdateButtons();
 
-        if (gameData.spinsLeft > 0 && gameData.money >= gameData.betAmount && gameData.wagerLeft >= gameData.betAmount)
+        if (gameData.spinsLeft > 0 /* && gameData.money >= gameData.betAmount && gameData.wagerLeft >= gameData.betAmount*/)
         {
             gameData.spinsLeft--;
-            gameData.money -= gameData.betAmount;
-            gameData.wagerLeft -= gameData.betAmount;
-            currentWin = slotMachine.SpinSlot(gameData.betAmount, false) * slotUIManager.winCoef;
+            //gameData.money -= gameData.betAmount;
+            //gameData.wagerLeft -= gameData.betAmount;
+            currentWin = slotMachine.SpinSlot(gameData.betAmount, false) * gameData.payoutMult.Value + gameData.payoutBonus.Value;
             slotUIManager.UpdateResultText($"Current win: ${currentWin}");
         }
         else
         {
-            slotUIManager.UpdateResultText("Not enough resources!");
+            slotUIManager.UpdateResultText("Not enough spins!");
         }
     }
 
@@ -52,12 +52,12 @@ public class SlotUIController
 
     public void OnChangeButtonClick()
     {
-        if (gameData.changePrice > gameData.money)
+        if (gameData.changePrice > gameData.tokens)
         {
             slotUIManager.UpdateInstructionText("Not enough money to change symbol!");
             return;
         }
-        gameData.money -= gameData.changePrice;
+        gameData.tokens -= gameData.changePrice;
 
         slotUIManager.StartChangingSymbol();
     }
@@ -69,7 +69,7 @@ public class SlotUIController
 
         slotUIManager.slotMode = SlotMode.WaitingForConfirm;
         slotUIManager.UpdateButtons();
-        currentWin = slotMachine.RandomizeSymbolCalculate(row, col) * slotUIManager.winCoef;
+        currentWin = slotMachine.RandomizeSymbolCalculate(row, col) * gameData.payoutMult.Value + gameData.payoutBonus.Value;
         slotUIManager.UpdateResultText($"Current win: ${currentWin}");
         slotUIManager.UpdateInstructionText("");
         
@@ -79,7 +79,7 @@ public class SlotUIController
     {
         slotUIManager.slotMode = SlotMode.WaitingForConfirm;
         slotUIManager.UpdateButtons();
-        currentWin = slotMachine.RandomizeColumnCalculate( col) * slotUIManager.winCoef;
+        currentWin = slotMachine.RandomizeColumnCalculate( col) * gameData.payoutMult.Value + gameData.payoutBonus.Value;
         slotUIManager.UpdateResultText($"Current win: ${currentWin}");
         slotUIManager.UpdateInstructionText("");
     }
@@ -92,7 +92,6 @@ public class SlotUIController
         if (currentIndex < slotUIManager.betAmounts.Count - 1 && gameData.money > slotUIManager.betAmounts[currentIndex])
         {
             gameData.betAmount = slotUIManager.betAmounts[currentIndex + 1];
-            gameData.changePrice = gameData.betAmount / 2;
             slotUIManager.UpdateUI();
         }
     }
@@ -103,7 +102,6 @@ public class SlotUIController
         if (currentIndex > 0)
         {
             gameData.betAmount = slotUIManager.betAmounts[currentIndex - 1];
-            gameData.changePrice = gameData.betAmount / 2;
             slotUIManager.UpdateUI();
         }
     }
@@ -114,7 +112,7 @@ public class SlotUIController
         {
             slotUIManager.SetFinishButton(true);
         }
-        else if (gameData.spinsLeft == 0 || gameData.wagerLeft < slotUIManager.betAmounts[0] || gameData.money < slotUIManager.betAmounts[0])
+        else if (gameData.spinsLeft == 0 /*|| gameData.wagerLeft < slotUIManager.betAmounts[0] || gameData.money < slotUIManager.betAmounts[0]*/)
         {
             slotUIManager.UpdateInstructionText("You Lose!");
             slotUIManager.pauseManager.winLoseMenu.SetActive(true);
@@ -145,14 +143,18 @@ public class SlotUIController
     }
     public void FinishRound()
     {
-        slotUIManager.UpdateInstructionText("You Win!");
+        int income = (int)(gameData.money * 0.1f);
+        int spinsLeft = gameData.spinsLeft;
+        int reward = gameData.currentLevel * 2;
+        int goldReceived = income + reward + spinsLeft;
+        slotUIManager.UpdateInstructionText($"You Win! Gold Received : {goldReceived}");
         slotUIManager.pauseManager.winLoseMenu.SetActive(true);
         slotUIManager.pauseManager.restartButton.gameObject.SetActive(false);
 
         gameData.currentLevel++;
-        gameData.targetMoney = (int)(gameData.baseMoney * (gameData.currentLevel * gameData.currentLevel * 0.5));
-        gameData.gold += 5 + gameData.currentLevel * 2;
-        gameData.money = gameData.baseMoney;
+        gameData.targetMoney += 10*gameData.currentLevel;
+        gameData.gold += goldReceived;
+        gameData.Reset();
 
         SaveGame();
         slotUIManager.DisableButtons();
