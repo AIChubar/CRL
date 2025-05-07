@@ -11,47 +11,53 @@ public class ShopManager : MonoBehaviour
     public bool inputDisabled;
     
     public GameObject itemButtonsParent;
-    public static ShopManager instance;
     
     public TMP_Text instructionText;
     public TMP_Text goldText;
+    public TMP_Text tokensOfferText;
+    public TMP_Text tokensText;
+
+    private int tokensToBuy;
+    private int tokensGold;
     
     [SerializeField] private Button nextLevelButton;
     [SerializeField] private Button menuButton;
 
     [SerializeField] private Button rerollButton;
     [SerializeField] private Button buyButton;
+    [SerializeField] private Button buyTokensButton;
+
     [SerializeField] private GameObject itemButtonPrefab;
     public GameData gameData;
     //[SerializeField] private ShopConfig shopConfig;
     private List<Item> availableItems; // Items currently in the pool
     private List<Item> currentShopItems; // Currently displayed shop items
 
-    private void Awake()
-    {
-        if (instance == null) instance = this;
-        else Destroy(gameObject);
-    }
-
     private void Start()
     {
         nextLevelButton.onClick.AddListener(NextLevel);
-        rerollButton.onClick.AddListener(RerollItems);
+        rerollButton.onClick.AddListener(Reroll);
         buyButton.onClick.AddListener(BuyItem);
+        buyTokensButton.onClick.AddListener(BuyTokens);
         menuButton.onClick.AddListener(OnMenuButtonClick);
         availableItems = new List<Item>(gameData.shopConfig.availableItems); // Initialize the pool
         currentShopItems = new List<Item>();
 
         UpdateUI();
-        RerollItems(); // Generate initial shop items
+        Reroll();
     }
 
-    public void RerollItems()
+    private void Reroll()
     {
-        // Return previous shop items to the pool
+        RerollItems(); // Generate initial shop items
+        RerollTokens();
+    }
+
+    private void RerollItems()
+    {
         availableItems.AddRange(currentShopItems);
         currentShopItems.Clear();
-
+        
         // Remove old UI buttons
         foreach (Transform child in itemButtonsParent.transform)
         {
@@ -71,6 +77,15 @@ public class ShopManager : MonoBehaviour
                 AddButton(selectedItem);
             }
         }
+    }
+
+    private void RerollTokens()
+    {
+        tokensToBuy = GameManager.instance.rngManager.NextInt(gameData.currentLevel, gameData.currentLevel*2 +1);
+        tokensGold = GameManager.instance.rngManager.NextInt(gameData.currentLevel, gameData.currentLevel*3 + 1);
+        
+        tokensOfferText.text = "Tokens offer: \n" + tokensToBuy + "T for " + tokensGold +" Gold";;
+        
     }
 
     private Item GetWeightedRandomItem()
@@ -101,7 +116,7 @@ public class ShopManager : MonoBehaviour
     {
         GameObject go = Instantiate(itemButtonPrefab, itemButtonsParent.transform);
         ItemButton ib = go.GetComponent<ItemButton>();
-        ib.SetButton(item);
+        ib.SetButton(item, this);
         go.transform.localScale = Vector3.one;
     }
 
@@ -138,6 +153,23 @@ public class ShopManager : MonoBehaviour
         UpdateUI();
     }
 
+    private void BuyTokens()
+    {
+        if (gameData.gold < tokensGold)
+        {
+            instructionText.text = "Not enough gold!";
+        }
+        else
+        {
+            gameData.gold -= tokensGold;
+            gameData.tokens += tokensToBuy;
+            instructionText.text = "Tokens bought!";
+            RerollTokens();
+        }
+
+        UpdateUI();
+    }
+
     public void NextLevel()
     {
         SceneManager.LoadScene(1, LoadSceneMode.Single);
@@ -155,5 +187,6 @@ public class ShopManager : MonoBehaviour
     public void UpdateUI()
     {
         goldText.text = "Gold: " + gameData.gold;
+        tokensText.text = "Tokens: " + gameData.tokens;
     }
 }

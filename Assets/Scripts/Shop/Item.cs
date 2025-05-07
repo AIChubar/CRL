@@ -19,6 +19,11 @@ public class Item : ScriptableObject
         Epic,
         Legendary
     }
+    
+    public virtual string GetDescription()
+    {
+        return "No description available.";
+    }
 
     public float GetWeight()
     {

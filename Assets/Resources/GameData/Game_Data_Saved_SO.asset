@@ -14,23 +14,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   RTP: 0.95
   baseMoney: 0
-  money: 2
-  spinsLeft: 8
-  targetMoney: 20
+  money: 0
+  spinsLeft: 10
+  targetMoney: 30
   betAmount: 1
   changePrice: 1
-  tokens: 4
-  currentLevel: 0
-  gold: 0
+  tokens: 0
+  currentLevel: 1
+  gold: 11
+  baseSpins: 10
   wildLuck:
     BaseValue: 1
   payoutMult:
-    BaseValue: 1
+    BaseValue: 4
   payoutBonus:
     BaseValue: 0
   passiveItems: []
   consumableItems: []
   slotConfig: {fileID: 11400000, guid: 1d8dece67bba3e3449d70af789909cca, type: 2}
+  shopConfig: {fileID: 11400000, guid: e3fe027bd7597114d8e311ac35c38f43, type: 2}
   columnBuffs:
   - BaseValue: 0
   - BaseValue: 0

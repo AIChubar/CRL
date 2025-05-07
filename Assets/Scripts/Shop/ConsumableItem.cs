@@ -11,6 +11,19 @@ public class ConsumableItem : Item
         charges--;
         return charges < 1;
     }
+    
+    public override string GetDescription()
+    {
+        string effect = consumableItemType switch
+        {
+            ConsumableItemType.ColumnRoll => "Rerolls a column",
+            ConsumableItemType.SymbolRoll => "Rerolls a symbol",
+            ConsumableItemType.SymbolTypeRoll => "Rerolls all symbols of a type",
+            _ => "Unknown effect"
+        };
+
+        return $"{effect} ({charges} charges)";
+    }
 
     private void ApplyEffect() =>  GameManager.instance.eventManager.OnConsumableItemUsed.InvokeEvent(consumableItemType);
 }

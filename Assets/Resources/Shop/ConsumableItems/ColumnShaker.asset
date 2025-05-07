@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: df62ae659ed242646970569dd7cb8975, type: 3}
-  m_Name: ConsumableItem
+  m_Name: ColumnShaker
   m_EditorClassIdentifier: 
-  itemName: bebe
+  itemName: Column Shaker
   price: 1
   rarity: 0
   consumableItemType: 0

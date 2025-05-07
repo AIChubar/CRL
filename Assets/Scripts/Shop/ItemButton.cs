@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class ItemButton : MonoBehaviour
 {
-    
+    private ShopManager shopManager;
     [HideInInspector] public Image image;
 
     public TextMeshProUGUI nameText;
@@ -27,13 +27,13 @@ public class ItemButton : MonoBehaviour
         
     }
     
-    public void SetButton(Item item)
+    public void SetButton(Item item, ShopManager shopManager)
     {
+        this.shopManager = shopManager;
         this.item = item;
-        //InitializeStatModifiers();
         nameText.text = item.itemName;
-        priceText.text = item.price.ToString();
-        descriptionText.text = "";
+        priceText.text = item.price.ToString() + " Gold";
+        descriptionText.text = item.GetDescription();
         
         image = GetComponent<Image>();
     }
@@ -41,13 +41,13 @@ public class ItemButton : MonoBehaviour
  
     public void OnClicked()
     {
-        if (ShopManager.instance.inputDisabled)
+        if (shopManager.inputDisabled)
             return;
-        if (ShopManager.instance.currentItem != null)
+        if (shopManager.currentItem != null)
         {
-            ShopManager.instance.currentItem.image.color = Color.white;
+            shopManager.currentItem.image.color = Color.white;
         }
-        ShopManager.instance.SetCurrentItem(this);
+        shopManager.SetCurrentItem(this);
         image.color = new Color32(245, 124, 124, 255);
     }
     
