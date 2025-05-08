@@ -16,7 +16,9 @@ public class ShopManager : MonoBehaviour
     public TMP_Text goldText;
     public TMP_Text tokensOfferText;
     public TMP_Text tokensText;
-
+    public TMP_Text rerollText;
+    
+    private int rerollCost;
     private int tokensToBuy;
     private int tokensGold;
     
@@ -33,6 +35,8 @@ public class ShopManager : MonoBehaviour
     private List<Item> availableItems; // Items currently in the pool
     private List<Item> currentShopItems; // Currently displayed shop items
 
+    
+    
     private void Start()
     {
         nextLevelButton.onClick.AddListener(NextLevel);
@@ -42,15 +46,24 @@ public class ShopManager : MonoBehaviour
         menuButton.onClick.AddListener(OnMenuButtonClick);
         availableItems = new List<Item>(gameData.shopConfig.availableItems); // Initialize the pool
         currentShopItems = new List<Item>();
-
+        rerollCost = 1;
         UpdateUI();
-        Reroll();
+        RerollItems();
+        RerollTokens();
     }
 
     private void Reroll()
     {
+        if (gameData.gold < rerollCost)
+        {
+            instructionText.text = "Not enough gold!";
+            return;
+        }
+        gameData.gold -= rerollCost;
+        rerollCost++;
         RerollItems(); // Generate initial shop items
         RerollTokens();
+        UpdateUI();
     }
 
     private void RerollItems()
@@ -188,5 +201,6 @@ public class ShopManager : MonoBehaviour
     {
         goldText.text = "Gold: " + gameData.gold;
         tokensText.text = "Tokens: " + gameData.tokens;
+        rerollText.text = "Reroll: " + rerollCost + " Gold";
     }
 }

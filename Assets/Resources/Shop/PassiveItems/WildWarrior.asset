@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: WildWarrior
   m_EditorClassIdentifier: 
   itemName: Wild Warrior
-  price: 0
+  price: 3
   rarity: 2
   statModifiers:
   - {fileID: 11400000, guid: 77ddac867dfa13743a729a6786df09f0, type: 2}
-  - {fileID: 11400000, guid: 77ddac867dfa13743a729a6786df09f0, type: 2}
+  - {fileID: 11400000, guid: 74ef2204f2ef59842a632c6d6d5d0c74, type: 2}

@@ -94,6 +94,7 @@ public class SlotSpinAnimator
         
         
         GameObject additional = GameObject.Instantiate(slotGrid.GetSymbolInstance(col, 0).gameObject, slotGrid.GetSymbolInstance(col, 0).transform.parent);
+        
         additional.SetActive(true);
         SymbolButton additionalSymbolButton = additional.GetComponent<SymbolButton>();
         copies.Add(additionalSymbolButton);
@@ -130,19 +131,21 @@ public class SlotSpinAnimator
         for (int row = 0; row < rows; row++)
         {
             SymbolButton original = originals[row];
-            SymbolButton copy = copies[row];
 
             // Set correct final position and symbol on the original
             //original.transform.localPosition = copy.transform.localPosition;
             original.SetSymbol(slotGrid.GetSymbol(col, row));
 
             // Hide and destroy the copy, show original
-            copy.gameObject.SetActive(false);
-            GameObject.Destroy(copy.gameObject);
-
             original.gameObject.SetActive(true);
-        } 
+            
+        }
 
+        foreach (var copy in copies)
+        {
+            GameObject.Destroy(copy.gameObject);
+        }
+        copies.Clear();
         onColumnComplete?.Invoke();
     }
 

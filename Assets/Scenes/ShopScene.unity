@@ -579,6 +579,7 @@ MonoBehaviour:
   goldText: {fileID: 145622482}
   tokensOfferText: {fileID: 1728023146}
   tokensText: {fileID: 2017072807}
+  rerollText: {fileID: 393051369}
   nextLevelButton: {fileID: 1191044744}
   menuButton: {fileID: 1093139554}
   rerollButton: {fileID: 1071663682}
