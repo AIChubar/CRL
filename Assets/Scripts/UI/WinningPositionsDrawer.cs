@@ -6,12 +6,13 @@ public class WinningPositionsDrawer
 {
     private CoroutineTracker coroutineTracker;
     private Transform parent;
-    private float animationDuration = 0.3f;
+    private float pulseDuration = 0.4f;
     private float scaleMultiplier = 1.5f;
+    private GameData gameData;
 
-
-    public void SetUp(Transform parent, CoroutineTracker coroutineTracker)
+    public void SetUp(Transform parent, CoroutineTracker coroutineTracker, GameData gameData)
     {
+        this.gameData = gameData;
         this.coroutineTracker = coroutineTracker;
         this.parent = parent;
     }
@@ -56,10 +57,10 @@ public class WinningPositionsDrawer
             originalScales[symbol] = symbol.transform.localScale;
         }
 
-        while (elapsedTime < animationDuration)
+        while (elapsedTime < pulseDuration * gameData.animationSpeed)
         {
             elapsedTime += Time.deltaTime;
-            float scaleFactor = Mathf.SmoothStep(1f, scaleMultiplier, elapsedTime / animationDuration);
+            float scaleFactor = Mathf.SmoothStep(1f, scaleMultiplier, elapsedTime / pulseDuration / gameData.animationSpeed);
             foreach (var symbol in symbolInstances)
             {
                 symbol.transform.localScale = originalScales[symbol] * scaleFactor;
@@ -69,10 +70,10 @@ public class WinningPositionsDrawer
 
         elapsedTime = 0f;
 
-        while (elapsedTime < animationDuration)
+        while (elapsedTime < pulseDuration  * gameData.animationSpeed)
         {
             elapsedTime += Time.deltaTime;
-            float scaleFactor = Mathf.SmoothStep(scaleMultiplier, 1f, elapsedTime / animationDuration);
+            float scaleFactor = Mathf.SmoothStep(scaleMultiplier, 1f, elapsedTime / pulseDuration / gameData.animationSpeed);
             foreach (var symbol in symbolInstances)
             {
                 symbol.transform.localScale = originalScales[symbol] * scaleFactor;

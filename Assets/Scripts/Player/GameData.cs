@@ -20,6 +20,8 @@ public class GameData : ScriptableObject
     public int gold;
     public int baseSpins;
 
+    [HideInInspector]public float animationSpeed = 1.0f;
+
     [SerializeField] public CharacterStat wildLuck;
     [SerializeField] public CharacterStat payoutMult;
     [SerializeField] public CharacterStat payoutBonus;
@@ -34,6 +36,7 @@ public class GameData : ScriptableObject
     public void CopyFrom(GameData other)
     {
         if (other == null) return;
+
         tokens = other.tokens;
         RTP = other.RTP;
         baseMoney = other.baseMoney;

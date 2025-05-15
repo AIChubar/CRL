@@ -61,12 +61,12 @@ public class SlotUIManager : MonoBehaviour
         slotMode = SlotMode.ReadyForSpin;
         coroutineTracker = new CoroutineTracker(this, AnimationType.Result);
         winningLineDrawer = new WinningLineDrawer();
-        winningLineDrawer.SetUp(this.transform, linePrefab, coroutineTracker);
+        winningLineDrawer.SetUp(this.transform, linePrefab, coroutineTracker, gameData);
 
         winningPositionsDrawer = new WinningPositionsDrawer();
-        winningPositionsDrawer.SetUp(this.transform, coroutineTracker);
+        winningPositionsDrawer.SetUp(this.transform, coroutineTracker, gameData);
 
-        slotSpinAnimator = new SlotSpinAnimator(slotGrid, this);
+        slotSpinAnimator = new SlotSpinAnimator(slotGrid, this, gameData);
         
         slotUIController = new SlotUIController();
         slotUIController.SetUp(gameData, slotMachine, this);

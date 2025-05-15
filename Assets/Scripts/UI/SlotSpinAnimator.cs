@@ -7,21 +7,16 @@ using Object = System.Object;
 public class SlotSpinAnimator
 {
     private SlotGrid slotGrid;
-    private float symbolStepDuration;
-    private float delayBetweenColumns;
-    private int symbolSteps;
-
+    private float symbolStepDuration = 0.03f;
+    private float delayBetweenColumns = 0.1f;
+    private int symbolSteps = 30;
+    private GameData gameData;
     private CoroutineTracker coroutineTracker;
 
-    public SlotSpinAnimator(SlotGrid slotGrid, MonoBehaviour coroutineRunner,
-                            int symbolSteps = 30,
-                            float symbolStepDuration = 0.03f,
-                            float delayBetweenColumns = 0.1f)
+    public SlotSpinAnimator(SlotGrid slotGrid, MonoBehaviour coroutineRunner, GameData gameData)
     {
+        this.gameData = gameData;
         this.slotGrid = slotGrid;
-        this.symbolSteps = symbolSteps;
-        this.symbolStepDuration = symbolStepDuration;
-        this.delayBetweenColumns = delayBetweenColumns;
         this.coroutineTracker = new CoroutineTracker(coroutineRunner, AnimationType.Spin);
     }
 
@@ -43,7 +38,7 @@ public class SlotSpinAnimator
                 columnsFinished++;
             }));
 
-            yield return new WaitForSeconds(delayBetweenColumns);
+            yield return new WaitForSeconds(delayBetweenColumns * gameData.animationSpeed);
         }
 
         while (columnsFinished < columnsCount)
@@ -109,9 +104,9 @@ public class SlotSpinAnimator
             symbolButtonToMove.SetSymbol(symbolsToShow[step]);
             symbolButtonToMove.transform.localPosition = positions[0];
             copies.Insert(0, symbolButtonToMove);
-            while (elapsed < symbolStepDuration)
+            while (elapsed < symbolStepDuration  * gameData.animationSpeed)
             {
-                float t = Mathf.Clamp01(elapsed / symbolStepDuration);
+                float t = Mathf.Clamp01(elapsed / symbolStepDuration / gameData.animationSpeed);
                 float offset = Mathf.Lerp(0, spacing, t);
 
                 for (int i = 0; i < rows+1; i++)

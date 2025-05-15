@@ -24,8 +24,10 @@ public class GameDataSerializable
     public List<ConsumableItemData> consumableItemData = new List<ConsumableItemData>();
     public List<int> columnBuffs = new List<int>();
     public string shopConfigName;
+    //public float animationSpeed;
     public GameDataSerializable(GameData data)
     {
+        //animationSpeed = data.animationSpeed;
         tokens = data.tokens;
         slotConfigName = data.slotConfig.name;
         shopConfigName = data.shopConfig.name;
@@ -65,6 +67,7 @@ public class GameDataSerializable
 
     public void ApplyToGameData(GameData data)
     {
+        //data.animationSpeed = animationSpeed;
         data.RTP = RTP;
         data.baseMoney = baseMoney;
         data.money = money;
