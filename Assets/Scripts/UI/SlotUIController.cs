@@ -152,7 +152,10 @@ public class SlotUIController
         slotUIManager.pauseManager.restartButton.gameObject.SetActive(false);
 
         gameData.currentLevel++;
-        gameData.targetMoney += 10 * gameData.currentLevel;
+        if (gameData.levelsTargetMoney.Count > gameData.currentLevel)
+            gameData.targetMoney = gameData.levelsTargetMoney[gameData.currentLevel];
+        else
+            gameData.targetMoney *= 2;
         gameData.gold += goldReceived;
         gameData.Reset();
 

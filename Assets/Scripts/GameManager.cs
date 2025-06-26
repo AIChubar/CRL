@@ -29,7 +29,6 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        gameData.Reset();
         rngManager = new RNGManager();
         rngManager.SetUp(seed);
         eventManager = new EventManager();

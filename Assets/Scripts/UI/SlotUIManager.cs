@@ -88,6 +88,7 @@ public class SlotUIManager : MonoBehaviour
         
         slotGridManager = new SlotGridManager(slotPanel, slotSymbolPrefab,slotGrid , slotUIController, columnPrefab);
         slotGridManager.Setup(gameData.columnBuffs);
+
         LoadConsumables();
         UpdateUI();
 

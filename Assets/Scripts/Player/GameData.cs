@@ -12,7 +12,7 @@ public class GameData : ScriptableObject
     [HideInInspector]public float baseMoney = 0;
     [HideInInspector]public float money = 0;
     [HideInInspector] public int spinsLeft;
-    public int targetMoney;
+    [HideInInspector] public int targetMoney;
     [HideInInspector]public int betAmount = 0;
     public int changePrice;
     public int tokens;
@@ -29,7 +29,8 @@ public class GameData : ScriptableObject
     public List<PassiveItem> passiveItems;
     public List<ConsumableItem> consumableItems;
 
-    [SerializeField] public SlotConfig slotConfig; // Assigned in Inspector
+    [SerializeField] public SlotConfig slotConfig;
+    [SerializeField] public List<int> levelsTargetMoney; // Assigned in Inspector
     [SerializeField] public ShopConfig shopConfig;
     [HideInInspector]public List<CharacterStat> columnBuffs = new List<CharacterStat>();
 
@@ -55,6 +56,7 @@ public class GameData : ScriptableObject
         payoutBonus = new CharacterStat(other.payoutBonus.BaseValue);
         passiveItems = new List<PassiveItem>(other.passiveItems);
         consumableItems = new List<ConsumableItem>();
+        levelsTargetMoney = other.levelsTargetMoney;
         foreach (ConsumableItem item in other.consumableItems)
         {
             ConsumableItem cloneItem = Instantiate(item);

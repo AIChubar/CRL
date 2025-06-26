@@ -22,8 +22,8 @@ public class GameDataSerializable
     public List<string> passiveItemNames = new List<string>();
     public string slotConfigName;
     public List<ConsumableItemData> consumableItemData = new List<ConsumableItemData>();
-    public List<int> columnBuffs = new List<int>();
     public string shopConfigName;
+    public List<int> levelsTargetMoney;
     //public float animationSpeed;
     public GameDataSerializable(GameData data)
     {
@@ -44,8 +44,8 @@ public class GameDataSerializable
         wildLuck = data.wildLuck.BaseValue;
         payoutMult = data.payoutMult.BaseValue;
         payoutBonus = data.payoutBonus.BaseValue;
-
         passiveItemNames = new List<string>();
+        levelsTargetMoney = data.levelsTargetMoney;
         foreach (var passive in data.passiveItems)
         {
             passiveItemNames.Add(passive.name);
@@ -83,6 +83,7 @@ public class GameDataSerializable
         data.payoutBonus = new CharacterStat(payoutBonus);
         data.baseSpins = baseSpins;
         data.passiveItems = new List<PassiveItem>();
+        data.levelsTargetMoney = levelsTargetMoney;
         foreach (var savedItemName in passiveItemNames)
         {
             PassiveItem loadedItem = Resources.Load<PassiveItem>($"Shop/PassiveItems/{savedItemName}");
