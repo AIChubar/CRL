@@ -51,8 +51,7 @@ public class WinningPositionsDrawer
     {
         float elapsedTime = 0f;
         Dictionary<SymbolButton, Vector3> originalScales = new Dictionary<SymbolButton, Vector3>();
-        Dictionary<SymbolButton, int> originalSortingOrders = new Dictionary<SymbolButton, int>();
-        int animationDrawOrder = 1; // higher than default
+        int animationDrawDiff = 1; // higher than default
 
         // Store original scale & sorting order, then bring to front
         foreach (var symbol in symbolInstances)
@@ -65,9 +64,7 @@ public class WinningPositionsDrawer
                 symbolCanvas = symbol.gameObject.AddComponent<Canvas>();
                 symbolCanvas.overrideSorting = true;
             }
-            symbolCanvas.overrideSorting = true;
-            originalSortingOrders[symbol] = symbolCanvas.sortingOrder;
-            symbolCanvas.sortingOrder =+ animationDrawOrder;
+            symbolCanvas.sortingOrder =+ animationDrawDiff;
         }
 
         // Animate scale up
@@ -100,7 +97,9 @@ public class WinningPositionsDrawer
         foreach (var symbol in symbolInstances)
         {
             Canvas symbolCanvas = symbol.GetComponent<Canvas>();
-            symbolCanvas.sortingOrder = originalSortingOrders[symbol];
+            symbolCanvas.sortingOrder = -animationDrawDiff;
+            symbolCanvas.overrideSorting = false;
+
         }
     }   
 
