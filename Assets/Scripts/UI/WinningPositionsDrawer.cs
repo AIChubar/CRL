@@ -51,12 +51,26 @@ public class WinningPositionsDrawer
     {
         float elapsedTime = 0f;
         Dictionary<SymbolButton, Vector3> originalScales = new Dictionary<SymbolButton, Vector3>();
+        Dictionary<SymbolButton, int> originalSortingOrders = new Dictionary<SymbolButton, int>();
+        int animationDrawOrder = 1; // higher than default
 
+        // Store original scale & sorting order, then bring to front
         foreach (var symbol in symbolInstances)
         {
             originalScales[symbol] = symbol.transform.localScale;
+
+            Canvas symbolCanvas = symbol.GetComponent<Canvas>();
+            if (symbolCanvas == null)
+            {
+                symbolCanvas = symbol.gameObject.AddComponent<Canvas>();
+                symbolCanvas.overrideSorting = true;
+            }
+            symbolCanvas.overrideSorting = true;
+            originalSortingOrders[symbol] = symbolCanvas.sortingOrder;
+            symbolCanvas.sortingOrder =+ animationDrawOrder;
         }
 
+        // Animate scale up
         while (elapsedTime < pulseDuration * gameData.animationSpeed)
         {
             elapsedTime += Time.deltaTime;
@@ -70,7 +84,8 @@ public class WinningPositionsDrawer
 
         elapsedTime = 0f;
 
-        while (elapsedTime < pulseDuration  * gameData.animationSpeed)
+        // Animate scale down
+        while (elapsedTime < pulseDuration * gameData.animationSpeed)
         {
             elapsedTime += Time.deltaTime;
             float scaleFactor = Mathf.SmoothStep(scaleMultiplier, 1f, elapsedTime / pulseDuration / gameData.animationSpeed);
@@ -80,5 +95,14 @@ public class WinningPositionsDrawer
             }
             yield return null;
         }
-    }
+
+        // Restore original sorting order
+        foreach (var symbol in symbolInstances)
+        {
+            Canvas symbolCanvas = symbol.GetComponent<Canvas>();
+            symbolCanvas.sortingOrder = originalSortingOrders[symbol];
+        }
+    }   
+
+
 }
