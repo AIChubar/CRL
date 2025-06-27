@@ -62,7 +62,24 @@ public class SlotUIController
         slotUIManager.StartChangingSymbol();
     }
     
-    
+    public void OnWildButtonClick()
+    {
+        if (gameData.wildPrice > gameData.tokens)
+        {
+            slotUIManager.UpdateInstructionText("Not enough money to change symbol!");
+            return;
+        }
+        gameData.tokens -= gameData.wildPrice;
+        StatModifier wildLuckMax = ScriptableObject.CreateInstance<StatModifier>();
+        wildLuckMax.Description = "Temporary wild guarantee";
+        wildLuckMax.Value = 1000000f;
+        wildLuckMax.StatModType = StatModType.PercentAdd;
+        wildLuckMax.StatType = StatType.WildLuck;
+        wildLuckMax.IsTemporary = true;
+        wildLuckMax.Order = 0;
+        gameData.wildLuck.AddModifier(wildLuckMax);
+        slotUIManager.StartChangingSymbol();
+    }
 
     public void ChangeSymbol(int row, int col)
     {
@@ -72,7 +89,7 @@ public class SlotUIController
         currentWin = slotMachine.RandomizeSymbolCalculate(row, col) * gameData.payoutMult.Value + gameData.payoutBonus.Value;
         slotUIManager.UpdateResultText($"Current win: ${currentWin}");
         slotUIManager.UpdateInstructionText("");
-        
+        gameData.wildLuck.RemoveTemporaryModifiers();
     }
     
     public void ChangeColumn(int col)
@@ -181,7 +198,8 @@ public class SlotUIController
         SceneManager.LoadScene(2, LoadSceneMode.Single);
     }
 
-   
+
+    
 }
 
 

@@ -27,5 +27,5 @@ public class StatModifier : ScriptableObject
     public bool IsColumnSpecific; // Checkbox to enable the column index
     public int ColumnIndex = -1; // Column index, defaults to -1
 
-   
+    [HideInInspector] public bool IsTemporary = false; 
 }

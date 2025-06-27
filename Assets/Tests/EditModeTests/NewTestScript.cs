@@ -22,7 +22,7 @@ public class NewTestScript
         slotConfig = Resources.Load<SlotConfig>("Tests/TestSlot");
 
         Assert.NotNull(slotConfig, "Failed to load SlotConfig ScriptableObject.");
-        symbolManager = new SymbolManager(slotConfig.symbols);
+        //symbolManager = new SymbolManager(slotConfig.symbols);
         slotCalculator = new SlotCalculator();
         testCases = Resources.LoadAll<SlotGridTestCase>("Tests/SlotTestCases");
         Assert.IsNotNull(testCases, "Failed to load test cases.");

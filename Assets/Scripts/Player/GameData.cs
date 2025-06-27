@@ -15,6 +15,7 @@ public class GameData : ScriptableObject
     [HideInInspector] public int targetMoney;
     [HideInInspector]public int betAmount = 0;
     public int changePrice;
+    public int wildPrice;
     public int tokens;
     public int currentLevel;
     public int gold;
@@ -46,6 +47,7 @@ public class GameData : ScriptableObject
         targetMoney = other.targetMoney;
         betAmount = other.betAmount;
         changePrice = other.changePrice;
+        wildPrice = other.wildPrice;
         currentLevel = other.currentLevel;
         gold = other.gold;
         shopConfig = other.shopConfig;
@@ -76,6 +78,7 @@ public class GameData : ScriptableObject
         spinsLeft = baseSpins;
         money = baseMoney;
     }
+
     
     public void ApplyAllModifiers()
     {

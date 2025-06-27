@@ -18,7 +18,7 @@ public class SlotMachine
     {
         this.gameData = gameData;
         this.slotCalculator = slotCalculator;
-        this.symbolManager = new SymbolManager(gameData.slotConfig.symbols);
+        this.symbolManager = new SymbolManager(gameData.slotConfig.symbols, gameData);
         this.slotUIManager = slotUIManager;
         slotGrid = new SlotGrid(gameData.slotConfig.rows, gameData.slotConfig.columns, gameData.columnBuffs, symbolManager);
         slotUIManager.SetUp(gameData, this, slotGrid);
@@ -70,8 +70,7 @@ public class SlotMachine
 
     private void RandomizeSingleSymbol(int col, int row, bool canBeTheSame = false)
     {
-        
-        slotGrid.SetSymbol(col, row, symbolManager.GetRandomSymbolUnweighted(canBeTheSame ? null : slotGrid.GetSymbol(col, row))); 
+        slotGrid.SetSymbol(col, row, symbolManager.GetRandomSymbolUnweighted(canBeTheSame ? null : slotGrid.GetSymbol(col, row), true)); 
         slotUIManager.ChangeSingleSymbol(col, row, slotGrid.GetSymbol(col, row));
     }
 }

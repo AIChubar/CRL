@@ -39,6 +39,21 @@ public class CharacterStat
             return (int)Math.Ceiling(Value); // Round up to the nearest integer
         }
     }
+    
+    public float GetValue(bool includeTemporary)
+    {
+        if (!includeTemporary)
+            return CalculateFinalValue(ignoreTemporary: true);
+
+        return Value;
+    }
+
+    
+    public int GetValueInt(bool includeTemporary)
+    {
+        return (int)Math.Ceiling(GetValue(includeTemporary));
+    }
+
     public CharacterStat()
     {
         statModifiers = new List<StatModifier>();
@@ -99,13 +114,27 @@ public class CharacterStat
         return 0; // if (a.Order == b.Order)
     }
     
-    protected virtual float CalculateFinalValue()
+    public void RemoveTemporaryModifiers()
+    {
+        for (int i = statModifiers.Count - 1; i >= 0; i--)
+        {
+            if (statModifiers[i].IsTemporary)
+            {
+                statModifiers.RemoveAt(i);
+                isDirty = true;
+            }
+        }
+    }
+    
+    protected virtual float CalculateFinalValue(bool ignoreTemporary = false)
     {
         float finalValue = BaseValue;
         float sumPercentAdd = 0;
 
         foreach (var mod in statModifiers)
         {
+            if (ignoreTemporary && mod.IsTemporary)
+                continue;
 
             if (mod.StatModType == StatModType.Flat)
             {
@@ -114,7 +143,8 @@ public class CharacterStat
             else if (mod.StatModType == StatModType.PercentAdd)
             {
                 sumPercentAdd += mod.Value;
-                if (statModifiers.IndexOf(mod) + 1 >= statModifiers.Count || statModifiers[statModifiers.IndexOf(mod) + 1].StatModType != StatModType.PercentAdd)
+                int modIndex = statModifiers.IndexOf(mod);
+                if (modIndex + 1 >= statModifiers.Count || statModifiers[modIndex + 1].StatModType != StatModType.PercentAdd)
                 {
                     finalValue *= 1 + sumPercentAdd;
                     sumPercentAdd = 0;
@@ -125,6 +155,8 @@ public class CharacterStat
                 finalValue *= 1 + mod.Value;
             }
         }
+
         return (float)Math.Round(finalValue, 4);
     }
+
 }

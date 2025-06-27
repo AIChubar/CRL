@@ -8,10 +8,10 @@ public class GameDataSerializable
     public float baseMoney;
     public float money;
     public int spinsLeft;
-    public int wagerLeft;
     public int targetMoney;
     public int betAmount;
     public int changePrice;
+    public int wildPrice;
     public int currentLevel;
     public int gold;
     public int tokens;
@@ -28,6 +28,7 @@ public class GameDataSerializable
     public GameDataSerializable(GameData data)
     {
         //animationSpeed = data.animationSpeed;
+        wildPrice = data.wildPrice;
         tokens = data.tokens;
         slotConfigName = data.slotConfig.name;
         shopConfigName = data.shopConfig.name;
@@ -68,6 +69,7 @@ public class GameDataSerializable
     public void ApplyToGameData(GameData data)
     {
         //data.animationSpeed = animationSpeed;
+        data.wildPrice = wildPrice;
         data.RTP = RTP;
         data.baseMoney = baseMoney;
         data.money = money;

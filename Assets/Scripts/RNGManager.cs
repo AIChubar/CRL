@@ -23,4 +23,10 @@ public class RNGManager
     {
         return (float)rng.NextDouble();
     }
+    
+    public float NextFloat(float min, float max)
+    {
+        return min + (float)rng.NextDouble() * (max - min);
+    }
+
 }
