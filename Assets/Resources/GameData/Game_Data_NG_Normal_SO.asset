@@ -23,6 +23,7 @@ MonoBehaviour:
   currentLevel: 0
   gold: 0
   baseSpins: 10
+  animationSpeed: 1
   wildLuck:
     BaseValue: 1
   payoutMult:
@@ -32,5 +33,6 @@ MonoBehaviour:
   passiveItems: []
   consumableItems: []
   slotConfig: {fileID: 11400000, guid: 1d8dece67bba3e3449d70af789909cca, type: 2}
+  levelsTargetMoney: 1400000028000000460000006400000096000000c80000002c01000090010000
   shopConfig: {fileID: 11400000, guid: e3fe027bd7597114d8e311ac35c38f43, type: 2}
   columnBuffs: []

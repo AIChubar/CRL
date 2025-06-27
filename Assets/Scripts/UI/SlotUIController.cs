@@ -146,7 +146,7 @@ public class SlotUIController
         int income = (int)(gameData.money * 0.1f);
         int spinsLeft = gameData.spinsLeft;
         int reward = 5 + gameData.currentLevel;
-        int goldReceived = income + reward + spinsLeft;
+        int goldReceived = income > 10 ? 10 : income + reward + spinsLeft;
         slotUIManager.UpdateInstructionText($"You Win! Gold Received : {goldReceived}");
         slotUIManager.pauseManager.winLoseMenu.SetActive(true);
         slotUIManager.pauseManager.restartButton.gameObject.SetActive(false);

@@ -94,11 +94,9 @@ public class ShopManager : MonoBehaviour
 
     private void RerollTokens()
     {
-        tokensToBuy = GameManager.instance.rngManager.NextInt(gameData.currentLevel, gameData.currentLevel*2 +1);
-        tokensGold = GameManager.instance.rngManager.NextInt(gameData.currentLevel, gameData.currentLevel*3 + 1);
-        
+        tokensToBuy = GameManager.instance.rngManager.NextInt(gameData.currentLevel, gameData.currentLevel*2 + 1);
+        tokensGold = GameManager.instance.rngManager.NextInt(gameData.currentLevel, gameData.currentLevel*3 + 2);
         tokensOfferText.text = "Tokens offer: \n" + tokensToBuy + "T for " + tokensGold +" Gold";;
-        
     }
 
     private Item GetWeightedRandomItem()

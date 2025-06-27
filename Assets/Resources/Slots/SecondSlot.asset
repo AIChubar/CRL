@@ -21,4 +21,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 7f1511ed5864f934494b42a49ed78bef, type: 2}
   rows: 4
   columns: 4
-  columnBuffs: 02000000000000000100000000000000
+  columnBuffs: 00000000000000000000000000000000
