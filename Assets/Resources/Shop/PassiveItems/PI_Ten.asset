@@ -9,11 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df62ae659ed242646970569dd7cb8975, type: 3}
-  m_Name: ColumnShaker
+  m_Script: {fileID: 11500000, guid: a497d5e8c6ea42e88b250fbd34c05b45, type: 3}
+  m_Name: PI_Ten
   m_EditorClassIdentifier: 
-  itemName: Column Shaker
-  price: 1
-  rarity: 0
-  consumableItemType: 0
-  charges: 3
+  itemName: Ten
+  price: 3
+  rarity: 1
+  statModifiers:
+  - {fileID: 11400000, guid: 9addb5f95926e71418332256d2458f83, type: 2}

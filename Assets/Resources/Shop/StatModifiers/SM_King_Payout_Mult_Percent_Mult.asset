@@ -10,12 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4cfdbb515b8244a59a9cacb9b5a18c7c, type: 3}
-  m_Name: SM_WildLuck_Mult
+  m_Name: SM_King_Payout_Mult_Percent_Mult
   m_EditorClassIdentifier: 
-  StatType: 0
-  Value: 0.1
+  StatType: 1
+  Value: 0.3
   StatModType: 2
-  Order: 0
+  Order: 1
   Description: 
-  IsColumnSpecific: 1
-  ColumnIndex: 1
+  IsColumnSpecific: 0
+  ColumnIndex: -1
+  IsTemporary: 0

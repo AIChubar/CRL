@@ -10,11 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a497d5e8c6ea42e88b250fbd34c05b45, type: 3}
-  m_Name: WildWarrior
+  m_Name: PI_Two
   m_EditorClassIdentifier: 
-  itemName: Wild Warrior
-  price: 3
-  rarity: 2
+  itemName: Three
+  price: 2
+  rarity: 0
   statModifiers:
-  - {fileID: 11400000, guid: 77ddac867dfa13743a729a6786df09f0, type: 2}
-  - {fileID: 11400000, guid: 74ef2204f2ef59842a632c6d6d5d0c74, type: 2}
+  - {fileID: 11400000, guid: 52b4992737116924ba2593c97480fe11, type: 2}
