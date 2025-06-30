@@ -29,6 +29,7 @@ public class DataPersistenceManager
         gameData.CopyFrom(newGameData);
         gameData.Reset();
         gameData.shopConfig.Reset();
+        SaveGame();
     }
 
     public void LoadGame()

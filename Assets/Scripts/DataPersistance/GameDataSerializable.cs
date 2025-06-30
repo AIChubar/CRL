@@ -15,6 +15,7 @@ public class GameDataSerializable
     public int currentLevel;
     public int gold;
     public int tokens;
+    public int initialLevelTokens;
     public float wildLuck;
     public float payoutMult;
     public float payoutBonus;
@@ -28,6 +29,7 @@ public class GameDataSerializable
     public GameDataSerializable(GameData data)
     {
         //animationSpeed = data.animationSpeed;
+        initialLevelTokens = data.initialLevelTokens;
         wildPrice = data.wildPrice;
         tokens = data.tokens;
         slotConfigName = data.slotConfig.name;
@@ -69,6 +71,7 @@ public class GameDataSerializable
     public void ApplyToGameData(GameData data)
     {
         //data.animationSpeed = animationSpeed;
+        data.initialLevelTokens = initialLevelTokens;
         data.wildPrice = wildPrice;
         data.RTP = RTP;
         data.baseMoney = baseMoney;

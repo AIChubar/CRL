@@ -16,10 +16,10 @@ public class PassiveItem : Item
         {
             string valueStr = mod.StatModType switch
             {
-                StatModType.Flat => $"{mod.Value:+#;-#;0}",
-                StatModType.PercentAdd => $"{mod.Value:+#%;-#%;0%}",
-                StatModType.PercentMult => $"{mod.Value:+#%;-#%;0%} Mult",
-                _ => $"{mod.Value}"
+                StatModType.Flat => $"{mod.Value:+0.00;-0.00;+0.00}",
+                StatModType.PercentAdd => $"{mod.Value:+0.00%;-0.00%;+0.00%}",
+                StatModType.PercentMult => $"{mod.Value:+0.00%;-0.00%;+0.00%} Mult",
+                _ => $"{mod.Value:0.00}"
             };
 
             if (mod.StatType == StatType.ColumnBuff)

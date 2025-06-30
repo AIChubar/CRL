@@ -12,8 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a497d5e8c6ea42e88b250fbd34c05b45, type: 3}
   m_Name: PI_Two
   m_EditorClassIdentifier: 
-  itemName: Three
-  price: 2
-  rarity: 0
+  itemName: Two
+  price: 1
+  rarity: 4
   statModifiers:
-  - {fileID: 11400000, guid: 52b4992737116924ba2593c97480fe11, type: 2}
+  - {fileID: 11400000, guid: ac3985278d5fb214983add7bc0fa4ff5, type: 2}
+  - {fileID: 11400000, guid: da743d92d52c3b843ba4bb434342ac4b, type: 2}
+  - {fileID: 11400000, guid: 3d6abefd8682af742957a6243bc71316, type: 2}
+  - {fileID: 11400000, guid: c50ced34f2941f343a15ec219eb215c1, type: 2}
+  - {fileID: 11400000, guid: 688f7103e25a1434d904a03a0bb372d2, type: 2}

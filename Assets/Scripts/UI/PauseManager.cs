@@ -26,7 +26,6 @@ public class PauseManager : MonoBehaviour
     {
         pauseMenu.SetActive(false);
         winLoseMenu.SetActive(false);
-
     }
 
     // Update is called once per frame

@@ -14,6 +14,7 @@ public class SlotUIController
         this.gameData = gameData;
         this.slotMachine = slotMachine;
         this.slotUIManager = slotUIManager;
+        slotUIManager.UpdateResultText($"Current win: ${currentWin:0.00}");
     }
 
     public void Spin()
@@ -32,7 +33,7 @@ public class SlotUIController
             //gameData.money -= gameData.betAmount;
             //gameData.wagerLeft -= gameData.betAmount;
             currentWin = (slotMachine.SpinSlot(gameData.betAmount) + gameData.payoutBonus.Value)  * gameData.payoutMult.Value;
-            slotUIManager.UpdateResultText($"Current win: ${currentWin}");
+            slotUIManager.UpdateResultText($"Current win: ${currentWin:0.00}");
         }
         else
         {
@@ -45,7 +46,7 @@ public class SlotUIController
         slotUIManager.slotMode = SlotMode.ReadyForSpin;
         slotUIManager.UpdateButtons();
         gameData.money += currentWin;
-        slotUIManager.UpdateResultText($"You won: ${currentWin}");
+        slotUIManager.UpdateResultText($"You won: ${currentWin:0.00}");
         slotUIManager.UpdateInstructionText("");
         CheckLevelEnd();
     }
@@ -87,7 +88,7 @@ public class SlotUIController
         slotUIManager.slotMode = SlotMode.WaitingForConfirm;
         slotUIManager.UpdateButtons();
         currentWin = slotMachine.RandomizeSymbolCalculate(row, col) * gameData.payoutMult.Value + gameData.payoutBonus.Value;
-        slotUIManager.UpdateResultText($"Current win: ${currentWin}");
+        slotUIManager.UpdateResultText($"Current win: ${currentWin:0.00}");
         slotUIManager.UpdateInstructionText("");
         gameData.wildLuck.RemoveTemporaryModifiers();
     }
@@ -97,7 +98,7 @@ public class SlotUIController
         slotUIManager.slotMode = SlotMode.WaitingForConfirm;
         slotUIManager.UpdateButtons();
         currentWin = slotMachine.RandomizeColumnCalculate( col) * gameData.payoutMult.Value + gameData.payoutBonus.Value;
-        slotUIManager.UpdateResultText($"Current win: ${currentWin}");
+        slotUIManager.UpdateResultText($"Current win: ${currentWin:0.00}");
         slotUIManager.UpdateInstructionText("");
     }
 
@@ -167,13 +168,13 @@ public class SlotUIController
         slotUIManager.UpdateInstructionText($"You Win! Gold Received : {goldReceived}");
         slotUIManager.pauseManager.winLoseMenu.SetActive(true);
         slotUIManager.pauseManager.restartButton.gameObject.SetActive(false);
-
         gameData.currentLevel++;
         if (gameData.levelsTargetMoney.Count > gameData.currentLevel)
             gameData.targetMoney = gameData.levelsTargetMoney[gameData.currentLevel];
         else
             gameData.targetMoney *= 2;
         gameData.gold += goldReceived;
+        gameData.initialLevelTokens = gameData.tokens;
         gameData.Reset();
 
         SaveGame();

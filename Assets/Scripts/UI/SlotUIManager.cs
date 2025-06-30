@@ -234,7 +234,6 @@ public class SlotUIManager : MonoBehaviour
     {
         resultText.text = result;
         UpdateUI();
-
     }
     
     public void UpdateInstructionText(string result)

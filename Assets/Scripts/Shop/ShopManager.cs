@@ -156,9 +156,10 @@ public class ShopManager : MonoBehaviour
         {
             gameData.passiveItems.Add(passive);
         }
+        gameData.gold -= currentItem.item.price;
         Destroy(currentItem.gameObject);
         currentShopItems.Remove(currentItem.item);
-        gameData.shopConfig.availableItems.Remove(currentItem.item);;
+        gameData.shopConfig.availableItems.Remove(currentItem.item);
         currentItem = null;
 
         UpdateUI();
@@ -173,7 +174,7 @@ public class ShopManager : MonoBehaviour
         else
         {
             gameData.gold -= tokensGold;
-            gameData.tokens += tokensToBuy;
+            gameData.initialLevelTokens += tokensToBuy;
             instructionText.text = "Tokens bought!";
             RerollTokens();
         }
@@ -183,11 +184,14 @@ public class ShopManager : MonoBehaviour
 
     public void NextLevel()
     {
+        gameData.ApplyAllModifiers();
+        gameData.tokens = gameData.initialLevelTokens;
         SceneManager.LoadScene(1, LoadSceneMode.Single);
     }
 
     public void OnMenuButtonClick()
     {
+        gameData.ApplyAllModifiers();
         SceneManager.LoadScene(0, LoadSceneMode.Single);
     }
     public void SetCurrentItem(ItemButton item)
@@ -197,8 +201,8 @@ public class ShopManager : MonoBehaviour
 
     public void UpdateUI()
     {
-        goldText.text = "Gold: " + gameData.gold;
-        tokensText.text = "Tokens: " + gameData.tokens;
-        rerollText.text = "Reroll: " + rerollCost + " Gold";
+        goldText.text =   $"Gold: {gameData.gold}";
+        tokensText.text =  $"Tokens: {gameData.initialLevelTokens}T";
+        rerollText.text =  $"Reroll: {rerollCost} Gold";
     }
 }

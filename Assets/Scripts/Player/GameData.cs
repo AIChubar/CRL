@@ -16,7 +16,8 @@ public class GameData : ScriptableObject
     [HideInInspector]public int betAmount = 0;
     public int changePrice;
     public int wildPrice;
-    public int tokens;
+    [HideInInspector]public int tokens;
+    public int initialLevelTokens;
     public int currentLevel;
     public int gold;
     public int baseSpins;
@@ -38,7 +39,7 @@ public class GameData : ScriptableObject
     public void CopyFrom(GameData other)
     {
         if (other == null) return;
-
+        initialLevelTokens = other.initialLevelTokens;
         tokens = other.tokens;
         RTP = other.RTP;
         baseMoney = other.baseMoney;
@@ -77,6 +78,7 @@ public class GameData : ScriptableObject
     {
         spinsLeft = baseSpins;
         money = baseMoney;
+        tokens = initialLevelTokens;
     }
 
     
@@ -84,6 +86,8 @@ public class GameData : ScriptableObject
     {
         foreach (var item in passiveItems)
         {
+            if (item.applied)
+                continue;
             foreach (var mod in item.statModifiers)
             {
                 if (mod.IsColumnSpecific)
@@ -103,6 +107,7 @@ public class GameData : ScriptableObject
                         targetStat.AddModifier(mod);
                 }
             }
+            item.applied = true;
         }
     }
     public void RemoveAllModifiers()
