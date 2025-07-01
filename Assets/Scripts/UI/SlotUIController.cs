@@ -7,10 +7,12 @@ public class SlotUIController
     private GameData gameData;
     private SlotMachine slotMachine;
     private SlotUIManager slotUIManager;
+    private SlotGridManager slotGridManager;
     private float currentWin = 0;
 
-    public void SetUp(GameData gameData, SlotMachine slotMachine, SlotUIManager slotUIManager)
+    public void SetUp(GameData gameData, SlotMachine slotMachine, SlotUIManager slotUIManager, SlotGridManager slotGridManager)
     {
+        this.slotGridManager = slotGridManager;
         this.gameData = gameData;
         this.slotMachine = slotMachine;
         this.slotUIManager = slotUIManager;
@@ -84,7 +86,7 @@ public class SlotUIController
 
     public void ChangeSymbol(int row, int col)
     {
-
+       
         slotUIManager.slotMode = SlotMode.WaitingForConfirm;
         slotUIManager.UpdateButtons();
         currentWin = slotMachine.RandomizeSymbolCalculate(row, col) * gameData.payoutMult.Value + gameData.payoutBonus.Value;
@@ -95,11 +97,23 @@ public class SlotUIController
     
     public void ChangeColumn(int col)
     {
-        slotUIManager.slotMode = SlotMode.WaitingForConfirm;
-        slotUIManager.UpdateButtons();
-        currentWin = slotMachine.RandomizeColumnCalculate( col) * gameData.payoutMult.Value + gameData.payoutBonus.Value;
-        slotUIManager.UpdateResultText($"Current win: ${currentWin:0.00}");
-        slotUIManager.UpdateInstructionText("");
+        if (slotUIManager.slotMode == SlotMode.ChangingColumn)
+        {
+            slotUIManager.slotMode = SlotMode.WaitingForConfirm;
+            slotUIManager.UpdateButtons();
+            currentWin = slotMachine.RandomizeColumnCalculate( col) * gameData.payoutMult.Value + gameData.payoutBonus.Value;
+            slotUIManager.UpdateResultText($"Current win: ${currentWin:0.00}");
+            slotUIManager.UpdateInstructionText("");
+        }
+        else if (slotUIManager.slotMode == SlotMode.BuffingColumn)
+        {
+            slotUIManager.slotMode = SlotMode.WaitingForConfirm;
+            slotUIManager.UpdateButtons();
+            slotGridManager.BuffColumn(col,1);
+            currentWin = slotMachine.RecalculateWithAnimation() * gameData.payoutMult.Value + gameData.payoutBonus.Value;
+            slotUIManager.UpdateResultText($"Current win: ${currentWin:0.00}");
+            slotUIManager.UpdateInstructionText("");
+        }
     }
 
     

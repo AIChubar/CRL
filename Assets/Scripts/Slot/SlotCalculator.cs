@@ -17,7 +17,7 @@ public int CalculateWin(SlotGrid slotGrid, int betAmount, bool isRecalculating =
     winningLines = new List<(List<(int, int)>, Symbol)>();
     playingPositions = new Dictionary<Symbol, SymbolPositions>();
 
-    for (int startRow = 0; startRow < slotGrid.GetColumnRowLength().rows; startRow++)
+    for (int startRow = 0; startRow < slotGrid.GetColumnRowLength(0).rows; startRow++)
     {
         if (!slotGrid.IsValidPosition(0, startRow))
         {
@@ -30,7 +30,7 @@ public int CalculateWin(SlotGrid slotGrid, int betAmount, bool isRecalculating =
         {
             List<List<(int, int)>> newPossibleWins = new List<List<(int, int)>>();
 
-            for (int row = 0; row < slotGrid.GetColumnRowLength().rows; row++)
+            for (int row = 0; row < slotGrid.GetColumnRowLength(col).rows; row++)
             {
                 if (!slotGrid.IsValidPosition(col, row))
                 {

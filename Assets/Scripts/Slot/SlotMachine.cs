@@ -48,19 +48,21 @@ public class SlotMachine
     public int RandomizeSymbolCalculate(int col, int row)
     {
         RandomizeSingleSymbol(col, row);
-        lastWinAmount = slotCalculator.CalculateWin(slotGrid, currentBetAmount, true);
-        slotUIManager.DisableButtons();
 
-        slotUIManager.DrawWinningLines(GetWinningLines());
-        slotUIManager.AnimatePositions(GetPlayingPositions());
-        return lastWinAmount;
+        return RecalculateWithAnimation();
     }
 
     public int RandomizeColumnCalculate(int col)
     {
         for (int row = 0; row < slotGrid.GetColumnRowLength().rows; row++)
             RandomizeSingleSymbol(col, row, true);
-        
+
+        return RecalculateWithAnimation();
+    }
+
+
+    public int RecalculateWithAnimation()
+    {
         lastWinAmount = slotCalculator.CalculateWin(slotGrid, currentBetAmount, true);
         slotUIManager.DisableButtons();
         slotUIManager.DrawWinningLines(GetWinningLines());

@@ -8,9 +8,10 @@ public class SlotGrid
     
     private Symbol[,] fullGrid;
     
-    private Symbol[,] grid;
-    private SymbolButton[,] symbolInstances;
+    private List<List<Symbol>> grid;
+    private List<List<SymbolButton>> symbolInstances;
     private List<CharacterStat> columnBuffs;
+    private List<int> temporaryColumnBuffs;
     private SymbolManager symbolManager;
 
     private int rows, columns;
@@ -28,14 +29,32 @@ public class SlotGrid
         this.rows = rows;
         this.columns = columns;
         this.symbolManager = symbolManager;
-
+        temporaryColumnBuffs = new List<int>();
+        for (int i = 0; i < columns; i++)
+            temporaryColumnBuffs.Add(0);
         int maxBuff = columnBuffs.Count > 0 ? Mathf.Max(columnBuffs.Select(buff => buff.ValueInt).ToArray()) : 0;
         maxRowsWithBuff = rows + maxBuff;
 
         // Now arrays are [column, row]
-        grid = new Symbol[columns, maxRowsWithBuff];
+        grid = new List<List<Symbol>>(columns);
+        for (int c = 0; c < columns; c++)
+        {
+            grid.Add(new List<Symbol>(rows)); 
+            for (int r = 0; r < rows + columnBuffs[c].ValueInt + temporaryColumnBuffs[c]; r++)
+            {
+                grid[c].Add(null);
+            }
+        }
+        symbolInstances = new List<List<SymbolButton>>(columns);
+        for (int c = 0; c < columns; c++)
+        {
+            symbolInstances.Add(new List<SymbolButton>(rows)); 
+            for (int r = 0; r < rows + columnBuffs[c].ValueInt + temporaryColumnBuffs[c]; r++)
+            {
+                symbolInstances[c].Add(null);
+            }
+        }
         fullGrid = new Symbol[totalColumns, totalRows];
-        symbolInstances = new SymbolButton[columns, maxRowsWithBuff];
         RollFullGrid();
     }
 
@@ -44,14 +63,24 @@ public class SlotGrid
         for (int c = 0; c < columns; c++)
         {
             int fullGridCol = gridTopLeftColumn + c;
-            int activeRows = rows + columnBuffs[c].ValueInt;
+            int activeRows = rows + columnBuffs[c].ValueInt + temporaryColumnBuffs[c];
+
+            // Ensure grid[c] has enough rows
+            while (grid[c].Count < activeRows)
+                grid[c].Add(null);
 
             for (int r = 0; r < activeRows; r++)
             {
                 int fullGridRow = gridTopLeftRow + r;
-                grid[c, r] = fullGrid[fullGridCol, fullGridRow];
+                grid[c][r] = fullGrid[fullGridCol, fullGridRow];
             }
         }
+    }
+
+    public void TemporaryBuffColumn(int column, int value)
+    {
+        temporaryColumnBuffs[column] += value;
+        FrameGrid();
     }
 
     public void MoveGridFrame(int deltaColumns, int deltaRows)
@@ -105,41 +134,55 @@ public class SlotGrid
     
     public (int columns, int rows) GetColumnRowLength(int col)
     {
-        return (columns, rows + columnBuffs[col].ValueInt);
+        return (columns, rows + columnBuffs[col].ValueInt + temporaryColumnBuffs[col]);
     }
 
-    public void RegisterSymbolInstance(int col, int row, SymbolButton instance)
+    public void RegisterSymbolInstance(int c, int r, SymbolButton instance)
     {
-        if (IsValidPosition(col, row))
-            symbolInstances[col, row] = instance;
+        if (!IsValidPosition(c, r))
+            return;
+        int activeRows = rows + columnBuffs[c].ValueInt + temporaryColumnBuffs[c];
+
+        // Ensure grid[c] has enough rows
+        while (symbolInstances[c].Count < activeRows)
+            symbolInstances[c].Add(null);
+        symbolInstances[c][r] = instance;
     }
 
     public SymbolButton GetSymbolInstance(int col, int row)
     {
-        return IsValidPosition(col, row) ? symbolInstances[col, row] : null;
+        return IsValidPosition(col, row) ? symbolInstances[col][row] : null;
     }
 
-    public SymbolButton[,] GetSymbolButtons()
+    public List<List<SymbolButton>> GetSymbolButtons()
     {
         return symbolInstances;
     }
 
     public Symbol GetSymbol(int col, int row)
     {
-        return IsValidPosition(col, row) ? grid[col, row] : null;
+        return IsValidPosition(col, row) ? grid[col][row] : null;
     }
 
     public void SetSymbol(int col, int row, Symbol newSymbol)
     {
-        if (IsValidPosition(col, row))
-            grid[col, row] = newSymbol;
+        if (!IsValidPosition(col, row))
+            return;
+
+        grid[col][row] = newSymbol;
+
+        int fullCol = gridTopLeftColumn + col;
+        int fullRow = gridTopLeftRow + row;
+
+        if (fullCol >= 0 && fullCol < totalColumns && fullRow >= 0 && fullRow < totalRows)
+            fullGrid[fullCol, fullRow] = newSymbol;
     }
 
   
 
     public bool IsValidPosition(int col, int row)
     {
-        return col >= 0 && col < columns && row >= 0 && row < (rows + columnBuffs[col].ValueInt);
+        return col >= 0 && col < columns && row >= 0 && row < (rows + columnBuffs[col].ValueInt + temporaryColumnBuffs[col]);
     }
 
     public Symbol GetFromFullGrid(int col, int row, int offset = 0)

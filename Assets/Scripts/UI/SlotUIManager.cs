@@ -13,6 +13,7 @@ public enum SlotMode
     ChangingColumn = 250,
     WaitingForConfirm = 300,
     AllDisabled = 400,
+    BuffingColumn
 }
 
 
@@ -69,7 +70,11 @@ public class SlotUIManager : MonoBehaviour
         slotSpinAnimator = new SlotSpinAnimator(slotGrid, this, gameData);
         
         slotUIController = new SlotUIController();
-        slotUIController.SetUp(gameData, slotMachine, this);
+        
+        slotGridManager = new SlotGridManager(slotPanel, slotSymbolPrefab,slotGrid , slotUIController, columnPrefab);
+        slotGridManager.Setup(gameData.columnBuffs);
+        
+        slotUIController.SetUp(gameData, slotMachine, this, slotGridManager);
         
         SetFinishButton(false);
 
@@ -87,8 +92,7 @@ public class SlotUIManager : MonoBehaviour
         toShopButton.onClick.AddListener(slotUIController.ToShop);
         finishRoundButton.onClick.AddListener(slotUIController.FinishRound);
         
-        slotGridManager = new SlotGridManager(slotPanel, slotSymbolPrefab,slotGrid , slotUIController, columnPrefab);
-        slotGridManager.Setup(gameData.columnBuffs);
+        
 
         LoadConsumables();
         UpdateUI();
@@ -147,9 +151,21 @@ public class SlotUIManager : MonoBehaviour
                 break;
             case ConsumableItemType.SymbolTypeRoll:
                 break;
+            case ConsumableItemType.ColumnBuff:
+                StartBuffingColumn();
+                break;
             default: break;
         }
     }
+
+    private void StartBuffingColumn()
+    {
+        slotMode = SlotMode.BuffingColumn;
+        slotGridManager.EnableColumnButtons();
+        UpdateButtons();
+        UpdateInstructionText("Pick reel you want to buff!");
+    }
+    
     public void StartChangingSymbol()
     {
         slotMode = SlotMode.ChangingSymbols;
@@ -163,7 +179,7 @@ public class SlotUIManager : MonoBehaviour
         slotMode = SlotMode.ChangingColumn;
         slotGridManager.EnableColumnButtons();
         UpdateButtons();
-        UpdateInstructionText("Pick column you want to change!");
+        UpdateInstructionText("Pick reel you want to change!");
     }
     public void DrawWinningLines(List<(List<(int, int)> line, Symbol symbol)> winningLines)
     {

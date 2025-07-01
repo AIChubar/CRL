@@ -59,7 +59,6 @@ public class SlotSpinAnimator
         List<Symbol> symbolsToShow = new List<Symbol>();
 
         
-        
         // 1. Copy each symbol, hide the original
         for (int row = 0; row < rows; row++) // start here, symbols are ok
         {

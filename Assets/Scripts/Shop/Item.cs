@@ -10,7 +10,7 @@ public class Item : ScriptableObject
 
     public int price;
     public ItemRarity rarity;
-    public bool applied = false;
+    [HideInInspector]public bool applied = false;
     public enum ItemRarity
     {
         Common,

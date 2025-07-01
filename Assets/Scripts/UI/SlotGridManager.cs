@@ -60,21 +60,29 @@ public class SlotGridManager
     
     public void DisableSymbolButtons()
     {
-        SymbolButton[,] symbolButtons = slotGrid.GetSymbolButtons();
-        foreach (SymbolButton symbolButton in symbolButtons)
+        List<List<SymbolButton>> symbolButtons = slotGrid.GetSymbolButtons();
+        foreach (List<SymbolButton> symbolButtonCol in symbolButtons)
         {
-            if (symbolButton != null)
-                symbolButton.DisableButton();
+            foreach (SymbolButton symbolButton in symbolButtonCol)
+            {
+                if (symbolButton != null)
+                    symbolButton.DisableButton();
+            }
+            
         }
     }
 
     public void EnableSymbolButtons()
     {
-        SymbolButton[,] symbolButtons = slotGrid.GetSymbolButtons();
-        foreach (SymbolButton symbolButton in symbolButtons)
+        List<List<SymbolButton>> symbolButtons = slotGrid.GetSymbolButtons();
+        foreach (List<SymbolButton> symbolButtonCol in symbolButtons)
         {
-            if (symbolButton != null)
-                symbolButton.EnableButton();
+            foreach (SymbolButton symbolButton in symbolButtonCol)
+            {
+                if (symbolButton != null)
+                    symbolButton.EnableButton();
+            }
+            
         }
     }
 
@@ -137,22 +145,44 @@ public class SlotGridManager
             }
         }
     }
+    
+    public void BuffColumn(int columnIndex, int value)
+    {
+        int rows = slotGrid.GetColumnRowLength(columnIndex).rows;
+        slotGrid.TemporaryBuffColumn(columnIndex, value);
+        for (int row = rows; row < rows + value; row++)
+        {
+            CreateSymbol(columnIndex, row);
+            Symbol symbol = slotGrid.GetSymbol(columnIndex, row);
+            slotGrid.GetSymbolInstance(columnIndex, row)?.SetSymbol(symbol);
+        }
+        columnContainers[columnIndex].GetComponent<CustomVerticalLayoutGroup>()?.ApplyLayout();
+    }
+
+
 
     private void CreateSymbol(int col, int row)
     {
-        SymbolButton newSymbol = Object.Instantiate(slotSymbolPrefab, columnContainers[col].transform).GetComponent<SymbolButton>();
+        SymbolButton newSymbol = Object.Instantiate(slotSymbolPrefab, columnContainers[col].transform)
+            .GetComponent<SymbolButton>();
+
         newSymbol.SetUp(col, row);
         newSymbol.GetComponent<Button>().onClick.AddListener(() => slotUIController.ChangeSymbol(col, row));
         slotGrid.RegisterSymbolInstance(col, row, newSymbol);
     }
 
+
     public void PopulateSymbolButtons()
     {
-        SymbolButton[,] symbolButtons = slotGrid.GetSymbolButtons();
-        foreach (SymbolButton symbolButton in symbolButtons)
+        List<List<SymbolButton>> symbolButtons = slotGrid.GetSymbolButtons();
+        foreach (List<SymbolButton> symbolButtonCol in symbolButtons)
         {
-            if (symbolButton !=  null)
-                symbolButton.SetSymbol(slotGrid.GetSymbol(symbolButton.col, symbolButton.row));
+            foreach (SymbolButton symbolButton in symbolButtonCol)
+            {
+                if (symbolButton !=  null)
+                    symbolButton.SetSymbol(slotGrid.GetSymbol(symbolButton.col, symbolButton.row));
+            }
+            
         }
     }
 
