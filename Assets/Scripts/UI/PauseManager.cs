@@ -12,7 +12,7 @@ public class PauseManager : MonoBehaviour
     public Button nextLevelButton;
     
     public GameObject winLoseMenu;
-
+    public GameObject statsMenu;
     public GameObject pauseMenu;
     private PlayerInput playerInput;
 

@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a497d5e8c6ea42e88b250fbd34c05b45, type: 3}
   m_Name: PI_Club
   m_EditorClassIdentifier: 
-  itemName: 
-  price: 0
+  itemName: Club
+  price: 5
   rarity: 0
-  applied: 0
-  statModifiers: []
+  applied: 1
+  statModifiers:
+  - {fileID: 11400000, guid: 435d51fa8b8ab8041ba56fb918ed5f0c, type: 2}

@@ -1,10 +1,7 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-using System;
 using System.Collections.Generic;
-using System.IO;
-using UnityEngine.SceneManagement;
 
 public enum SlotMode
 {
@@ -25,7 +22,7 @@ public class SlotUIManager : MonoBehaviour
 
     public TextMeshProUGUI tokensText, moneyText, targetText, spinsText, betText, resultText, changePriceText, wildPriceText, instructionText, goldText;
     public Button changeButton, wildButton, confirmButton, spinButton, increaseButton, decreaseButton, restartButton, pauseRestartButton, /*nextLevelButton,*/ continueButton, toMenuButton, pauseToMenuButton, toShopButton;
-    [SerializeField] private Button finishRoundButton;
+    [SerializeField] private Button finishRoundButton, statsButton;
     [SerializeField] private TextMeshProUGUI finishRoundText;
     public PauseManager pauseManager;
 
@@ -91,7 +88,7 @@ public class SlotUIManager : MonoBehaviour
         pauseToMenuButton.onClick.AddListener(slotUIController.ToMenu);
         toShopButton.onClick.AddListener(slotUIController.ToShop);
         finishRoundButton.onClick.AddListener(slotUIController.FinishRound);
-        
+        statsButton.onClick.AddListener(slotUIController.OpenStats);
         
 
         LoadConsumables();

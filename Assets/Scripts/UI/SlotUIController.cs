@@ -214,7 +214,11 @@ public class SlotUIController
     }
 
 
-    
+    public void OpenStats()
+    {
+        slotUIManager.pauseManager.winLoseMenu.SetActive(true);
+        slotUIManager.DisableButtons();
+    }
 }
 
 
