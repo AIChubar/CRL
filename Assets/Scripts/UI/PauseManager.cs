@@ -3,17 +3,18 @@ using TMPro;
 using UnityEngine.UI;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using UnityEngine.SceneManagement;
 
 public class PauseManager : MonoBehaviour
 {
     public Button restartButton;
     public Button nextLevelButton;
-    
+
     public GameObject winLoseMenu;
-    public GameObject statsMenu;
     public GameObject pauseMenu;
+
+    [SerializeField] private StatsMenu statsMenu;
+
     private PlayerInput playerInput;
 
     private void Awake()
@@ -21,14 +22,12 @@ public class PauseManager : MonoBehaviour
         playerInput = new PlayerInput();
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void Start()
     {
         pauseMenu.SetActive(false);
         winLoseMenu.SetActive(false);
     }
 
-    // Update is called once per frame
     private void Update()
     {
         if (playerInput.Player.Pause.triggered)
@@ -36,6 +35,7 @@ public class PauseManager : MonoBehaviour
             PauseGame();
         }
     }
+
     private void OnEnable()
     {
         playerInput.Enable();
@@ -45,8 +45,16 @@ public class PauseManager : MonoBehaviour
     {
         playerInput.Disable();
     }
+
     public void PauseGame()
     {
-        pauseMenu.SetActive(!pauseMenu.activeSelf);
+        if (statsMenu.IsOpen)
+        {
+            statsMenu.Hide();
+        }
+        else
+        {
+            pauseMenu.SetActive(!pauseMenu.activeSelf);
+        }
     }
 }

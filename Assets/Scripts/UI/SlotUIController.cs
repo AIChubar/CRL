@@ -212,13 +212,7 @@ public class SlotUIController
         //SaveGame();
         SceneManager.LoadScene(2, LoadSceneMode.Single);
     }
-
-
-    public void OpenStats()
-    {
-        slotUIManager.pauseManager.winLoseMenu.SetActive(true);
-        slotUIManager.DisableButtons();
-    }
+    
 }
 
 

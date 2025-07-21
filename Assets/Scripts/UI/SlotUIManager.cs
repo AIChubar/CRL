@@ -22,6 +22,7 @@ public class SlotUIManager : MonoBehaviour
 
     public TextMeshProUGUI tokensText, moneyText, targetText, spinsText, betText, resultText, changePriceText, wildPriceText, instructionText, goldText;
     public Button changeButton, wildButton, confirmButton, spinButton, increaseButton, decreaseButton, restartButton, pauseRestartButton, /*nextLevelButton,*/ continueButton, toMenuButton, pauseToMenuButton, toShopButton;
+    
     [SerializeField] private Button finishRoundButton, statsButton;
     [SerializeField] private TextMeshProUGUI finishRoundText;
     public PauseManager pauseManager;
@@ -88,7 +89,6 @@ public class SlotUIManager : MonoBehaviour
         pauseToMenuButton.onClick.AddListener(slotUIController.ToMenu);
         toShopButton.onClick.AddListener(slotUIController.ToShop);
         finishRoundButton.onClick.AddListener(slotUIController.FinishRound);
-        statsButton.onClick.AddListener(slotUIController.OpenStats);
         
 
         LoadConsumables();
@@ -225,6 +225,7 @@ public class SlotUIManager : MonoBehaviour
         wildButton.interactable = (slotMode == SlotMode.WaitingForConfirm);
         increaseButton.interactable = (slotMode == SlotMode.ReadyForSpin);
         decreaseButton.interactable = (slotMode == SlotMode.ReadyForSpin);
+        statsButton.interactable = (slotMode != SlotMode.AllDisabled);
         consumableButtons.RemoveAll(button => button == null || button.gameObject == null);
 
         foreach (var consumableButton in consumableButtons)

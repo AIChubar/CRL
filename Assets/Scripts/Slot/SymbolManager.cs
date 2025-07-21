@@ -10,6 +10,7 @@ public class SymbolManager
     private Dictionary<Symbol, float> symbolProbabilities; // Precomputed probabilities
     private List<KeyValuePair<Symbol, float>> cumulativeList; // Precomputed cumulative probabilities
     private GameData gameData;
+    
     public SymbolManager(List<Symbol> symbols, GameData gameData)
     {
         this.symbols = symbols;
