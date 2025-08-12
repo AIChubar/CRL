@@ -10,7 +10,7 @@ public class GameDataSerializable
     public int spinsLeft;
     public int targetMoney;
     public int betAmount;
-    public int changePrice;
+    public List<int> changePriceProgression;
     public int wildPrice;
     public int currentLevel;
     public int gold;
@@ -40,7 +40,7 @@ public class GameDataSerializable
         spinsLeft = data.spinsLeft;
         targetMoney = data.targetMoney;
         betAmount = data.betAmount;
-        changePrice = data.changePrice;
+        changePriceProgression = data.changePriceProgression;
         currentLevel = data.currentLevel;
         gold = data.gold;
         baseSpins = data.baseSpins;
@@ -68,6 +68,8 @@ public class GameDataSerializable
         }
     }
 
+    
+    
     public void ApplyToGameData(GameData data)
     {
         //data.animationSpeed = animationSpeed;
@@ -79,7 +81,7 @@ public class GameDataSerializable
         data.spinsLeft = spinsLeft;
         data.targetMoney = targetMoney;
         data.betAmount = betAmount;
-        data.changePrice = changePrice;
+        data.changePriceProgression = changePriceProgression;
         data.currentLevel = currentLevel;
         data.gold = gold;
         data.tokens = tokens;

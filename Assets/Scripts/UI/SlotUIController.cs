@@ -26,6 +26,7 @@ public class SlotUIController
             slotUIManager.UpdateInstructionText("You don't have spins left!");
             return;
         }
+        GameManager.instance.eventManager.OnSpinButtonClick?.InvokeEvent(); // move
         slotUIManager.slotMode = SlotMode.WaitingForConfirm;
         slotUIManager.UpdateButtons();
 
@@ -55,13 +56,16 @@ public class SlotUIController
 
     public void OnChangeButtonClick()
     {
-        if (gameData.changePrice > gameData.tokens)
+        int price = gameData.GetCurrentChangePrice();
+
+        if (price > gameData.tokens)
         {
             slotUIManager.UpdateInstructionText("Not enough money to change symbol!");
             return;
         }
-        gameData.tokens -= gameData.changePrice;
 
+        gameData.tokens -= price;
+        gameData.changeSymbolUses++; // increase usage count
         slotUIManager.StartChangingSymbol();
     }
     

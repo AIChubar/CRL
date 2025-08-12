@@ -14,14 +14,14 @@ public class GameData : ScriptableObject
     [HideInInspector] public int spinsLeft;
     [HideInInspector] public int targetMoney;
     [HideInInspector]public int betAmount = 0;
-    public int changePrice;
     public int wildPrice;
     [HideInInspector]public int tokens;
     public int initialLevelTokens;
     public int currentLevel;
     public int gold;
     public int baseSpins;
-
+    [HideInInspector] public int changeSymbolUses; 
+    public List<int> changePriceProgression;
     [HideInInspector]public float animationSpeed = 1.0f;
 
     [SerializeField] public CharacterStat wildLuck;
@@ -47,7 +47,7 @@ public class GameData : ScriptableObject
         spinsLeft = other.spinsLeft;
         targetMoney = other.targetMoney;
         betAmount = other.betAmount;
-        changePrice = other.changePrice;
+        changePriceProgression = other.changePriceProgression;
         wildPrice = other.wildPrice;
         currentLevel = other.currentLevel;
         gold = other.gold;
@@ -73,12 +73,21 @@ public class GameData : ScriptableObject
         RemoveAllModifiers();
         ApplyAllModifiers();
     }
+    
+    public int GetCurrentChangePrice()
+    {
+        if (changeSymbolUses < changePriceProgression.Count)
+            return changePriceProgression[changeSymbolUses];
+        else
+            return changePriceProgression[changePriceProgression.Count - 1];
+    }
 
     public void Reset()
     {
         spinsLeft = baseSpins;
         money = baseMoney;
         tokens = initialLevelTokens;
+        targetMoney = levelsTargetMoney[currentLevel];
     }
 
     
@@ -135,7 +144,10 @@ public class GameData : ScriptableObject
             }
         }
     }
-    
-    
-    
+
+
+    public void OnSpinButtonClick()
+    {
+        changeSymbolUses = 0;
+    }
 }

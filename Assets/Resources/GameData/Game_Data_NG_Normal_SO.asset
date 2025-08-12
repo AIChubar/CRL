@@ -21,7 +21,7 @@ MonoBehaviour:
   changePrice: 1
   wildPrice: 4
   tokens: 10
-  initialLevelTokens: 1111
+  initialLevelTokens: 5
   currentLevel: 0
   gold: 0
   baseSpins: 10
@@ -33,9 +33,8 @@ MonoBehaviour:
   payoutBonus:
     BaseValue: 0
   passiveItems: []
-  consumableItems:
-  - {fileID: 11400000, guid: b4f6f703f15144d4ea169547cf83829e, type: 2}
+  consumableItems: []
   slotConfig: {fileID: 11400000, guid: 1d8dece67bba3e3449d70af789909cca, type: 2}
-  levelsTargetMoney: 140000001e00000032000000460000006400000096000000c80000002c010000
+  levelsTargetMoney: 0a000000140000001e00000032000000460000006400000096000000c80000002c010000
   shopConfig: {fileID: 11400000, guid: e3fe027bd7597114d8e311ac35c38f43, type: 2}
   columnBuffs: []

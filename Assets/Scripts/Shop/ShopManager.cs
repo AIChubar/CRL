@@ -150,7 +150,9 @@ public class ShopManager : MonoBehaviour
 
         if (consumable != null)
         {
-            gameData.consumableItems.Add(Instantiate(consumable));
+            ConsumableItem newConsumable = Instantiate(consumable);
+            newConsumable.name = consumable.name; 
+            gameData.consumableItems.Add(newConsumable);
         }
         else if (passive != null)
         {

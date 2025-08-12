@@ -21,6 +21,7 @@ public class StatsMenu : MonoBehaviour
 
     private void ShowStatsMenu()
     {
+        UpdateUI();
         this.gameObject.SetActive(true);
     }
     

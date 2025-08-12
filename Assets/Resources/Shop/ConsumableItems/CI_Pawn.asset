@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: df62ae659ed242646970569dd7cb8975, type: 3}
-  m_Name: CI_Bishop
+  m_Name: CI_Pawn
   m_EditorClassIdentifier: 
-  itemName: Bishop
-  price: 5
-  rarity: 1
+  itemName: Pawn
+  price: 3
+  rarity: 0
   applied: 0
-  consumableItemType: 0
+  consumableItemType: 1
   charges: 3

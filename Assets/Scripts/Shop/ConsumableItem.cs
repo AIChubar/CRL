@@ -20,6 +20,7 @@ public class ConsumableItem : Item
             ConsumableItemType.SymbolRoll => "Rerolls a symbol",
             ConsumableItemType.SymbolTypeRoll => "Rerolls all symbols of a type",
             ConsumableItemType.ColumnBuff => "Adds a symbol to a reel for the level",
+            //ConsumableItemType.Farsight => "Next random symbol function is determined",
             _ => "Unknown effect"
         };
 
@@ -33,5 +34,6 @@ public enum ConsumableItemType
     ColumnRoll,
     SymbolRoll,
     SymbolTypeRoll,
-    ColumnBuff
+    ColumnBuff,
+    //Farsight
 }

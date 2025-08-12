@@ -110,16 +110,25 @@ public class SlotUIManager : MonoBehaviour
 
     private void UnsubscribeFromEvents()
     {
+        GameManager.instance.eventManager.OnSpinButtonClick.RemoveListener(OnSpinButtonClick);
         GameManager.instance.eventManager.OnConsumableItemUsed.RemoveListener(OnConsumableItemUsed);
         GameManager.instance.eventManager.OnCoroutineEnd.RemoveListener(OnCoroutineEnd);
     }
 
+
+
     private void SubscribeToEvents()
     {
+        GameManager.instance.eventManager.OnSpinButtonClick.AddListener(OnSpinButtonClick);
         GameManager.instance.eventManager.OnConsumableItemUsed.AddListener(OnConsumableItemUsed);
         GameManager.instance.eventManager.OnCoroutineEnd.AddListener(OnCoroutineEnd);
     }
 
+    private void OnSpinButtonClick()
+    {
+        gameData.OnSpinButtonClick();
+    }
+    
     private void OnCoroutineEnd(AnimationType animationType)
     {
         switch (animationType)
@@ -154,6 +163,7 @@ public class SlotUIManager : MonoBehaviour
             default: break;
         }
     }
+    
 
     private void StartBuffingColumn()
     {
@@ -206,7 +216,7 @@ public class SlotUIManager : MonoBehaviour
         spinsText.text = $"Spins Left: {gameData.spinsLeft}";
         betText.text = $"Bet: ${gameData.betAmount}";
         targetText.text = $"Target Money: ${gameData.targetMoney:0.00}";
-        changePriceText.text = $"{gameData.changePrice}T ";
+        changePriceText.text = $"{gameData.GetCurrentChangePrice()}T ";
         wildPriceText.text = $"{gameData.wildPrice}T ";
         goldText.text = $"Gold: {gameData.gold}";
     }
