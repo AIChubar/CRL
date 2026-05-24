@@ -1,8 +1,6 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
-using Object = System.Object;
 
 public class SlotSpinAnimator
 {
@@ -11,151 +9,98 @@ public class SlotSpinAnimator
     private float delayBetweenColumns = 0.1f;
     private int symbolSteps = 30;
     private GameData gameData;
-    private CoroutineTracker coroutineTracker;
 
-    public SlotSpinAnimator(SlotGrid slotGrid, MonoBehaviour coroutineRunner, GameData gameData)
+    public SlotSpinAnimator(SlotGrid slotGrid, GameData gameData)
     {
         this.gameData = gameData;
         this.slotGrid = slotGrid;
-        this.coroutineTracker = new CoroutineTracker(coroutineRunner, AnimationType.Spin);
     }
 
-    public void StartSpin()
-    {
-        coroutineTracker.StartTrackedCoroutine(SpinGrid());
-    }
-
-    private IEnumerator SpinGrid()
+    public async Awaitable StartSpin(CancellationToken ct)
     {
         var (columns, _) = slotGrid.GetColumnRowLength();
-        int columnsCount = columns;
-        int columnsFinished = 0;
+        var tasks = new List<Awaitable>();
 
-        for (int col = 0; col < columnsCount; col++)
+        for (int col = 0; col < columns; col++)
         {
-            coroutineTracker.StartTrackedCoroutine(SpinSingleColumn(col, () =>
-            {
-                columnsFinished++;
-            }));
-
-            yield return new WaitForSeconds(delayBetweenColumns * gameData.animationSpeed);
+            tasks.Add(SpinSingleColumn(col, ct));
+            await Awaitable.WaitForSecondsAsync(delayBetweenColumns * gameData.animationSpeed, ct);
         }
 
-        while (columnsFinished < columnsCount)
-        {
-            yield return null;
-        }
-
-        yield return new WaitForSeconds(0.2f);
+        foreach (var task in tasks)
+            await task;
+        await Awaitable.WaitForSecondsAsync(0.2f, ct);
     }
 
-    private IEnumerator SpinSingleColumn(int col, Action onColumnComplete)
+    private async Awaitable SpinSingleColumn(int col, CancellationToken ct)
     {
         int rows = slotGrid.GetColumnRowLength(col).rows;
         SymbolButton[] originals = new SymbolButton[rows];
         List<SymbolButton> copies = new List<SymbolButton>();
-        Vector3[] positions = new Vector3[rows+1];
-        
+        Vector3[] positions = new Vector3[rows + 1];
         List<Symbol> symbolsToShow = new List<Symbol>();
 
-        
-        // 1. Copy each symbol, hide the original
-        for (int row = 0; row < rows; row++) // start here, symbols are ok
+        for (int row = 0; row < rows; row++)
         {
             var original = slotGrid.GetSymbolInstance(col, row);
             originals[row] = original;
-            positions[row+1] = original.transform.localPosition;
+            positions[row + 1] = original.transform.localPosition;
 
-            // Create a copy
             GameObject copyObj = GameObject.Instantiate(original.gameObject, original.transform.parent);
-            
-            copyObj.transform.localPosition = positions[row+1];
-            SymbolButton copy = copyObj.GetComponent<SymbolButton>();
-            copies.Add(copy);
+            copyObj.transform.localPosition = positions[row + 1];
+            copies.Add(copyObj.GetComponent<SymbolButton>());
 
-            // Optionally distinguish the copy visually (e.g. faded, different material)
             original.gameObject.SetActive(false);
-            copy.gameObject.SetActive(true);
+            copyObj.SetActive(true);
         }
-        
-        
-        for (int row =  symbolSteps -1  ; row >=0 ; row--)
-        {
-            symbolsToShow.Add(slotGrid.GetSymbolFromFullGrid(col, row ));
-        }
+
+        for (int row = symbolSteps - 1; row >= 0; row--)
+            symbolsToShow.Add(slotGrid.GetSymbolFromFullGrid(col, row));
+
         float spacing = positions[1].y - positions[2].y;
-        
-        
-        
-        GameObject additional = GameObject.Instantiate(slotGrid.GetSymbolInstance(col, 0).gameObject, slotGrid.GetSymbolInstance(col, 0).transform.parent);
-        
+
+        GameObject additional = GameObject.Instantiate(
+            slotGrid.GetSymbolInstance(col, 0).gameObject,
+            slotGrid.GetSymbolInstance(col, 0).transform.parent);
         additional.SetActive(true);
-        SymbolButton additionalSymbolButton = additional.GetComponent<SymbolButton>();
-        copies.Add(additionalSymbolButton);
-        positions[0] = positions[1] + new Vector3(0,spacing,0);;
-        
-        // 2. Animate the copies
-        for (int step = 0; step < symbolSteps; step++)
-        {
-            float elapsed = 0f;
-            SymbolButton symbolButtonToMove = copies[^1];
-            copies.RemoveAt(copies.Count - 1);
-            symbolButtonToMove.SetSymbol(symbolsToShow[step]);
-            symbolButtonToMove.transform.localPosition = positions[0];
-            copies.Insert(0, symbolButtonToMove);
-            while (elapsed < symbolStepDuration  * gameData.animationSpeed)
-            {
-                float t = Mathf.Clamp01(elapsed / symbolStepDuration / gameData.animationSpeed);
-                float offset = Mathf.Lerp(0, spacing, t);
+        copies.Add(additional.GetComponent<SymbolButton>());
+        positions[0] = positions[1] + new Vector3(0, spacing, 0);
 
-                for (int i = 0; i < rows+1; i++)
+        try
+        {
+            for (int step = 0; step < symbolSteps; step++)
+            {
+                float elapsed = 0f;
+                SymbolButton symbolButtonToMove = copies[^1];
+                copies.RemoveAt(copies.Count - 1);
+                symbolButtonToMove.SetSymbol(symbolsToShow[step]);
+                symbolButtonToMove.transform.localPosition = positions[0];
+                copies.Insert(0, symbolButtonToMove);
+
+                while (elapsed < symbolStepDuration * gameData.animationSpeed)
                 {
-                    copies[i].transform.localPosition = positions[i] - new Vector3(0f, offset, 0f);
+                    float t = Mathf.Clamp01(elapsed / symbolStepDuration / gameData.animationSpeed);
+                    float offset = Mathf.Lerp(0, spacing, t);
+
+                    for (int i = 0; i < rows + 1; i++)
+                        copies[i].transform.localPosition = positions[i] - new Vector3(0f, offset, 0f);
+
+                    await Awaitable.NextFrameAsync(ct);
+                    elapsed += Time.deltaTime;
                 }
-
-                yield return null;
-                elapsed += Time.deltaTime;
-
             }
-            
-            
         }
-
-        // 3. Replace final symbols and restore originals
-        for (int row = 0; row < rows; row++)
+        finally
         {
-            SymbolButton original = originals[row];
-
-            // Set correct final position and symbol on the original
-            //original.transform.localPosition = copy.transform.localPosition;
-            original.SetSymbol(slotGrid.GetSymbol(col, row));
-
-            // Hide and destroy the copy, show original
-            original.gameObject.SetActive(true);
-            
-        }
-
-        foreach (var copy in copies)
-        {
-            GameObject.Destroy(copy.gameObject);
-        }
-        copies.Clear();
-        onColumnComplete?.Invoke();
-    }
-
-
-    private float GetHighestY(SymbolButton[] buttons, Vector3[] referencePositions)
-    {
-        float highest = float.MinValue;
-        for (int i = 0; i < buttons.Length; i++)
-        {
-            if (buttons[i] != null)
+            for (int row = 0; row < rows; row++)
             {
-                float y = buttons[i].transform.localPosition.y;
-                if (y > highest) highest = y;
+                originals[row].SetSymbol(slotGrid.GetSymbol(col, row));
+                originals[row].gameObject.SetActive(true);
             }
+
+            foreach (var copy in copies)
+                GameObject.Destroy(copy.gameObject);
+            copies.Clear();
         }
-        return highest;
     }
 }
-

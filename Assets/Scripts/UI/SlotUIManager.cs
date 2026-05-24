@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System.Threading;
 
 public enum SlotMode
 {
@@ -22,7 +23,7 @@ public class SlotUIManager : MonoBehaviour
 
     public TextMeshProUGUI tokensText, moneyText, targetText, spinsText, betText, resultText, changePriceText, wildPriceText, instructionText, goldText;
     public Button changeButton, wildButton, confirmButton, spinButton, increaseButton, decreaseButton, restartButton, pauseRestartButton, /*nextLevelButton,*/ continueButton, toMenuButton, pauseToMenuButton, toShopButton;
-    
+
     [SerializeField] private Button finishRoundButton, statsButton;
     [SerializeField] private TextMeshProUGUI finishRoundText;
     public PauseManager pauseManager;
@@ -31,26 +32,22 @@ public class SlotUIManager : MonoBehaviour
     private GameData gameData;
     private SlotMachine slotMachine;
     private float currentWin;
-    
-    
-    public GameObject slotSymbolPrefab;     
-    public GameObject slotPanel;
 
+    public GameObject slotSymbolPrefab;
+    public GameObject slotPanel;
     public GameObject linePrefab;
-    
+
     private WinningLineDrawer winningLineDrawer;
     private WinningPositionsDrawer winningPositionsDrawer;
-    private CoroutineTracker coroutineTracker;
-    
+
     private SlotGridManager slotGridManager;
-    
+
     public GameObject consumableButtonPrefab;
     public GameObject columnPrefab;
     private SlotSpinAnimator slotSpinAnimator;
     private SlotGrid slotGrid;
-    public Transform consumableButtonContainer; // Assign UI Panel for items
+    public Transform consumableButtonContainer;
     private List<ConsumableItemButton> consumableButtons = new List<ConsumableItemButton>();
-    //private List<GameObject> columnContainers;
 
     public void SetUp(GameData gameData, SlotMachine slotMachine, SlotGrid slotGrid)
     {
@@ -58,22 +55,22 @@ public class SlotUIManager : MonoBehaviour
         this.gameData = gameData;
         this.slotMachine = slotMachine;
         slotMode = SlotMode.ReadyForSpin;
-        coroutineTracker = new CoroutineTracker(this, AnimationType.Result);
+
         winningLineDrawer = new WinningLineDrawer();
-        winningLineDrawer.SetUp(this.transform, linePrefab, coroutineTracker, gameData);
+        winningLineDrawer.SetUp(this.transform, linePrefab, gameData);
 
         winningPositionsDrawer = new WinningPositionsDrawer();
-        winningPositionsDrawer.SetUp(this.transform, coroutineTracker, gameData);
+        winningPositionsDrawer.SetUp(this.transform, gameData);
 
-        slotSpinAnimator = new SlotSpinAnimator(slotGrid, this, gameData);
-        
+        slotSpinAnimator = new SlotSpinAnimator(slotGrid, gameData);
+
         slotUIController = new SlotUIController();
-        
-        slotGridManager = new SlotGridManager(slotPanel, slotSymbolPrefab,slotGrid , slotUIController, columnPrefab);
+
+        slotGridManager = new SlotGridManager(slotPanel, slotSymbolPrefab, slotGrid, slotUIController, columnPrefab);
         slotGridManager.Setup(gameData.columnBuffs);
-        
+
         slotUIController.SetUp(gameData, slotMachine, this, slotGridManager);
-        
+
         SetFinishButton(false);
 
         spinButton.onClick.AddListener(slotUIController.Spin);
@@ -89,60 +86,27 @@ public class SlotUIManager : MonoBehaviour
         pauseToMenuButton.onClick.AddListener(slotUIController.ToMenu);
         toShopButton.onClick.AddListener(slotUIController.ToShop);
         finishRoundButton.onClick.AddListener(slotUIController.FinishRound);
-        
 
         LoadConsumables();
         UpdateUI();
-
         UpdateButtons();
-
     }
 
     private void OnEnable()
     {
-        SubscribeToEvents();
-    }
-    
-    private void OnDisable()
-    {
-        UnsubscribeFromEvents();
+        GameManager.instance.eventManager.OnSpinButtonClick.AddListener(OnSpinButtonClick);
+        GameManager.instance.eventManager.OnConsumableItemUsed.AddListener(OnConsumableItemUsed);
     }
 
-    private void UnsubscribeFromEvents()
+    private void OnDisable()
     {
         GameManager.instance.eventManager.OnSpinButtonClick.RemoveListener(OnSpinButtonClick);
         GameManager.instance.eventManager.OnConsumableItemUsed.RemoveListener(OnConsumableItemUsed);
-        GameManager.instance.eventManager.OnCoroutineEnd.RemoveListener(OnCoroutineEnd);
-    }
-
-
-
-    private void SubscribeToEvents()
-    {
-        GameManager.instance.eventManager.OnSpinButtonClick.AddListener(OnSpinButtonClick);
-        GameManager.instance.eventManager.OnConsumableItemUsed.AddListener(OnConsumableItemUsed);
-        GameManager.instance.eventManager.OnCoroutineEnd.AddListener(OnCoroutineEnd);
     }
 
     private void OnSpinButtonClick()
     {
         gameData.OnSpinButtonClick();
-    }
-    
-    private void OnCoroutineEnd(AnimationType animationType)
-    {
-        switch (animationType)
-        {
-            case AnimationType.Spin:
-                DrawWinningLines(slotMachine.GetWinningLines());
-                AnimatePositions(slotMachine.GetPlayingPositions());
-                DisableButtons();
-                break;
-            case AnimationType.Result:
-                slotMode = SlotMode.WaitingForConfirm;
-                UpdateButtons();
-                break;
-        }
     }
 
     public void OnConsumableItemUsed(ConsumableItemType item)
@@ -163,7 +127,6 @@ public class SlotUIManager : MonoBehaviour
             default: break;
         }
     }
-    
 
     private void StartBuffingColumn()
     {
@@ -172,7 +135,7 @@ public class SlotUIManager : MonoBehaviour
         UpdateButtons();
         UpdateInstructionText("Pick reel you want to buff!");
     }
-    
+
     public void StartChangingSymbol()
     {
         slotMode = SlotMode.ChangingSymbols;
@@ -180,7 +143,7 @@ public class SlotUIManager : MonoBehaviour
         UpdateButtons();
         UpdateInstructionText("Pick symbol you want to change!");
     }
-    
+
     public void StartChangingColumn()
     {
         slotMode = SlotMode.ChangingColumn;
@@ -188,16 +151,27 @@ public class SlotUIManager : MonoBehaviour
         UpdateButtons();
         UpdateInstructionText("Pick reel you want to change!");
     }
-    public void DrawWinningLines(List<(List<(int, int)> line, Symbol symbol)> winningLines)
+
+    public void TriggerResultAnimation()
     {
-        winningLineDrawer.DrawWinningLines(winningLines, slotGrid);
+        DisableButtons();
+        _ = RunResultAnimationAsync(destroyCancellationToken);
     }
 
-    public void AnimatePositions(Dictionary<Symbol, SymbolPositions> playingPositions)
+    private async Awaitable RunResultAnimationAsync(CancellationToken ct)
     {
-        winningPositionsDrawer.AnimatePositions(playingPositions, slotGrid);
+        try
+        {
+            var linesAwaitable = winningLineDrawer.DrawWinningLinesAsync(slotMachine.GetWinningLines(), slotGrid, ct);
+            var positionsAwaitable = winningPositionsDrawer.AnimatePositionsAsync(slotMachine.GetPlayingPositions(), slotGrid, ct);
+            await linesAwaitable;
+            await positionsAwaitable;
+            slotMode = SlotMode.WaitingForConfirm;
+            UpdateButtons();
+        }
+        catch (System.OperationCanceledException) { }
     }
-    
+
     private void LoadConsumables()
     {
         foreach (var item in gameData.consumableItems)
@@ -220,14 +194,14 @@ public class SlotUIManager : MonoBehaviour
         wildPriceText.text = $"{gameData.wildPrice}T ";
         goldText.text = $"Gold: {gameData.gold}";
     }
+
     public void DisableButtons()
     {
         slotMode = SlotMode.AllDisabled;
         UpdateButtons();
     }
 
-
-    public void UpdateButtons() 
+    public void UpdateButtons()
     {
         spinButton.interactable = (slotMode == SlotMode.ReadyForSpin);
         confirmButton.interactable = (slotMode == SlotMode.WaitingForConfirm);
@@ -246,20 +220,19 @@ public class SlotUIManager : MonoBehaviour
                 consumableButton.DisableButton();
         }
     }
-    
-    
+
     public void SetFinishButton(bool interactable)
     {
         finishRoundButton.interactable = interactable;
         finishRoundText.color = new Color(0, 0, 0, interactable ? 1f : 0.4f);
     }
-    
+
     public void UpdateResultText(string result)
     {
         resultText.text = result;
         UpdateUI();
     }
-    
+
     public void UpdateInstructionText(string result)
     {
         instructionText.text = result;
@@ -268,18 +241,32 @@ public class SlotUIManager : MonoBehaviour
 
     public void SetUpGridUI()
     {
-        slotSpinAnimator.StartSpin();
         winningLineDrawer.ClearLines();
         slotGridManager.DisableSymbolButtons();
         slotGridManager.DisableColumnButtons();
         DisableButtons();
+        _ = RunSpinAnimationAsync(destroyCancellationToken);
     }
-    
+
+    private async Awaitable RunSpinAnimationAsync(CancellationToken ct)
+    {
+        try
+        {
+            await slotSpinAnimator.StartSpin(ct);
+            var linesAwaitable = winningLineDrawer.DrawWinningLinesAsync(slotMachine.GetWinningLines(), slotGrid, ct);
+            var positionsAwaitable = winningPositionsDrawer.AnimatePositionsAsync(slotMachine.GetPlayingPositions(), slotGrid, ct);
+            await linesAwaitable;
+            await positionsAwaitable;
+            slotMode = SlotMode.WaitingForConfirm;
+            UpdateButtons();
+        }
+        catch (System.OperationCanceledException) { }
+    }
+
     public void ChangeSingleSymbol(int row, int col, Symbol newSymbol)
     {
         slotGridManager.ChangeSingleSymbol(row, col, newSymbol);
         slotGridManager.DisableSymbolButtons();
         slotGridManager.DisableColumnButtons();
     }
-
 }

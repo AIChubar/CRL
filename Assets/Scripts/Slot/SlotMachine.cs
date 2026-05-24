@@ -1,19 +1,16 @@
 using UnityEngine;
-using TMPro;
-using UnityEngine.UI;
 using System.Collections.Generic;
 
-public class SlotMachine 
+public class SlotMachine
 {
     private GameData gameData;
-    private SlotGrid slotGrid;             
-    //private List<SlotReel> reels;
+    private SlotGrid slotGrid;
     private SymbolManager symbolManager;
     private SlotCalculator slotCalculator;
-    private int lastWinAmount = 0; // Store last win value
+    private int lastWinAmount = 0;
     private SlotUIManager slotUIManager;
     private int currentBetAmount;
-    
+
     public void SetUp(SlotCalculator slotCalculator, SlotUIManager slotUIManager, GameData gameData)
     {
         this.gameData = gameData;
@@ -30,25 +27,18 @@ public class SlotMachine
     public int SpinSlot(int betAmount, bool simulateOnly = false)
     {
         currentBetAmount = betAmount;
-      
         slotGrid.RollFullGrid();
+
         if (!simulateOnly)
-        {
             slotUIManager.SetUpGridUI();
-        }
 
         lastWinAmount = slotCalculator.CalculateWin(slotGrid, currentBetAmount);
-
-
         return lastWinAmount;
     }
-    
-    
 
     public int RandomizeSymbolCalculate(int col, int row)
     {
         RandomizeSingleSymbol(col, row);
-
         return RecalculateWithAnimation();
     }
 
@@ -56,23 +46,19 @@ public class SlotMachine
     {
         for (int row = 0; row < slotGrid.GetColumnRowLength().rows; row++)
             RandomizeSingleSymbol(col, row, true);
-
         return RecalculateWithAnimation();
     }
-
 
     public int RecalculateWithAnimation()
     {
         lastWinAmount = slotCalculator.CalculateWin(slotGrid, currentBetAmount, true);
-        slotUIManager.DisableButtons();
-        slotUIManager.DrawWinningLines(GetWinningLines());
-        slotUIManager.AnimatePositions(GetPlayingPositions());
+        slotUIManager.TriggerResultAnimation();
         return lastWinAmount;
     }
 
     private void RandomizeSingleSymbol(int col, int row, bool canBeTheSame = false)
     {
-        slotGrid.SetSymbol(col, row, symbolManager.GetRandomSymbolUnweighted(canBeTheSame ? null : slotGrid.GetSymbol(col, row), true)); 
+        slotGrid.SetSymbol(col, row, symbolManager.GetRandomSymbolUnweighted(canBeTheSame ? null : slotGrid.GetSymbol(col, row), true));
         slotUIManager.ChangeSingleSymbol(col, row, slotGrid.GetSymbol(col, row));
     }
 }

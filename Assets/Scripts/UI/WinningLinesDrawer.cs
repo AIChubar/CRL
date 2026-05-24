@@ -1,32 +1,30 @@
-using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 public class WinningLineDrawer
 {
     private GameObject linePrefab;
     private List<GameObject> activeLines = new List<GameObject>();
-    private CoroutineTracker coroutineTracker;
     private Transform parent;
     private GameData gameData;
- 
+
     private float lineFragmentDuration = 0.01f;
 
-    public void SetUp(Transform parent, GameObject linePrefab, CoroutineTracker coroutineTracker, GameData gameData)
+    public void SetUp(Transform parent, GameObject linePrefab, GameData gameData)
     {
         this.gameData = gameData;
-        this.coroutineTracker = coroutineTracker;
         this.parent = parent;
         this.linePrefab = linePrefab;
     }
 
-    public void DrawWinningLines(List<(List<(int, int)> line, Symbol symbol)> winningLines, SlotGrid slotGrid)
+    public async Awaitable DrawWinningLinesAsync(List<(List<(int, int)> line, Symbol symbol)> winningLines, SlotGrid slotGrid, CancellationToken ct)
     {
         ClearLines();
-        coroutineTracker.StartTrackedCoroutine(DrawLinesSequentially(winningLines, slotGrid));
+        await DrawLinesSequentially(winningLines, slotGrid, ct);
     }
 
-    private IEnumerator DrawLinesSequentially(List<(List<(int, int)> line, Symbol symbol)> winningLines, SlotGrid slotGrid)
+    private async Awaitable DrawLinesSequentially(List<(List<(int, int)> line, Symbol symbol)> winningLines, SlotGrid slotGrid, CancellationToken ct)
     {
         for (int i = 0; i < winningLines.Count; i++)
         {
@@ -35,38 +33,34 @@ public class WinningLineDrawer
 
             GameObject newLineObj = Object.Instantiate(linePrefab, parent);
             LineRenderer lr = newLineObj.GetComponent<LineRenderer>();
-
             lr.startColor = lr.endColor = Color.gray;
             activeLines.Add(newLineObj);
 
-            yield return coroutineTracker.StartTrackedCoroutine(DrawLineSegments(lr, line, slotGrid));
+            await DrawLineSegments(lr, line, slotGrid, ct);
         }
     }
 
-    private IEnumerator DrawLineSegments(LineRenderer lr, List<(int row, int column)> line, SlotGrid slotGrid)
+    private async Awaitable DrawLineSegments(LineRenderer lr, List<(int row, int column)> line, SlotGrid slotGrid, CancellationToken ct)
     {
         lr.positionCount = 0;
-        yield return new WaitForSeconds(lineFragmentDuration * gameData.animationSpeed);
+        await Awaitable.WaitForSecondsAsync(lineFragmentDuration * gameData.animationSpeed, ct);
 
         for (int i = 0; i < line.Count; i++)
         {
             SymbolButton symbolInstance = slotGrid.GetSymbolInstance(line[i].row, line[i].column);
             if (symbolInstance == null) continue;
 
-            Vector3 pos = symbolInstance.transform.position;
             lr.positionCount = i + 1;
-            lr.SetPosition(i, pos);
+            lr.SetPosition(i, symbolInstance.transform.position);
 
-            yield return new WaitForSeconds(lineFragmentDuration * gameData.animationSpeed);
+            await Awaitable.WaitForSecondsAsync(lineFragmentDuration * gameData.animationSpeed, ct);
         }
     }
 
     public void ClearLines()
     {
         foreach (var line in activeLines)
-        {
             Object.Destroy(line);
-        }
         activeLines.Clear();
     }
 }
