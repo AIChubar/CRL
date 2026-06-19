@@ -18,13 +18,14 @@ MonoBehaviour:
   spinsLeft: 10
   targetMoney: 20
   betAmount: 1
-  changePrice: 1
   wildPrice: 4
   tokens: 10
   initialLevelTokens: 5
   currentLevel: 0
   gold: 0
   baseSpins: 10
+  changeSymbolUses: 0
+  changePriceProgression: 000000000100000001000000010000000100000002000000
   animationSpeed: 1
   wildLuck:
     BaseValue: 1
