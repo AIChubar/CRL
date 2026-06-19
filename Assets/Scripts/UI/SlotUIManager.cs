@@ -71,6 +71,10 @@ public class SlotUIManager : MonoBehaviour
 
         slotUIController.SetUp(gameData, slotMachine, this, slotGridManager);
 
+        slotMachine.GridRolled += SetUpGridUI;
+        slotMachine.ResultReady += TriggerResultAnimation;
+        slotMachine.SymbolChanged += ChangeSingleSymbol;
+
         SetFinishButton(false);
 
         spinButton.onClick.AddListener(slotUIController.Spin);
@@ -102,6 +106,16 @@ public class SlotUIManager : MonoBehaviour
     {
         GameManager.instance.eventManager.OnSpinButtonClick.RemoveListener(OnSpinButtonClick);
         GameManager.instance.eventManager.OnConsumableItemUsed.RemoveListener(OnConsumableItemUsed);
+    }
+
+    private void OnDestroy()
+    {
+        if (slotMachine != null)
+        {
+            slotMachine.GridRolled -= SetUpGridUI;
+            slotMachine.ResultReady -= TriggerResultAnimation;
+            slotMachine.SymbolChanged -= ChangeSingleSymbol;
+        }
     }
 
     private void OnSpinButtonClick()

@@ -19,7 +19,8 @@ public class SlotSceneManager : MonoBehaviour
     {
         slotCalculator = new SlotCalculator();
         slotMachine = new SlotMachine();
-        slotMachine.SetUp(slotCalculator, slotUIManager, gameData);
+        slotMachine.SetUp(slotCalculator, gameData);
+        slotUIManager.SetUp(gameData, slotMachine, slotMachine.Grid);
         statsMenu.SetUp(gameData, slotUIManager);
     }
 }
