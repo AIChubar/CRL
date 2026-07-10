@@ -15,16 +15,17 @@ MonoBehaviour:
   RTP: 0.95
   baseMoney: 0
   money: 0
-  spinsLeft: 9
-  targetMoney: 20
+  spinsLeft: 8
+  targetMoney: 10
   betAmount: 1
-  changePrice: 1
   wildPrice: 4
-  tokens: 1111
-  initialLevelTokens: 1111
+  tokens: 5
+  initialLevelTokens: 5
   currentLevel: 0
-  gold: 111
+  gold: 0
   baseSpins: 10
+  changeSymbolUses: 0
+  changePriceProgression: 000000000100000001000000010000000100000002000000
   animationSpeed: 1
   wildLuck:
     BaseValue: 1
@@ -33,10 +34,9 @@ MonoBehaviour:
   payoutBonus:
     BaseValue: 0
   passiveItems: []
-  consumableItems:
-  - {fileID: 0}
+  consumableItems: []
   slotConfig: {fileID: 11400000, guid: 1d8dece67bba3e3449d70af789909cca, type: 2}
-  levelsTargetMoney: 140000001e00000032000000460000006400000096000000c80000002c010000
+  levelsTargetMoney: 0a000000140000001e00000032000000460000006400000096000000c80000002c010000
   shopConfig: {fileID: 11400000, guid: e3fe027bd7597114d8e311ac35c38f43, type: 2}
   columnBuffs:
   - BaseValue: 0

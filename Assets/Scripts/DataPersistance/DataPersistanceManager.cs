@@ -27,8 +27,8 @@ public class DataPersistenceManager
     public void NewGame()
     {
         gameData.CopyFrom(newGameData);
-        gameData.Reset();
-        gameData.shopConfig.Reset();
+        gameData.ResetLevelState();
+        gameData.InitShopPool();
         SaveGame();
     }
 

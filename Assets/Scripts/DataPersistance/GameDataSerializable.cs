@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [System.Serializable]
@@ -24,6 +25,7 @@ public class GameDataSerializable
     public string slotConfigName;
     public List<ConsumableItemData> consumableItemData = new List<ConsumableItemData>();
     public string shopConfigName;
+    public List<string> availableShopItemNames = new List<string>();
     public List<int> levelsTargetMoney;
     //public float animationSpeed;
     public GameDataSerializable(GameData data)
@@ -49,6 +51,7 @@ public class GameDataSerializable
         payoutBonus = data.payoutBonus.BaseValue;
         passiveItemNames = new List<string>();
         levelsTargetMoney = data.levelsTargetMoney;
+        availableShopItemNames = data.availableShopItems.Select(item => item.name).ToList();
         foreach (var passive in data.passiveItems)
         {
             passiveItemNames.Add(passive.name);
@@ -119,6 +122,16 @@ public class GameDataSerializable
             data.shopConfig = shopConfigLoaded;
         else
             Debug.LogWarning($"Shop '{shopConfigName}' not found in Resources folder!");
+
+        data.availableShopItems = new List<Item>();
+        if (data.shopConfig != null)
+        {
+            foreach (Item item in data.shopConfig.allItems)
+            {
+                if (availableShopItemNames.Contains(item.name))
+                    data.availableShopItems.Add(item);
+            }
+        }
         data.ApplyAllModifiers();
     }
 

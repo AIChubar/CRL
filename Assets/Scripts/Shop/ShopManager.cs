@@ -7,12 +7,12 @@ using System.Linq;
 
 public class ShopManager : MonoBehaviour
 {
-    [HideInInspector] public ItemButton currentItem;
     public bool inputDisabled;
     
     public GameObject itemButtonsParent;
     
     public TMP_Text instructionText;
+    public GameObject instructionPanel;
     public TMP_Text goldText;
     public TMP_Text tokensOfferText;
     public TMP_Text tokensText;
@@ -26,7 +26,6 @@ public class ShopManager : MonoBehaviour
     [SerializeField] private Button menuButton;
 
     [SerializeField] private Button rerollButton;
-    [SerializeField] private Button buyButton;
     [SerializeField] private Button buyTokensButton;
 
     [SerializeField] private GameObject itemButtonPrefab;
@@ -41,44 +40,59 @@ public class ShopManager : MonoBehaviour
     {
         nextLevelButton.onClick.AddListener(NextLevel);
         rerollButton.onClick.AddListener(Reroll);
-        buyButton.onClick.AddListener(BuyItem);
         buyTokensButton.onClick.AddListener(BuyTokens);
         menuButton.onClick.AddListener(OnMenuButtonClick);
-        availableItems = new List<Item>(gameData.shopConfig.availableItems); // Initialize the pool
+        availableItems = new List<Item>(gameData.availableShopItems); // Initialize the pool
         currentShopItems = new List<Item>();
-        rerollCost = 1;
+        rerollCost = gameData.shopConfig.baseRerollCost;
+        SetInstruction("");
         UpdateUI();
-        RerollItems();
+        RerollItems(gameData.shopConfig.guaranteedItem);
         RerollTokens();
+    }
+
+    private void SetInstruction(string text)
+    {
+        instructionText.text = text;
+        if (instructionPanel != null)
+            instructionPanel.SetActive(!string.IsNullOrEmpty(text));
     }
 
     private void Reroll()
     {
         if (gameData.gold < rerollCost)
         {
-            instructionText.text = "Not enough gold!";
+            SetInstruction("Not enough gold!");
             return;
         }
         gameData.gold -= rerollCost;
-        rerollCost++;
+        rerollCost += gameData.shopConfig.rerollCostIncrement;
         RerollItems(); // Generate initial shop items
         RerollTokens();
         UpdateUI();
     }
 
-    private void RerollItems()
+    private void RerollItems(Item guaranteedItem = null)
     {
         availableItems.AddRange(currentShopItems);
         currentShopItems.Clear();
-        
+
         // Remove old UI buttons
         foreach (Transform child in itemButtonsParent.transform)
         {
             Destroy(child.gameObject);
         }
 
-        // Select 3 new items with weighted probability
-        for (int i = 0; i < 3; i++)
+        // Reserve one slot for the guaranteed item if it's still available
+        if (guaranteedItem != null && availableItems.Contains(guaranteedItem))
+        {
+            currentShopItems.Add(guaranteedItem);
+            availableItems.Remove(guaranteedItem);
+            AddButton(guaranteedItem);
+        }
+
+        // Fill the remaining slots with weighted random items
+        while (currentShopItems.Count < gameData.shopConfig.shopSize)
         {
             if (availableItems.Count == 0) break;
 
@@ -94,8 +108,9 @@ public class ShopManager : MonoBehaviour
 
     private void RerollTokens()
     {
-        tokensToBuy = GameManager.instance.rngManager.NextInt(gameData.currentLevel, gameData.currentLevel*2 + 1);
-        tokensGold = GameManager.instance.rngManager.NextInt(gameData.currentLevel, gameData.currentLevel*3 + 2);
+        ShopConfig config = gameData.shopConfig;
+        tokensToBuy = GameManager.instance.rngManager.NextInt(gameData.currentLevel, gameData.currentLevel * config.tokenAmountLevelMult + config.tokenAmountConstant);
+        tokensGold = GameManager.instance.rngManager.NextInt(gameData.currentLevel, gameData.currentLevel * config.tokenPriceLevelMult + config.tokenPriceConstant);
         tokensOfferText.text = "Tokens offer: \n" + tokensToBuy + "T for " + tokensGold +" Gold";;
     }
 
@@ -107,7 +122,7 @@ public class ShopManager : MonoBehaviour
         Dictionary<Item, float> weightedItems = new Dictionary<Item, float>();
         foreach (Item item in availableItems)
         {
-            weightedItems[item] = item.GetWeight(); // Use rarity weight
+            weightedItems[item] = gameData.shopConfig.GetWeight(item.rarity); // Use rarity weight
         }
 
         // Weighted random selection
@@ -126,43 +141,42 @@ public class ShopManager : MonoBehaviour
     public void AddButton(Item item)
     {
         GameObject go = Instantiate(itemButtonPrefab, itemButtonsParent.transform);
-        ItemButton ib = go.GetComponent<ItemButton>();
+        ShopItem ib = go.GetComponent<ShopItem>();
         ib.SetButton(item, this);
         go.transform.localScale = Vector3.one;
     }
 
-    public void BuyItem()
+    public void BuyItem(ShopItem itemButton)
     {
-        if (currentItem == null)
+        if (itemButton == null)
         {
-            instructionText.text = "No item selected.";
+            SetInstruction("No item selected.");
             return;
         }
 
-        if (currentItem.item.price > gameData.gold)
+        if (itemButton.item.price > gameData.gold)
         {
-            instructionText.text = "Not enough gold!";
+            SetInstruction("Not enough gold!");
             return;
         }
 
-        ConsumableItem consumable = currentItem.item as ConsumableItem;
-        PassiveItem passive = currentItem.item as PassiveItem;
+        ConsumableItem consumable = itemButton.item as ConsumableItem;
+        PassiveItem passive = itemButton.item as PassiveItem;
 
         if (consumable != null)
         {
             ConsumableItem newConsumable = Instantiate(consumable);
-            newConsumable.name = consumable.name; 
+            newConsumable.name = consumable.name;
             gameData.consumableItems.Add(newConsumable);
         }
         else if (passive != null)
         {
             gameData.passiveItems.Add(passive);
         }
-        gameData.gold -= currentItem.item.price;
-        Destroy(currentItem.gameObject);
-        currentShopItems.Remove(currentItem.item);
-        gameData.shopConfig.availableItems.Remove(currentItem.item);
-        currentItem = null;
+        gameData.gold -= itemButton.item.price;
+        currentShopItems.Remove(itemButton.item);
+        gameData.availableShopItems.Remove(itemButton.item);
+        Destroy(itemButton.gameObject);
 
         UpdateUI();
     }
@@ -171,13 +185,13 @@ public class ShopManager : MonoBehaviour
     {
         if (gameData.gold < tokensGold)
         {
-            instructionText.text = "Not enough gold!";
+            SetInstruction("Not enough gold!");
         }
         else
         {
             gameData.gold -= tokensGold;
             gameData.initialLevelTokens += tokensToBuy;
-            instructionText.text = "Tokens bought!";
+            SetInstruction("Tokens bought!");
             RerollTokens();
         }
 
@@ -196,15 +210,11 @@ public class ShopManager : MonoBehaviour
         gameData.ApplyAllModifiers();
         SceneManager.LoadScene(0, LoadSceneMode.Single);
     }
-    public void SetCurrentItem(ItemButton item)
-    {
-        currentItem = item;
-    }
 
     public void UpdateUI()
     {
-        goldText.text =   $"Gold: {gameData.gold}";
-        tokensText.text =  $"Tokens: {gameData.initialLevelTokens}T";
+        goldText.text =   $"{gameData.gold}";
+        tokensText.text =  $"{gameData.initialLevelTokens}T";
         rerollText.text =  $"Reroll: {rerollCost} Gold";
     }
 }

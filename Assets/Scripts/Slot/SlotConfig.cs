@@ -9,8 +9,8 @@ public class SlotConfig : ScriptableObject
     public List<Symbol> symbols = new List<Symbol>();
 
     [Header("Grid Settings")]
-    public int rows = 3;
-    public int columns = 3;
+    [Min(1)] public int rows = 3;
+    [Min(1)] public int columns = 3;
     
     [SerializeField] public List<int> columnBuffs = new List<int>();
 
@@ -33,6 +33,8 @@ public class SlotConfig : ScriptableObject
     private void OnValidate()
     {
         EnsureColumnBuffsSize();
+        if (symbols == null || symbols.Count == 0)
+            Debug.LogWarning($"[SlotConfig] '{name}' has no symbols assigned.", this);
     }
 #endif
 }

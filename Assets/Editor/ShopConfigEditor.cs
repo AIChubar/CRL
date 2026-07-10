@@ -20,8 +20,6 @@ public class ShopConfigEditor : Editor
                 .Where(item => item != null)
                 .ToList();
 
-            config.availableItems = new List<Item>(config.allItems);
-
             EditorUtility.SetDirty(config);
             Debug.Log($"Populated with {config.allItems.Count} items.");
         }

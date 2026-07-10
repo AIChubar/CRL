@@ -8,18 +8,18 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "GameData", menuName = "GameData")]
 public class GameData : ScriptableObject
 {
-    public float RTP;
+    [Min(0f)] public float RTP;
     [HideInInspector]public float baseMoney = 0;
     [HideInInspector]public float money = 0;
     [HideInInspector] public int spinsLeft;
     [HideInInspector] public int targetMoney;
     [HideInInspector]public int betAmount = 0;
-    public int wildPrice;
+    [Min(0)] public int wildPrice;
     [HideInInspector]public int tokens;
-    public int initialLevelTokens;
-    public int currentLevel;
-    public int gold;
-    public int baseSpins;
+    [Min(0)] public int initialLevelTokens;
+    [Min(0)] public int currentLevel;
+    [Min(0)] public int gold;
+    [Min(0)] public int baseSpins;
     [HideInInspector] public int changeSymbolUses; 
     public List<int> changePriceProgression;
     [HideInInspector]public float animationSpeed = 1.0f;
@@ -35,6 +35,13 @@ public class GameData : ScriptableObject
     [SerializeField] public List<int> levelsTargetMoney; // Assigned in Inspector
     [SerializeField] public ShopConfig shopConfig;
     [HideInInspector]public List<CharacterStat> columnBuffs = new List<CharacterStat>();
+    [HideInInspector] public List<Item> availableShopItems = new List<Item>(); // Runtime shop pool for this run
+    private readonly HashSet<PassiveItem> appliedPassives = new HashSet<PassiveItem>();
+
+    public void InitShopPool()
+    {
+        availableShopItems = new List<Item>(shopConfig.allItems);
+    }
 
     public void CopyFrom(GameData other)
     {
@@ -82,7 +89,7 @@ public class GameData : ScriptableObject
             return changePriceProgression[changePriceProgression.Count - 1];
     }
 
-    public void Reset()
+    public void ResetLevelState()
     {
         spinsLeft = baseSpins;
         money = baseMoney;
@@ -95,12 +102,17 @@ public class GameData : ScriptableObject
     {
         foreach (var item in passiveItems)
         {
-            if (item.applied)
+            if (!appliedPassives.Add(item)) // Add() returns false if already applied
                 continue;
             foreach (var mod in item.statModifiers)
             {
                 if (mod.IsColumnSpecific)
                 {
+                    if (!IsValidColumn(mod.ColumnIndex))
+                    {
+                        Debug.LogWarning($"[GameData] '{item.name}' column modifier index {mod.ColumnIndex} out of range (0..{columnBuffs.Count - 1}); skipping.");
+                        continue;
+                    }
                     columnBuffs[mod.ColumnIndex].AddModifier(mod);
                 }
                 else
@@ -116,7 +128,6 @@ public class GameData : ScriptableObject
                         targetStat.AddModifier(mod);
                 }
             }
-            item.applied = true;
         }
     }
     public void RemoveAllModifiers()
@@ -127,6 +138,8 @@ public class GameData : ScriptableObject
             {
                 if (mod.IsColumnSpecific)
                 {
+                    if (!IsValidColumn(mod.ColumnIndex))
+                        continue;
                     columnBuffs[mod.ColumnIndex].RemoveModifier(mod);
                 }
                 else
@@ -143,11 +156,28 @@ public class GameData : ScriptableObject
                 }
             }
         }
+        appliedPassives.Clear();
     }
 
+
+    private bool IsValidColumn(int columnIndex)
+    {
+        return columnIndex >= 0 && columnIndex < columnBuffs.Count;
+    }
 
     public void OnSpinButtonClick()
     {
         changeSymbolUses = 0;
     }
+
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        if (levelsTargetMoney == null || levelsTargetMoney.Count == 0)
+            Debug.LogWarning($"[GameData] '{name}' has no levelsTargetMoney entries — level reset will fail.", this);
+
+        if (changePriceProgression == null || changePriceProgression.Count == 0)
+            Debug.LogWarning($"[GameData] '{name}' has no changePriceProgression entries — symbol-change pricing will fail.", this);
+    }
+#endif
 }

@@ -16,7 +16,7 @@ public class SlotUIController
         this.gameData = gameData;
         this.slotMachine = slotMachine;
         this.slotUIManager = slotUIManager;
-        slotUIManager.UpdateResultText($"Current win: ${currentWin:0.00}");
+        slotUIManager.UpdateResultText($"This Spin: ${currentWin:0.00}");
     }
 
     public void Spin()
@@ -36,7 +36,7 @@ public class SlotUIController
             //gameData.money -= gameData.betAmount;
             //gameData.wagerLeft -= gameData.betAmount;
             currentWin = (slotMachine.SpinSlot(gameData.betAmount) + gameData.payoutBonus.Value)  * gameData.payoutMult.Value;
-            slotUIManager.UpdateResultText($"Current win: ${currentWin:0.00}");
+            slotUIManager.UpdateResultText($"This Spin: ${currentWin:0.00}");
         }
         else
         {
@@ -179,10 +179,11 @@ public class SlotUIController
     }
     public void FinishRound()
     {
-        int income = (int)(gameData.money * 0.1f);
+        ShopConfig config = gameData.shopConfig;
+        int income = (int)(gameData.money * config.incomeRate);
         int spinsLeft = gameData.spinsLeft;
-        int reward = 5 + gameData.currentLevel;
-        int goldReceived = income > 10 ? 10 : income + reward + spinsLeft;
+        int reward = config.baseLevelReward + gameData.currentLevel * config.rewardPerLevel;
+        int goldReceived = income > config.incomeCap ? config.incomeCap : income + reward + spinsLeft;
         slotUIManager.UpdateInstructionText($"You Win! Gold Received : {goldReceived}");
         slotUIManager.pauseManager.winLoseMenu.SetActive(true);
         slotUIManager.pauseManager.restartButton.gameObject.SetActive(false);
@@ -193,7 +194,7 @@ public class SlotUIController
             gameData.targetMoney *= 2;
         gameData.gold += goldReceived;
         gameData.initialLevelTokens = gameData.tokens;
-        gameData.Reset();
+        gameData.ResetLevelState();
 
         SaveGame();
         slotUIManager.DisableButtons();

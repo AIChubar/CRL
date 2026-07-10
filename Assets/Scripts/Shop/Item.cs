@@ -10,7 +10,6 @@ public class Item : ScriptableObject
 
     public int price;
     public ItemRarity rarity;
-    [HideInInspector]public bool applied = false;
     public enum ItemRarity
     {
         Common,
@@ -24,20 +23,5 @@ public class Item : ScriptableObject
     {
         return "No description available.";
     }
-
-    public float GetWeight()
-    {
-        return rarity switch
-        {
-            ItemRarity.Common => 40f,
-            ItemRarity.Uncommon => 30f,
-            ItemRarity.Rare => 18f,
-            ItemRarity.Epic => 8f,
-            ItemRarity.Legendary => 4f,
-            _ => 1f
-        };
-    }
-
-  
 }
     
